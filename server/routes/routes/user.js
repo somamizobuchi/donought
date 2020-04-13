@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const auth = require('./auth')
 
 
+
 // Create new User
 router.post('/new', async (req, res) => {
     if(!req.body.email | !req.body.firstname | !req.body.lastname | !req.body.password){

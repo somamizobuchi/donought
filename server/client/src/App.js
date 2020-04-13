@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Home from './components/Home'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {UserProvider} from './UserContext'
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -14,25 +15,23 @@ function App() {
   const logout = () => {
     fetch('/api/user/logout')
       .then(res => res.json())
-      .then(res => {
-        if(res.success){
-          setIsAuth(false);
-        }
-      })
+      .then(res => setIsAuth(false))
   }
 
+  
   if(isAuth){
     return(
-      <button onClick={() => logout()}>Logout</button>
+      <button onClick={() => logout()}></button>
     )
   }else{
     return (
-      <div className="App">
-        <Home isAuth={isAuth}/>
-      </div>
+      <UserProvider value={{isAuth: isAuth, setIsAuth: setIsAuth}}>
+        <div className="App">
+          <Home/>
+        </div>
+      </UserProvider>
     )
   }
-
   
 }
 
