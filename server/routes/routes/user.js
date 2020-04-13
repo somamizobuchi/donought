@@ -72,9 +72,14 @@ router.post('/login', (req, res) => {
                         Error: "Incorrect password"
                     })
                 }
-                var token = jwt.sign({_id: user._id}, process.env.JWT_KEY)
+                var token = jwt.sign({
+                    _id: user._id,
+                    email: user.email,
+                },process.env.JWT_KEY)
                 res.status(200).cookie('auth', token).json({
-                    success: true
+                    _id: user._id,
+                    email: user.email,
+                    ok: true
                 })
             });
     })
@@ -90,7 +95,9 @@ router.get('/logout', (req, res) => {
 // Check Authorization Status
 router.get('/isauth', auth, (req, res) => {
     res.status(200).json({
-        success: true
+        _id: res.locals._id,
+        email: res.locals.email,
+        ok: true
     })
 })
 

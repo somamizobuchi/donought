@@ -1,38 +1,44 @@
 import React, {useState, useEffect} from 'react';
 import Home from './components/Home'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {UserProvider} from './UserContext'
+import {UserProvider} from './UserContext';
+import Dashboard from './components/Dashboard';
 
 function App() {
-  const [isAuth, setIsAuth] = useState(false);
+  
+  const [user, setUser] = useState({
+    _id: '',
+    email: '',
+    authorized: false
+  });
 
-  useEffect(() => {
+  const authorize = async () => {
     fetch('/api/user/isauth')
       .then(res => res.json())
-      .then(res => setIsAuth(res.success))
-  })
-
-  const logout = () => {
-    fetch('/api/user/logout')
-      .then(res => res.json())
-      .then(res => setIsAuth(false))
+      .then(res => setUser({ 
+        _id: res._id,
+        email: res.email,
+        authorized: res.ok
+      }))
+      .catch(err => {
+        console.log(err.message)
+      })
   }
 
-  
-  if(isAuth){
-    return(
-      <button onClick={() => logout()}></button>
+  useEffect(() => {
+    authorize()
+  },[user.authorized])
+
+
+    return ( 
+      <div className="App">
+        <UserProvider value={{user, setUser}}>
+          {user.authorized ? (<Dashboard />) : (<Home />)}
+        </UserProvider>
+      </div>
     )
-  }else{
-    return (
-      <UserProvider value={{isAuth: isAuth, setIsAuth: setIsAuth}}>
-        <div className="App">
-          <Home/>
-        </div>
-      </UserProvider>
-    )
-  }
-  
+
+
 }
 
 export default App;
