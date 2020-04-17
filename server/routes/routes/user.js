@@ -42,6 +42,17 @@ router.post('/new', async (req, res) => {
                             Error: "Database save error"
                         })
                     }
+                    var token = jwt.sign({
+                        _id: doc._id,
+                        email: doc.email,
+                    },process.env.JWT_KEY)
+                    res.status(200)
+                        .cookie('auth', token)
+                        .json({
+                            ok: true,
+                            _id: doc._id,
+                            email: doc.email
+                        })
                 });
             })
     })
