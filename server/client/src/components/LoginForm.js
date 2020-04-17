@@ -1,6 +1,7 @@
 import React, {useState, useContext} from 'react'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import {UserContext} from '../UserContext'
+import {Link} from 'react-router-dom'
 
 export default function LoginForm(){
 
@@ -50,7 +51,9 @@ export default function LoginForm(){
             </Form>
             <hr></hr>
             <p>Or</p>
-            <Button>Register</Button>
+            <Button>
+                <Link to="/">Register</Link>
+            </Button>
         </div>
     )
 }

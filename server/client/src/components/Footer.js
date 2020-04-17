@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navbar, NavbarBrand, Nav, NavItem, NavLink} from 'reactstrap'
+import { Navbar, Nav, NavLink} from 'reactstrap'
 
 
 export default function Footer(){

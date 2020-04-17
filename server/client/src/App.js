@@ -9,7 +9,8 @@ function App() {
   const [user, setUser] = useState({
     _id: '',
     email: '',
-    authorized: false
+    authorized: false,
+    tasks: ''
   });
 
   const authorize = async () => {

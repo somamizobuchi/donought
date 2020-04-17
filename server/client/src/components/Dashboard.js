@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { UserContext } from '../UserContext'
+import Tasks from './Tasks'
 
 export default function Dashboard(){
 
@@ -15,7 +16,7 @@ export default function Dashboard(){
     
     return(
         <div>
-            <h1>{user._id}</h1>
+            <Tasks />
             <button onClick={logout}>Logout</button>
         </div>
     );
