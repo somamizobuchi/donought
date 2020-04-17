@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const log = require('./TaskLog');
+const log = require('./TunaLog');
 
 module.exports = new mongoose.Schema({
     title: String,

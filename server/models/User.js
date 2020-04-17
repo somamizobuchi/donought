@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Task = require('./Task');
+const Tuna = require('./Tuna');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     lastname: String, 
     email: String,
     password: String,
-    tasks: [Task]
+    tunas: [Tuna]
 },{
     timestamps: true
 });
