@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "api server",
+  "main": "server.js",
+  "scripts": {
+    "dev-server": "nodemon server.js",
+    "dev-client": "npm start --prefix client",
+    "dev": "concurrently \"npm:dev-*\""
+  },
+  "author": "Soma Mizobuchi",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "concurrently": "^5.1.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "create-react-app": "^3.4.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.7",
+    "npm": "^6.14.4"
+  }
+}
