@@ -16,6 +16,7 @@ export default function RegisterForm(){
     })
 
     const [alert, setAlert] = useState("d-none")
+
     const handleHttpResponse = (res) => {
         const status = res.status
         res.json()
@@ -38,6 +39,10 @@ export default function RegisterForm(){
 
     }
     
+    const verifyFields = (e) => {
+        
+    }
+
     const updateField = (e) => {
         setForm({
             ...form, 
@@ -45,7 +50,7 @@ export default function RegisterForm(){
         })
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         const requestOptions = {
             method: 'POST', 

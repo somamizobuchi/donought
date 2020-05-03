@@ -3,7 +3,7 @@ import {Col, Card, CardTitle, CardText, Button} from 'reactstrap'
 
 export default function Task(props){
     return(
-        <Col sm="6">
+        <Col sm="3">
             <Card body>
                 <CardTitle>{props.title}</CardTitle>
                 <CardText>{props.desc}</CardText>
