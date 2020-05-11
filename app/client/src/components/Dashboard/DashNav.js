@@ -7,7 +7,7 @@ export default function DashNav(){
         <Navbar color="light">
             <Nav>
                 <NavItem>
-                    <NavLink>Hello</NavLink>
+                    <NavLink>Home</NavLink>
                 </NavItem>
             </Nav>
         </Navbar>
