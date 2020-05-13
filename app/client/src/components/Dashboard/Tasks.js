@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { UserContext } from '../../UserContext'
 import Task from './Task'
-import { Row } from 'reactstrap'
+import { Row, Container } from 'reactstrap'
 
 export default function Tasks(){
     // Get user context
@@ -32,13 +32,13 @@ export default function Tasks(){
         )
     }else{
         return (
-            <div className="">
+	<Container> 
                 <Row className="w-75 m-auto">
                     {user.tasks.map((task) => (
                         <Task title={task.title} key={task._id} desc={task.description}/>
                     ))}
                 </Row>
-            </div>
+	</Container> 
         )
     }
         
