@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { UserContext } from '../../UserContext'
 import Tasks from './Tasks'
 import DashNav from './DashNav'
-import { Button, Container, Row } from 'reactstrap'
+import { Button } from 'reactstrap'
 
 export default function Dashboard(){
 
@@ -17,10 +17,10 @@ export default function Dashboard(){
     }
     
     return(
-	<div>
-	    <DashNav />
-	    <Tasks />
-	    <Button onClick={logout}>Logout</Button>
-	</div>
+       	<div>
+	        <DashNav />
+	        <Tasks />
+	        <Button onClick={logout}>Logout</Button>
+	    </div>
     );
 }
