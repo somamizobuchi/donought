@@ -8,17 +8,18 @@ const chalk = require('chalk');
 require('dotenv').config();
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI, {
+var mongooseOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
-}, (err) => {
-    if(!err){
-        console.log("Connected to database")
-    }else{
-        console.log(err);
-    }
-})
+}
+mongoose.connect(process.env.MONGO_URI, mongooseOptions)
+    .then(() => {
+        console.log(chalk.green("Connected to database"));
+    })
+    .catch(err => {
+        console.log(chalk.red(err));
+    })
 
 // Open server on port
 const port = process.env.PORT | 5000;
