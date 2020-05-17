@@ -3,6 +3,7 @@ import { UserContext } from '../../UserContext'
 import Tasks from './Tasks'
 import DashNav from './DashNav'
 import { Button } from 'reactstrap'
+import TaskForm from './TaskForm'
 
 export default function Dashboard(){
 
@@ -21,6 +22,7 @@ export default function Dashboard(){
 	        <DashNav />
 	        <Tasks />
 	        <Button onClick={logout}>Logout</Button>
+            <TaskForm />
 	    </div>
     );
 }
