@@ -3,8 +3,9 @@ const auth = require('./auth');
 router.use('*', auth)
 const User = require('../../models/User');
 
+// Get all tasks associated wiht user 
 router.get('/:uid', (req, res) => {
-    
+    // 
     User.findById(req.params.uid)
         .select('tasks')
         .exec((err, doc) => {
@@ -13,7 +14,7 @@ router.get('/:uid', (req, res) => {
         })
 })
 
-// New
+// New task
 router.post('/new', (req, res) => {
     var filter = {_id: res.locals._id}
     var update = {$push: {tasks: {
@@ -40,7 +41,7 @@ router.post('/new', (req, res) => {
 
 })
 
-// Delete
+// Delete task
 router.delete('/delete', (req, res) => {
     var filter = {
         _id: res.locals._id
@@ -56,29 +57,31 @@ router.delete('/delete', (req, res) => {
     })
 })
 
-// Get
+// Get from UserID and TaskID
 router.get('/:uid/:tid', (req, res) => {
     if(req.params.uid != res.locals._id){
         res.status(403).json({
             Error: "Unauthorized" 
         })
     }
-    var query = {
-        'id': res.locals.id
-    }
-    User.findOne(query)
-        .select({tasks: {'$elemMatch': {_id: req.params.id}}})
-        .exec((err, doc) => {
-            return res.status(200).json(doc.tasks[0])
-        })
-})
-
+    User.find({
+        tasks: {
+            _id: req.params.tid
+        }
+    }, (err, doc) => {
+        if(!err){
+            return res.status(200).json(doc)
+        } else {
+            return err
+        }
+    });
+});
 // Add a log
 router.post('/log', (req, res) => {
     const query = {
         "_id": res.locals._id,
         "tasks": {$elemMatch: {
-            "_id": req.body._id}
+            "_id": req.body.task_id}
         }
     }
     const update = {
