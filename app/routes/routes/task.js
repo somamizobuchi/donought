@@ -20,8 +20,7 @@ router.post('/new', (req, res) => {
     var update = {$push: {tasks: {
         title: req.body.title,
         description: req.body.description,
-        start_date: req.body.start_date,
-        end_date: req.body.end_date
+        category: req.body.category,
     }}}
     User.findOneAndUpdate(filter, update,(err, user) => {
         if(err){
@@ -42,12 +41,12 @@ router.post('/new', (req, res) => {
 })
 
 // Delete task
-router.delete('/delete', (req, res) => {
+router.delete('/delete/:tid', (req, res) => {
     var filter = {
         _id: res.locals._id
     }
     var update = {
-        "$pull": {"tasks": {"_id": req.body.id}}
+        "$pull": {"tasks": {"_id": req.params.tid}}
     }
     User.updateOne(filter, update, (err, doc) => {
         if(err) return res.status(500).send(err)
@@ -76,6 +75,7 @@ router.get('/:uid/:tid', (req, res) => {
         }
     });
 });
+
 // Add a log
 router.post('/log', (req, res) => {
     const query = {

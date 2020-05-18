@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import chalk from 'chalk'
 
 
 export default function TaskForm(){
@@ -9,19 +10,38 @@ export default function TaskForm(){
         category:'', 
         description: ''
     })
+
+    // Update `form` state based on input
     const updateField = (e) => {
         setForm({
             ...form, 
             [e.target.name]: e.target.value
         })
     }
+
+    // fetch API 
     const handleSubmit = (e) => {
         // Prevent default "submit" action
         e.preventDefault();
-        // POST to api
-
-        // Handle response
+        // HTTP header options
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(form)
+        };
+        console.log(chalk.red("Making http call"));
+        // Make http request
+        fetch('/api/task/new', requestOptions)
+            .then(res => res.json())
+            .then(res => {
+                console.log(chalk.blueBright(res))
+            })
+            .catch(err => {
+                console.log(chalk.red(err));
+            })
     }
+
+    // render
     return (
         <div> 
             <Form>

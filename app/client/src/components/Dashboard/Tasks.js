@@ -10,7 +10,9 @@ export default function Tasks(){
     // loading state
     const [loading, setLoading] = useState(true); 
 
-    // Initial
+    // UI state
+    const [refresh, setRefresh] = useState(false);
+    // Before component render: 
     useEffect(() => {
         fetch(`/api/task/${user._id}`)
             .then(res => res.json())
@@ -18,27 +20,28 @@ export default function Tasks(){
                 setUser({
                     ...user,
                     tasks: doc.tasks
-                })
+                });
+                setLoading(false);
+                setRefresh(false);
             })
-            .then(setLoading(false));
-    },[])
+    },[refresh])
 
     // Render
-    if(!user.tasks){
+    if(loading){
         return (
-            <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
+            <div className="spinner-border text-primary" role="status">
+                <span className="sr-only">Loading...</span>
             </div>
         )
     }else{
         return (
-	<Container> 
+	        <Container> 
                 <Row className="w-75 m-auto">
                     {user.tasks.map((task) => (
-                        <Task title={task.title} key={task._id} desc={task.description}/>
+                        <Task refresh={refresh} setRefresh={setRefresh} tid={task._id} title={task.title} key={task._id} cat={task.category} desc={task.description}/>
                     ))}
                 </Row>
-	</Container> 
+	        </Container> 
         )
     }
         
