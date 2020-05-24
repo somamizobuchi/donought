@@ -2,23 +2,26 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
 
+
+// User Schema 
 const userSchema = new Schema({
 	firstname: String,
 	lastname: String,
 	email: String,
 	password: String,
 	tasks: [{
-		task_id: Schema.Types.ObjectID,
+		type: Schema.Types.ObjectID,
 		ref: 'Task'
 	}],
 	logs: [{
-		log_id: Schema.Types.ObjectID,
+		type: Schema.Types.ObjectID,
 		ref: 'Log'
 	}]
 }, {
 	timestamps: true
 });
 
+// generateHash(password)
 userSchema.statics.generateHash = async (password) => {
 	const saltRounds = 10;
 	let hash;
@@ -30,6 +33,7 @@ userSchema.statics.generateHash = async (password) => {
 	return hash
 }
 
+// compareHash(Password, Hash)
 userSchema.statics.compareHash = async (password, hash) => {
 	let same;
 	try {
@@ -38,7 +42,7 @@ userSchema.statics.compareHash = async (password, hash) => {
 		throw new Error(err)
 	}
 	return same
-
 }
 
+// Export model
 module.exports = mongoose.model('User', userSchema)
