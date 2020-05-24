@@ -7,9 +7,13 @@ export default function Task(props) {
 		e.preventDefault();
 		// Set header options
 		const requestOptions = {
-			method: 'DELETE'
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				tid: props.tid
+			})
 		};
-		fetch('/api/task/delete/' + props.tid, requestOptions)
+		fetch('/api/task/delete/', requestOptions)
 			.then(res => res.json())
 			.then(res => {
 				console.log(res);
