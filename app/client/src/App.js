@@ -1,45 +1,60 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Home from './components/Home'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {UserProvider} from './UserContext';
+import { UserProvider } from './UserContext';
 import Dashboard from './components/Dashboard/';
 
 function App() {
-  
-  const [user, setUser] = useState({
-    _id: '',
-    email: '',
-    authorized: false,
-    tasks: ''
-  });
+	// Create user state -> context
+	const [user, setUser] = useState({
+		_id: '',
+		email: '',
+		authorized: false,
+		tasks: []
+	});
 
-  const authorize = async () => {
-    fetch('/api/user/isauth')
-      .then(res => res.json())
-      .then(res => setUser({ 
-        _id: res._id,
-        email: res.email,
-        authorized: res.ok
-      }))
-      .catch(err => {
-        console.log(err.message)
-      })
-  }
+	const authorize = () => {
+		fetch('/api/user/isauth')
+			.then(res => res.json())
+			.then(json => {
+				setUser({
+					_id: json._id,
+					email: json.email,
+					authorized: json.ok,
+					tasks: []
+				})
+			})
+			.catch(err => {
+				console.log(err.message);
+			})
+	}
 
-  useEffect(() => {
-    authorize()
-  },[user.authorized])
-
-
-    return ( 
-      <div className="App">
-        <UserProvider value={{user, setUser}}>
-          {user.authorized ? (<Dashboard />) : (<Home />)}
-        </UserProvider>
-      </div>
-    )
+	useEffect(() => {
+		authorize()
+	}, [user.authorized])
 
 
+	return (
+		<div className="App">
+			<UserProvider value={{ user, setUser }}>
+				<LandingPage authorized={user.authorized} />
+			</UserProvider>
+		</div>
+	)
+
+}
+
+const LandingPage = (props) => {
+	const authorized = props.authorized;
+	if (authorized) {
+		return (
+			<Dashboard />
+		)
+	} else {
+		return (
+			<Home />
+		)
+	}
 }
 
 export default App;

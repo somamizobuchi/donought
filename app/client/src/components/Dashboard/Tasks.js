@@ -1,48 +1,98 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from '../../UserContext'
 import Task from './Task'
-import { Row, Container } from 'reactstrap'
+import { Row, Container, Button, Modal, ModalHeader, ModalBody } from 'reactstrap'
+import TaskForm from './TaskForm'
 
-export default function Tasks(){
-    // Get user context
-    const {user, setUser} = useContext(UserContext)
+export default function Tasks() {
+	// Get user context
+	const { user, setUser } = useContext(UserContext)
 
-    // loading state
-    const [loading, setLoading] = useState(true); 
+	// loading state
+	const [loading, setLoading] = useState(true);
 
-    // UI state
-    const [refresh, setRefresh] = useState(false);
-    // Before component render: 
-    useEffect(() => {
-        fetch(`/api/task/${user._id}`)
-            .then(res => res.json())
-            .then(doc => {
-                setUser({
-                    ...user,
-                    tasks: doc.tasks
-                });
-                setLoading(false);
-                setRefresh(false);
-            })
-    },[refresh])
+	// UI state
+	const [refresh, setRefresh] = useState(false);
 
-    // Render
-    if(loading){
-        return (
-            <div className="spinner-border text-primary" role="status">
-                <span className="sr-only">Loading...</span>
-            </div>
-        )
-    }else{
-        return (
-	        <Container> 
-                <Row className="w-75 m-auto">
-                    {user.tasks.map((task) => (
-                        <Task refresh={refresh} setRefresh={setRefresh} tid={task._id} title={task.title} key={task._id} cat={task.category} desc={task.description}/>
-                    ))}
-                </Row>
-	        </Container> 
-        )
-    }
-        
+	// tasks state
+	const [tasks, setTasks] = useState([]);
+
+	// Before component render: 
+	useEffect(() => {
+		fetch(`/api/task/${user._id}`)
+			.then(res => res.json())
+			.then(doc => {
+				setTasks(doc.tasks);
+			})
+			.then(setLoading(false))
+			.then(setRefresh(false))
+	}, [refresh, tasks.length])
+
+
+	// Render
+	return (
+		<>
+			<Container>
+				<Row>
+					<FormModal refresh={refresh} setRefresh={setRefresh} />
+				</Row>
+				<Row>
+					{loading ? (<Loader />) : (<TaskCards refresh={refresh} setRefresh={setRefresh} tasks={tasks} />)}
+				</Row>
+			</Container>
+		</>
+	);
 }
+
+const FormModal = (props) => {
+	// props
+	const refresh = props.refresh;
+	const setRefresh = props.setRefresh;
+
+	// Modal State
+	const [modal, setModal] = useState(false);
+	const toggle = () => setModal(!modal);
+
+	// render
+	return (
+		<>
+			<Button onClick={toggle} color="success">New</Button>
+			<Modal isOpen={modal} toggle={toggle}>
+				<ModalHeader toggle={toggle}>
+					New Donought
+    		</ModalHeader>
+				<ModalBody>
+					<TaskForm refresh={refresh} setRefresh={setRefresh} toggle={toggle} />
+				</ModalBody>
+			</Modal>
+		</>
+	)
+}
+
+const Loader = (props) => {
+	if (props.loading) {
+		return (
+			<div className="spinner-border text-primary" role="status">
+				<span className="sr-only">Loading...</span>
+			</div>
+		)
+	} else {
+		return null;
+	}
+}
+
+const TaskCards = (props) => {
+	const tasks = props.tasks || [];
+	const refresh = props.refresh;
+	const setRefresh = props.setRefresh;
+	return (
+		<>
+			{
+				tasks.map(task => (
+					<Task refresh={refresh} setRefresh={setRefresh} key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} />
+				))
+			}
+		</>
+	)
+}
+
