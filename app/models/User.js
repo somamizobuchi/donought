@@ -9,6 +9,7 @@ const userSchema = new Schema({
 	lastname: String,
 	email: String,
 	password: String,
+	_role: Number,
 	tasks: [{
 		type: Schema.Types.ObjectID,
 		ref: 'Task'

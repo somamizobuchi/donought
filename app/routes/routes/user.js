@@ -7,6 +7,8 @@ const auth = require('./auth')
 
 // Create new User
 router.post('/new', async (req, res) => {
+
+	// Check of missing fields
 	if (!req.body.email | !req.body.firstname | !req.body.lastname | !req.body.password) {
 		return res.status(422).json({
 			Error: "missing fields"
@@ -14,47 +16,49 @@ router.post('/new', async (req, res) => {
 	}
 	let password;
 
+	// Email duplicate check
 	User.exists({ email: req.body.email }, (err, exists) => {
-
 		if (err) {
 			console.log(err);
 			return res.status(500).json({
 				Error: "Database query error"
 			})
-		}
-		if (exists) {
+		} else if (exists) {
 			return res.status(409).json({
 				Error: "A user with that email already exists"
 			})
-		}
-		User.generateHash(req.body.password)
-			.then(hash => {
-				const newUser = new User({
-					firstname: req.body.firstname,
-					lastname: req.body.lastname,
-					email: req.body.email,
-					password: hash
-				});
-				newUser.save((err, doc) => {
-					if (err) {
-						console.log(err);
-						return res.status(500).json({
-							Error: "Database save error"
-						})
-					}
-					var token = jwt.sign({
-						_id: doc._id,
-						email: doc.email,
-					}, process.env.JWT_KEY)
-					res.status(200)
-						.cookie('auth', token)
-						.json({
-							ok: true,
+		} else {
+			// Hash password
+			User.generateHash(req.body.password)
+				.then(hash => {
+					const newUser = new User({
+						firstname: req.body.firstname,
+						lastname: req.body.lastname,
+						email: req.body.email,
+						password: hash
+					});
+					newUser.save((err, doc) => {
+						if (err) {
+							console.log(err);
+							return res.status(500).json({
+								Error: "Database save error"
+							})
+						}
+						// Generate cookie
+						var token = jwt.sign({
 							_id: doc._id,
-							email: doc.email
-						})
-				});
-			})
+							email: doc.email,
+						}, process.env.JWT_KEY)
+						res.status(200)
+							.cookie('auth', token)
+							.json({
+								ok: true,
+								_id: doc._id,
+								email: doc.email
+							})
+					});
+				})
+		}
 	})
 });
 
@@ -86,6 +90,7 @@ router.post('/login', (req, res) => {
 				var token = jwt.sign({
 					_id: user._id,
 					email: user.email,
+					_role: user._role
 				}, process.env.JWT_KEY)
 				res.status(200).cookie('auth', token).json({
 					_id: user._id,

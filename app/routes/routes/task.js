@@ -1,7 +1,23 @@
-const router = require('express').Router()
+const router = require('express').Router();
 const auth = require('./auth');
-router.use('*', auth)
+router.use('*', auth);
 const User = require('../../models/User');
+const isAdmin = require('./admin');
+const Task = require('../../models/Task');
+
+// Get all tasks
+router.get('/', (req, res) => {
+	Task.find().exec((err, docs) => {
+		if (err) {
+			return res.status(500).json({
+				Error: "Internal"
+			})
+		} else {
+			return res.status(200).json(docs);
+		}
+	})
+})
+
 
 // Get all tasks associated wiht user 
 router.get('/:uid', (req, res) => {
@@ -14,49 +30,50 @@ router.get('/:uid', (req, res) => {
 		})
 })
 
-// New task
-router.post('/new', (req, res) => {
-	var filter = { _id: res.locals._id }
-	var update = {
-		$push: {
-			tasks: {
-				title: req.body.title,
-				description: req.body.description,
-				category: req.body.category,
-			}
-		}
-	}
-	User.findOneAndUpdate(filter, update, (err, user) => {
+// New Task
+router.post('/new', isAdmin, (req, res) => {
+	// Determine if task w title exists
+	Task.exists({ title: req.body.title }, (err, exists) => {
 		if (err) {
 			return res.send(500).json({
-				Error: "Query Error"
+				Error: "Internal Server Error"
 			})
 		}
-		if (!user) {
-			return res.send(403).json({
-				Error: "Forbidden"
-			})
+
+		// Check if task already exists
+		if (exists) {
+			return res.send(409)
 		}
-		return res.status(200).json({
-			success: true
+
+		// Create new task model object
+		const task = new Task({
+			title: req.body.title,
+			description: req.body.description,
+			category: req.body.category
+		});
+
+		// Save task
+		task.save((err, doc) => {
+			if (err) {
+				return res.status(500).json({
+					Error: "Internal server error"
+				})
+			}
+			// Successfully Created document
+			return res.status(200).json(doc);
 		})
 	})
-
 })
 
 // Delete task
-router.delete('/delete/:tid', (req, res) => {
-	var filter = {
-		_id: res.locals._id
-	}
-	var update = {
-		"$pull": { "tasks": { "_id": req.params.tid } }
-	}
-	User.updateOne(filter, update, (err, doc) => {
-		if (err) return res.status(500).send(err)
-		return res.status(200).json({
-			success: true
-		})
+router.delete('/delete', isAdmin, (req, res) => {
+	const task_id = req.body.tid;
+	Task.findByIdAndDelete(task_id, (err, doc) => {
+		if (err) {
+			return res.status(500);
+		} else {
+			return res.status(200).json(doc);
+		}
 	})
 })
 
