@@ -7,15 +7,32 @@ const Task = require('../../models/Task');
 
 // Get all tasks
 router.get('/', (req, res) => {
-	Task.find().exec((err, docs) => {
-		if (err) {
-			return res.status(500).json({
-				Error: "Internal"
-			})
-		} else {
-			return res.status(200).json(docs);
-		}
-	})
+	Task.aggregate()
+		.match({})
+		.project({
+			title: 1,
+			description: 1,
+			category: 1,
+			numUsers: { $size: '$users' }
+		})
+		.exec((err, docs) => {
+			if (err) return res.status(500).send(err);
+			return res.status(200).send(docs);
+		})
+	// Task.find().exec((err, docs) => {
+	// 	if (err) {
+	// 		return res.status(500).json({
+	// 			Error: "Internal"
+	// 		})
+	// 	} else {
+	// 		Task.aggregate({
+	// 			$project: {
+	// 				numUsers: { $size: '$users' }
+	// 			}
+	// 		})
+	// 		return res.status(200).json(docs);
+	// 	}
+	// })
 })
 
 
@@ -77,6 +94,28 @@ router.delete('/delete', isAdmin, (req, res) => {
 	})
 })
 
+// Join a Task
+router.get('/join/:tid', (req, res) => {
+	Task.findOne({ _id: req.params.tid }, (err, doc) => {
+		if (err) return res.sendStatus(500);
+		if (doc) {
+			doc.users.addToSet(res.locals._id);
+			doc.save((err, doc) => {
+				if (err) return res.sendStatus(500).send(err);
+				User.findByIdAndUpdate(
+					res.locals._id,
+					{
+						$addToSet: { tasks: doc._id }
+					}, (err, user) => {
+						if (err) return res.status(500).send(err);
+						else return res.status(200).json(user);
+					})
+			})
+		} else {
+			return res.sendStatus(404);
+		}
+	})
+})
 // Get from UserID and TaskID
 router.get('/:uid/:tid', (req, res) => {
 	if (req.params.uid != res.locals._id) {
@@ -97,7 +136,6 @@ router.get('/:uid/:tid', (req, res) => {
 	});
 });
 
-// Get Logs
 
 // Add a log
 router.post('/log', (req, res) => {

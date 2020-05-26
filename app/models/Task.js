@@ -6,6 +6,10 @@ TaskSchema = new Schema({
 	title: String,
 	description: String,
 	category: String,
+	users: [{
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	}]
 }, {
 	timestamps: true
 });

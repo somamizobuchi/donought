@@ -117,5 +117,24 @@ router.get('/isauth', auth, (req, res) => {
 	})
 })
 
+// Get User's Tasks
+router.get('/tasks', auth, (req, res) => {
+	User
+		.findById(res.locals._id)
+		.select('tasks')
+		.populate({
+			path: 'tasks',
+			select: [
+				'title',
+				'category',
+				'description'
+			]
+		})
+		.exec((err, doc) => {
+			if (err) return res.status(500).send(err);
+			res.status(200).json(doc.tasks);
+		});
+
+})
 
 module.exports = router

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Col, Card, CardTitle, CardText, Button } from 'reactstrap'
+import React from 'react'
+import { Col, Card, CardBody, CardText, CardHeader, Button } from 'reactstrap'
 
-export default function Task(props) {
+export default function TaskCard(props) {
 	// handling delete
 	const handleDelete = (e) => {
 		e.preventDefault();
@@ -23,7 +23,7 @@ export default function Task(props) {
 	}
 
 	// handle new log 
-	const handleLog = (e) => {
+	const handleJoin = (e) => {
 		e.preventDefault();
 		// Set header options for a new log
 		const requestOptions = {
@@ -42,17 +42,18 @@ export default function Task(props) {
 			})
 			.catch(err => console.log(err.message));
 	}
+
 	// Render
 	return (
-		<Col sm="12" lg="4">
-			<Card body>
-				<CardTitle>{props.title}</CardTitle>
+		<Card>
+			<CardHeader><h2>{props.title}</h2></CardHeader>
+			<CardBody>
 				<CardText>{props.desc}</CardText>
 				<CardText>{props.cat}</CardText>
 				<CardText>{props.tid}</CardText>
 				<Button onClick={handleDelete} color="danger">Delete</Button>
-				<Button onClick={handleLog} color="success">Log</Button>
-			</Card>
-		</Col>
+				<Button onClick={handleJoin} color="success">Join</Button>
+			</CardBody>
+		</Card>
 	)
 }

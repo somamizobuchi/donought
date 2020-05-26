@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Task from './Task'
+import TaskCard from './TaskCard'
+import { Container } from 'reactstrap';
 
 const Explore = (props) => {
 
 	const [tasks, setTasks] = useState([]);
 
+	const [refresh, setRefresh] = useState(false);
 
 	useEffect(() => {
 		// Make http request
@@ -14,10 +16,13 @@ const Explore = (props) => {
 				console.log(json)
 				setTasks(json)
 			})
+			.then(() => {
+				setRefresh(false);
+			})
 			.catch(err => {
 				console.log(err.message);
 			})
-	}, [tasks.lenght])
+	}, [tasks.length, refresh])
 	// Render: 
 	if (!tasks) {
 		return (
@@ -26,12 +31,14 @@ const Explore = (props) => {
 	} else {
 		return (
 			<>
-				<h1>Explore</h1>
-				{
-					tasks.map(task => (
-						<Task key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} />
-					))
-				}
+				<Container>
+					<h1>Explore</h1>
+					{
+						tasks.map(task => (
+							<TaskCard refresh={refresh} setRefresh={setRefresh} key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} />
+						))
+					}
+				</Container>
 			</>
 		)
 	}

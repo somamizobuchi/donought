@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from '../../UserContext'
-import Task from './Task'
+import Task from './TaskCard'
 import { Row, Container, Button, Modal, ModalHeader, ModalBody } from 'reactstrap'
 import TaskForm from './TaskForm'
 
