@@ -19,20 +19,6 @@ router.get('/', (req, res) => {
 			if (err) return res.status(500).send(err);
 			return res.status(200).send(docs);
 		})
-	// Task.find().exec((err, docs) => {
-	// 	if (err) {
-	// 		return res.status(500).json({
-	// 			Error: "Internal"
-	// 		})
-	// 	} else {
-	// 		Task.aggregate({
-	// 			$project: {
-	// 				numUsers: { $size: '$users' }
-	// 			}
-	// 		})
-	// 		return res.status(200).json(docs);
-	// 	}
-	// })
 })
 
 
