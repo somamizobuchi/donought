@@ -19,14 +19,15 @@ export default function Tasks() {
 
 	// Before component render: 
 	useEffect(() => {
-		fetch(`/api/task/${user._id}`)
+		fetch('/api/user/tasks')
 			.then(res => res.json())
 			.then(doc => {
-				setTasks(doc.tasks);
+				console.log(doc)
+				setTasks(doc);
 			})
 			.then(setLoading(false))
 			.then(setRefresh(false))
-	}, [refresh, tasks.length])
+	}, [refresh])
 
 
 	// Render
@@ -35,9 +36,9 @@ export default function Tasks() {
 			<Container>
 				<Row>
 					<FormModal refresh={refresh} setRefresh={setRefresh} />
-				</Row>
-				<Row>
-					{loading ? (<Loader />) : (<TaskCards refresh={refresh} setRefresh={setRefresh} tasks={tasks} />)}
+					{tasks.map(task => (
+						<Task setRefresh={setRefresh} refresh={refresh} title={task.title} category={task.category} />
+					))}
 				</Row>
 			</Container>
 		</>
@@ -68,31 +69,3 @@ const FormModal = (props) => {
 		</>
 	)
 }
-
-const Loader = (props) => {
-	if (props.loading) {
-		return (
-			<div className="spinner-border text-primary" role="status">
-				<span className="sr-only">Loading...</span>
-			</div>
-		)
-	} else {
-		return null;
-	}
-}
-
-const TaskCards = (props) => {
-	const tasks = props.tasks || [];
-	const refresh = props.refresh;
-	const setRefresh = props.setRefresh;
-	return (
-		<>
-			{
-				tasks.map(task => (
-					<Task refresh={refresh} setRefresh={setRefresh} key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} />
-				))
-			}
-		</>
-	)
-}
-

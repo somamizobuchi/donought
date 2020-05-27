@@ -22,7 +22,7 @@ const Explore = (props) => {
 			.catch(err => {
 				console.log(err.message);
 			})
-	}, [tasks.length, refresh])
+	}, [tasks.length])
 	// Render: 
 	if (!tasks) {
 		return (
