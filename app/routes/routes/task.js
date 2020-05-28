@@ -44,9 +44,11 @@ router.post('/new', isAdmin, (req, res) => {
 		}
 
 		// Check if task already exists
-		if (exists) {
-			return res.send(409)
-		}
+		if (exists) return res.status(409).json({
+			ok: false,
+			message: "A task with that title already exists"
+		})
+
 
 		// Create new task model object
 		const task = new Task({
@@ -82,26 +84,38 @@ router.delete('/delete', isAdmin, (req, res) => {
 
 // Join a Task
 router.get('/join/:tid', (req, res) => {
-	Task.findOne({ _id: req.params.tid }, (err, doc) => {
-		if (err) return res.sendStatus(500);
-		if (doc) {
-			doc.users.addToSet(res.locals._id);
-			doc.save((err, doc) => {
-				if (err) return res.sendStatus(500).send(err);
-				User.findByIdAndUpdate(
-					res.locals._id,
-					{
-						$addToSet: { tasks: doc._id }
-					}, (err, user) => {
-						if (err) return res.status(500).send(err);
-						else return res.status(200).json(user);
-					})
+	Task.findByIdAndUpdate({ _id: req.params.tid }, {
+		$push: { users: res.locals._id }
+	}, (err, task) => {
+		if (err) return res.status(500).send(err);
+		if (!task) return res.status(404).json({
+			ok: false,
+			message: "no tasks found"
+		})
+		User.exists({ _id: res.locals._id, 'tasks.task': req.params.tid }, (err, exists) => {
+			if (err) return res.status(500).json({
+				ok: false,
+				message: "Internal Server Error"
 			})
-		} else {
-			return res.sendStatus(404);
-		}
+			if (exists) return res.status(409).json({
+				ok: false,
+				message: "You have already joined this Donought"
+			})
+			User.findByIdAndUpdate(
+				res.locals._id,
+				{
+					$addToSet: { tasks: { task: req.params.tid, comment: "hello" } }
+				}, (err, user) => {
+					if (err) return res.status(500).json(err);
+					return res.status(200).json({
+						ok: true,
+						message: "Successfully joined this Donought!"
+					});
+				})
+		})
 	})
 })
+
 // Get from UserID and TaskID
 router.get('/:uid/:tid', (req, res) => {
 	if (req.params.uid != res.locals._id) {
@@ -125,43 +139,6 @@ router.get('/:uid/:tid', (req, res) => {
 
 // Add a log
 router.post('/log', (req, res) => {
-	var d = new Date();
-	console.log(d.toISOString());
-	User.findOne(
-		{
-			'_id': res.locals._id,
-			'tasks._id': req.body.tid,
-		}
-	).select(
-		'tasks.logs'
-	).sort(
-		[['date', '-1']]
-	).exec(
-		(err, docs) => {
-			if (err) console.log(err)
-			else console.log(docs.tasks[0].logs)
-		}
-	)
-	const query = {
-		_id: res.locals._id,
-		tasks: {
-			$elemMatch: {
-				_id: req.body.tid
-			}
-		}
-	}
-	const update = {
-		$push: {
-			"tasks.$.logs": {
-				comment: req.body.comment,
-				success: req.body.success
-			}
-		}
-	}
-	User.updateOne(query, update, (err, doc) => {
-		if (err) return res.status(500).send(err)
-		return res.status(200).json(doc)
-	})
 })
 
 module.exports = router

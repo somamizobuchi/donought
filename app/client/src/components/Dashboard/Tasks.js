@@ -1,15 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from '../../UserContext'
+import React, { useEffect, useState } from "react";
 import Task from './TaskCard'
-import { Row, Container, Button, Modal, ModalHeader, ModalBody } from 'reactstrap'
-import TaskForm from './TaskForm'
 
 export default function Tasks() {
-	// Get user context
-	const { user, setUser } = useContext(UserContext)
-
-	// loading state
-	const [loading, setLoading] = useState(true);
 
 	// UI state
 	const [refresh, setRefresh] = useState(false);
@@ -22,50 +14,20 @@ export default function Tasks() {
 		fetch('/api/user/tasks')
 			.then(res => res.json())
 			.then(doc => {
-				console.log(doc)
 				setTasks(doc);
 			})
-			.then(setLoading(false))
 			.then(setRefresh(false))
-	}, [refresh])
+			.catch(err => console.log(err))
+	}, [])
 
 
 	// Render
 	return (
 		<>
-			<Container>
-				<Row>
-					<FormModal refresh={refresh} setRefresh={setRefresh} />
-					{tasks.map(task => (
-						<Task setRefresh={setRefresh} refresh={refresh} title={task.title} category={task.category} />
-					))}
-				</Row>
-			</Container>
+			<h1>My Donoughts</h1>
+			{tasks.map(task => (
+				<Task setRefresh={setRefresh} refresh={refresh} key={task.task._id} title={task.task.title} category={task.task.category} description={task.task.description} my={true} />
+			))}
 		</>
 	);
-}
-
-const FormModal = (props) => {
-	// props
-	const refresh = props.refresh;
-	const setRefresh = props.setRefresh;
-
-	// Modal State
-	const [modal, setModal] = useState(false);
-	const toggle = () => setModal(!modal);
-
-	// render
-	return (
-		<>
-			<Button onClick={toggle} color="success">New</Button>
-			<Modal isOpen={modal} toggle={toggle}>
-				<ModalHeader toggle={toggle}>
-					New Donought
-    		</ModalHeader>
-				<ModalBody>
-					<TaskForm refresh={refresh} setRefresh={setRefresh} toggle={toggle} />
-				</ModalBody>
-			</Modal>
-		</>
-	)
 }

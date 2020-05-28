@@ -121,9 +121,9 @@ router.get('/isauth', auth, (req, res) => {
 router.get('/tasks', auth, (req, res) => {
 	User
 		.findById(res.locals._id)
-		.select('tasks')
+		.select('tasks.task')
 		.populate({
-			path: 'tasks',
+			path: 'tasks.task',
 			select: [
 				'title',
 				'category',

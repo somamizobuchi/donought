@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { UserContext } from '../../UserContext'
 import Tasks from './Tasks'
 import DashNav from './DashNav'
-import { Button } from 'reactstrap'
+import { Button, Container } from 'reactstrap'
 import Explore from './Explore'
 import {
 	BrowserRouter as Router,
@@ -27,18 +27,20 @@ export default function Dashboard() {
 	// Render
 	return (
 		<Router>
-			<DashNav />
-			<Switch>
-				<Route path="/tasks">
-					<Tasks />
-				</Route>
-				<Route path="/Explore">
-					<Explore />
-				</Route>
-			</Switch>
-			<div>
-				<Button onClick={logout}>Logout</Button>
-			</div>
+			<Container>
+				<DashNav />
+				<Switch>
+					<Route path="/tasks">
+						<Tasks />
+					</Route>
+					<Route path="/Explore">
+						<Explore />
+					</Route>
+				</Switch>
+				<div>
+					<Button onClick={logout}>Logout</Button>
+				</div>
+			</Container>
 		</Router>
 	);
 }

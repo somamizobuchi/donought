@@ -22,35 +22,32 @@ export default function TaskCard(props) {
 		fetch('/api/task/delete/', requestOptions)
 			.then(res => res.json())
 			.then(res => {
-				// Refresh
 				props.setRefresh(!props.refresh);
 			})
 	}
 
-	// handle new log 
+	// handle new join 
 	const handleJoin = (e) => {
 		e.preventDefault();
 		// Set header options for a new log
 		fetch(`/api/task/join/${props.tid}`)
 			.then(res => res.json())
 			.then(json => {
+				console.log(json.ok)
 				if (json.ok) {
-					console.log(json)
 					props.setRefresh(true);
 					setAlert({
 						...alert,
 						isOpen: true,
 						color: "success",
-						message: "Successfully joined!"
+						message: json.message
 					});
 				} else {
 					setAlert({
-						...alert,
 						isOpen: true,
 						color: "danger",
-						message: "Sorry, something went wrong!"
+						message: json.message
 					});
-					setAlert(true);
 				}
 			})
 			.catch(err => console.log(err));
@@ -63,11 +60,28 @@ export default function TaskCard(props) {
 			<CardBody>
 				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
 				<CardText>{props.desc}</CardText>
+				<CardText>{props.numUsers}</CardText>
 				<CardText>{props.cat}</CardText>
 				<CardText>{props.tid}</CardText>
-				<Button onClick={handleDelete} color="danger">Delete</Button>
-				<Button onClick={handleJoin} color="success">Join</Button>
+				<CardButtons my={props.my} handleDelete={handleDelete} handleJoin={handleJoin} />
 			</CardBody>
 		</Card>
 	)
+}
+
+const CardButtons = (props) => {
+	if (props.my === true) {
+		return (
+			<>
+				<Button >Log</Button>
+			</>
+		)
+	} else {
+		return (
+			<>
+				<Button onClick={props.handleDelete} color="danger">Delete</Button>
+				<Button onClick={props.handleJoin} color="success">Join</Button>
+			</>
+		)
+	}
 }

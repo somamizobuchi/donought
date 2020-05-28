@@ -6,25 +6,31 @@ import classnames from 'classnames'
 // Dashboard NavBar
 export default function DashNav() {
 
-	const [activeTab, setActiveTab] = useState('/explore');
+	const [activeTab, setActiveTab] = useState(useLocation().pathname);
+
+	const navItems = [
+		{
+			title: "Explore",
+			path: "/explore"
+		},
+		{
+			title: "My Donoughts",
+			path: "/tasks"
+		}
+	]
 
 	const toggle = tab => {
 		if (activeTab !== tab) setActiveTab(tab);
 	}
 	return (
 		<Nav tabs>
-			<NavItem >
-				<Link to="/explore">
-					<NavLink className={classnames({ 'active': activeTab === '/explore' })} onClick={() => toggle('/explore')}>Explore</NavLink>
-				</Link>
-			</NavItem>
-			<NavItem>
-				<Link to="/tasks">
-					<NavLink className={classnames({ 'active': activeTab === '/tasks' })} onClick={() => toggle('/tasks')}>
-						My Donoughts
-						</NavLink>
-				</Link>
-			</NavItem>
+			{navItems.map(navItem => (
+				<NavItem>
+					<Link to={navItem.path}>
+						<NavLink className={classnames({ 'active': activeTab === navItem.path })} onClick={() => toggle(navItem.path)}>{navItem.title}</NavLink>
+					</Link>
+				</NavItem>
+			))}
 		</Nav>
 	)
 }

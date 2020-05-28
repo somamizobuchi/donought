@@ -11,8 +11,11 @@ const userSchema = new Schema({
 	password: String,
 	_role: Number,
 	tasks: [{
-		type: Schema.Types.ObjectID,
-		ref: 'Task'
+		task: {
+			type: Schema.Types.ObjectID,
+			ref: 'Task'
+		},
+		comment: String
 	}],
 	logs: [{
 		type: Schema.Types.ObjectID,
