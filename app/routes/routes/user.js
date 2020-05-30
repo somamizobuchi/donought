@@ -145,7 +145,7 @@ router.get('/tasks', auth, (req, res) => {
 				ok: false,
 				message: "No user found"
 			})
-			res.status(200).json(doc.tasks);
+			return res.status(200).json(doc.tasks);
 		});
 
 })
