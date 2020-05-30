@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 TaskLogSchema = Schema({
     comment: String,
     success: Boolean,
-    user: { type: Schema.Types.ObjectId, ref: 'User' }
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    task: { type: Schema.Types.ObjectId, ref: 'Task' }
 }, {
     timestamps: true
 })

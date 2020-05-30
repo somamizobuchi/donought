@@ -1,9 +1,12 @@
 const router = require('express').Router();
 const auth = require('./auth');
 router.use('*', auth);
-const User = require('../../models/User');
 const isAdmin = require('./admin');
+const moment = require('moment')
+// Models
+const User = require('../../models/User');
 const Task = require('../../models/Task');
+const Log = require('../../models/TaskLog');
 
 // Get all tasks
 router.get('/', (req, res) => {
@@ -20,6 +23,7 @@ router.get('/', (req, res) => {
 			return res.status(200).send(docs);
 		})
 })
+
 
 
 // Get all tasks associated wiht user 
@@ -39,7 +43,8 @@ router.post('/new', isAdmin, (req, res) => {
 	Task.exists({ title: req.body.title }, (err, exists) => {
 		if (err) {
 			return res.send(500).json({
-				Error: "Internal Server Error"
+				ok: false,
+				message: "Internal Server Error"
 			})
 		}
 
@@ -85,7 +90,7 @@ router.delete('/delete', isAdmin, (req, res) => {
 // Join a Task
 router.get('/join/:tid', (req, res) => {
 	Task.findByIdAndUpdate({ _id: req.params.tid }, {
-		$push: { users: res.locals._id }
+		$addToSet: { users: res.locals._id }
 	}, (err, task) => {
 		if (err) return res.status(500).send(err);
 		if (!task) return res.status(404).json({
@@ -128,17 +133,53 @@ router.get('/:uid/:tid', (req, res) => {
 			_id: req.params.tid
 		}
 	}, (err, doc) => {
-		if (!err) {
-			return res.status(200).json(doc)
-		} else {
-			return err
-		}
+		if (err) return res.status(500).json({
+			ok: false,
+			message: "Internal Server Error"
+		})
+		return res.status(200).json(doc)
 	});
 });
 
 
 // Add a log
 router.post('/log', (req, res) => {
+	var now = moment().startOf('day');
+	var serverErrMsg = {
+		ok: false,
+		message: "Internal Server Error"
+	}
+	Log.exists({
+		user: res.locals._id,
+		task: req.body.tid,
+		createdAt: { $gt: now }
+	}, (err, exists) => {
+		// Error
+		if (err) return res.status(500).json(serverErrMsg)
+		// Doc exists
+		if (exists) return res.status(409).json({
+			ok: false,
+			message: "A log has already been submitted for this task"
+		})
+		// Create a log 
+		const log = new Log({
+			success: req.body.success,
+			comment: req.body.comment,
+			task: req.body.tid,
+			user: res.locals._id
+		});
+		// Save Log
+		log.save((err, prod) => {
+			if (err) return res.status(500).json(serverErrMsg)
+			User.findOne({
+				_id: res.locals._id,
+				tasks: { $elemMatch: { task: req.body.tid } }
+			}, (err, doc) => {
+				if (err) return res.status(500).json(serverErrMsg)
+				res.status(200).json(doc)
+			})
+		})
+	})
 })
 
 module.exports = router

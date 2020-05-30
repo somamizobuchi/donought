@@ -15,11 +15,10 @@ const userSchema = new Schema({
 			type: Schema.Types.ObjectID,
 			ref: 'Task'
 		},
-		comment: String
-	}],
-	logs: [{
-		type: Schema.Types.ObjectID,
-		ref: 'Log'
+		logs: [{
+			type: Schema.Types.ObjectId,
+			ref: 'Log'
+		}]
 	}]
 }, {
 	timestamps: true

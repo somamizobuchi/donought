@@ -35,7 +35,8 @@ router.post('/new', async (req, res) => {
 						firstname: req.body.firstname,
 						lastname: req.body.lastname,
 						email: req.body.email,
-						password: hash
+						password: hash,
+						_role: 0
 					});
 					newUser.save((err, doc) => {
 						if (err) {
@@ -48,6 +49,7 @@ router.post('/new', async (req, res) => {
 						var token = jwt.sign({
 							_id: doc._id,
 							email: doc.email,
+							_role: doc._role
 						}, process.env.JWT_KEY)
 						res.status(200)
 							.cookie('auth', token)
@@ -121,7 +123,7 @@ router.get('/isauth', auth, (req, res) => {
 router.get('/tasks', auth, (req, res) => {
 	User
 		.findById(res.locals._id)
-		.select('tasks.task')
+		.select('tasks.task tasks.logs')
 		.populate({
 			path: 'tasks.task',
 			select: [
@@ -132,7 +134,7 @@ router.get('/tasks', auth, (req, res) => {
 		})
 		.exec((err, doc) => {
 			if (err) return res.status(500).send(err);
-			res.status(200).json(doc.tasks);
+			res.status(200).json(doc);
 		});
 
 })
