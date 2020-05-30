@@ -132,9 +132,20 @@ router.get('/tasks', auth, (req, res) => {
 				'description'
 			]
 		})
+		.populate({
+			path: 'tasks.logs',
+			select: [
+				'success',
+				'createdAt'
+			]
+		})
 		.exec((err, doc) => {
 			if (err) return res.status(500).send(err);
-			res.status(200).json(doc);
+			if (!doc || !doc.tasks) return res.status(404).json({
+				ok: false,
+				message: "No user found"
+			})
+			res.status(200).json(doc.tasks);
 		});
 
 })

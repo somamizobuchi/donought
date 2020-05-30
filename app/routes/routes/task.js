@@ -25,18 +25,6 @@ router.get('/', (req, res) => {
 })
 
 
-
-// Get all tasks associated wiht user 
-router.get('/:uid', (req, res) => {
-	// 
-	User.findById(req.params.uid)
-		.select('tasks')
-		.exec((err, doc) => {
-			if (err) res.status(500).json({ Error: "Database Queary Error" })
-			res.status(200).json(doc);
-		})
-})
-
 // New Task
 router.post('/new', isAdmin, (req, res) => {
 	// Determine if task w title exists
@@ -121,26 +109,32 @@ router.get('/join/:tid', (req, res) => {
 	})
 })
 
-// Get from UserID and TaskID
-router.get('/:uid/:tid', (req, res) => {
-	if (req.params.uid != res.locals._id) {
-		res.status(403).json({
-			Error: "Unauthorized"
-		})
-	}
-	User.find({
-		tasks: {
-			_id: req.params.tid
-		}
+// Unlog
+router.post('/unlog', (req, res) => {
+	Log.deleteOne({
+		user: res.locals._id,
+		task: req.body.tid
 	}, (err, doc) => {
 		if (err) return res.status(500).json({
 			ok: false,
-			message: "Internal Server Error"
+			messages: "Internal Server Error"
 		})
-		return res.status(200).json(doc)
-	});
-});
+		return res.status(200).json(doc.n)
+	})
+})
 
+// Log Only to User
+router.get('/logger', (req, res) => {
+	User.findOneAndUpdate({
+		_id: res.locals._id,
+		tasks: { $elemMatch: { task: req.body.tid } }
+	}, {
+		$addToSet: { 'tasks.$.logs': "5ed277de24c3f00908e47045" }
+	}, (err, doc) => {
+		if (err) return res.status(500).json(serverErrMsg)
+		res.status(200).json(doc.n)
+	});
+})
 
 // Add a log
 router.post('/log', (req, res) => {
@@ -171,15 +165,24 @@ router.post('/log', (req, res) => {
 		// Save Log
 		log.save((err, prod) => {
 			if (err) return res.status(500).json(serverErrMsg)
-			User.findOne({
-				_id: res.locals._id,
-				tasks: { $elemMatch: { task: req.body.tid } }
-			}, (err, doc) => {
-				if (err) return res.status(500).json(serverErrMsg)
-				res.status(200).json(doc)
-			})
+			if (prod._id) {
+				const logID = prod._id
+				User.findOneAndUpdate({
+					_id: res.locals._id,
+					tasks: { $elemMatch: { task: req.body.tid } }
+				}, {
+					$addToSet: { 'tasks.$.logs': logID }
+				}, (err, doc) => {
+					if (err) return res.status(500).json(serverErrMsg)
+					res.status(200).json({
+						ok: true,
+						message: "Successfully added log"
+					})
+				})
+			}
 		})
 	})
 })
+
 
 module.exports = router
