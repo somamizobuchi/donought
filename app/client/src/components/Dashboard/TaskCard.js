@@ -96,7 +96,7 @@ const CardButtons = (props) => {
 			body: JSON.stringify(form)
 		};
 
-		fetch('/api/task/log/', requestOptions)
+		fetch('/api/task/log', requestOptions)
 			.then(res => res.json())
 			.then(json => {
 				if (json.ok) {
