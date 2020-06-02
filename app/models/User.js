@@ -15,6 +15,10 @@ const userSchema = new Schema({
 			type: Schema.Types.ObjectID,
 			ref: 'Task'
 		},
+		consecutive: {
+			type: Number,
+			default: 0
+		},
 		logs: [{
 			type: Schema.Types.ObjectId,
 			ref: 'Log'

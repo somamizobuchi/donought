@@ -109,79 +109,74 @@ router.get('/join/:tid', (req, res) => {
 	})
 })
 
-// Unlog
-router.post('/unlog', (req, res) => {
-	Log.deleteOne({
-		user: res.locals._id,
-		task: req.body.tid
-	}, (err, doc) => {
-		if (err) return res.status(500).json({
-			ok: false,
-			messages: "Internal Server Error"
-		})
-		return res.status(200).json(doc.n)
-	})
-})
-
-// Log Only to User
-router.get('/logger', (req, res) => {
-	User.findOneAndUpdate({
-		_id: res.locals._id,
-		tasks: { $elemMatch: { task: req.body.tid } }
-	}, {
-		$addToSet: { 'tasks.$.logs': "5ed277de24c3f00908e47045" }
-	}, (err, doc) => {
-		if (err) return res.status(500).json(serverErrMsg)
-		res.status(200).json(doc.n)
-	});
-})
 
 // Add a log
 router.post('/log', (req, res) => {
-	var now = moment().startOf('day');
-	var serverErrMsg = {
+	const serverErrMsg = {
 		ok: false,
-		message: "Internal Server Error"
+		message: "Internal Server Error!"
 	}
-	Log.exists({
+	let consecutive = false;
+	Log.findOne({
 		user: res.locals._id,
-		task: req.body.tid,
-		createdAt: { $gt: now }
-	}, (err, exists) => {
-		// Error
-		if (err) return res.status(500).json(serverErrMsg)
-		// Doc exists
-		if (exists) return res.status(409).json({
-			ok: false,
-			message: "A log has already been submitted for this task"
-		})
-		// Create a log 
-		const log = new Log({
-			success: req.body.success,
-			comment: req.body.comment,
-			task: req.body.tid,
-			user: res.locals._id
-		});
-		// Save Log
-		log.save((err, prod) => {
-			if (err) return res.status(500).json(serverErrMsg)
-			if (prod._id) {
-				const logID = prod._id
-				User.findOneAndUpdate({
-					_id: res.locals._id,
-					tasks: { $elemMatch: { task: req.body.tid } }
-				}, {
-					$addToSet: { 'tasks.$.logs': logID }
-				}, (err, doc) => {
-					if (err) return res.status(500).json(serverErrMsg)
-					res.status(200).json({
-						ok: true,
-						message: "Successfully added log"
-					})
-				})
-			}
-		})
+		task: req.body.tid
 	})
+		.sort({ createdAt: -1 })
+		.exec((err, log) => {
+			if (err) return res.status(500).json(serverErrMsg);
+			if (log) {
+				const startOfDay = moment().startOf('day');
+				const createdAt = moment(log.createdAt);
+				// Check if already logged today
+				if (createdAt.isAfter(startOfDay)) return res.status(409).json({
+					ok: false,
+					message: "You have already submitted a log for this task today"
+				})
+				// Check if consecutive successes
+				if (startOfDay.subtract(1, 'days').isAfter(createdAt) && log.success && req.body.success) consecutive = true;
+			}
+
+			// Create a log 
+			const newLog = new Log({
+				success: req.body.success,
+				comment: req.body.comment,
+				task: req.body.tid,
+				user: res.locals._id
+			});
+
+			// Save Log
+			newLog.save((err, prod) => {
+				if (err) return res.status(500).json(serverErrMsg)
+				if (prod._id) {
+					const logID = prod._id
+					let update;
+					if (consecutive) {
+						update = {
+
+							$addToSet: { 'tasks.$.logs': logID },
+							$inc: { 'tasks.$.consecutive': 1 }
+						}
+					} else {
+						console.log("Not")
+						update = {
+							$addToSet: { 'tasks.$.logs': logID }
+						}
+					}
+					console.log(update)
+					User.findOneAndUpdate({
+						_id: res.locals._id,
+						tasks: { $elemMatch: { task: req.body.tid } }
+					}, update, (err, doc) => {
+						if (err) return res.status(500).json(serverErrMsg)
+						res.status(200).json({
+							ok: true,
+							message: "Successfully added log"
+						})
+					})
+				}
+
+			})
+		})
 })
 
 

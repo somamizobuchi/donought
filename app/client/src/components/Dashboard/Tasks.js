@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Task from './TaskCard'
-import { Spinner, Button, Toast } from 'reactstrap'
+import Task from './MyTaskCard'
+import { Spinner, Button } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
+import moment from 'moment'
 
 export default function Tasks() {
 
@@ -18,11 +19,25 @@ export default function Tasks() {
 	useEffect(() => {
 		fetch('/api/user/tasks')
 			.then(res => res.json())
-			.then(doc => {
-				setTasks(doc);
+			.then(json => {
+				json.forEach(task => {
+					const createdAt = moment(task.logs[0].createdAt);
+					const startOfDay = moment().startOf('day');
+					if (createdAt.isAfter(startOfDay)) {
+						task.logged = true
+					} else {
+						task.logged = false
+					}
+				})
+				return json
 			})
-			.then(setLoading(false))
-			.catch(err => console.log(err))
+			.then(tasks => {
+				setTasks(tasks)
+			})
+			.catch(err => {
+				console.log(err)
+			})
+		setLoading(false)
 	}, [])
 
 	if (tasks.length > 0) {
@@ -36,7 +51,7 @@ export default function Tasks() {
 						title={task.task.title}
 						category={task.task.category}
 						description={task.task.description}
-						my={true}
+						logged={task.logged}
 					/>
 				))}
 			</>

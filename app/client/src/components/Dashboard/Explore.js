@@ -28,7 +28,6 @@ const Explore = (props) => {
 	return (
 		<>
 			<FormModal refresh={refresh} setRefresh={setRefresh} />
-			<h1>Explore</h1>
 			{
 				tasks.map(task => (
 					<TaskCard refresh={refresh} setRefresh={setRefresh} key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />

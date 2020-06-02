@@ -137,7 +137,10 @@ router.get('/tasks', auth, (req, res) => {
 			select: [
 				'success',
 				'createdAt'
-			]
+			],
+			options: {
+				limit: 10
+			}
 		})
 		.exec((err, doc) => {
 			if (err) return res.status(500).send(err);
@@ -145,6 +148,11 @@ router.get('/tasks', auth, (req, res) => {
 				ok: false,
 				message: "No user found"
 			})
+			doc.tasks.forEach(task => {
+				task.logs = task.logs.sort((a, b) => {
+					return new Date(b.createdAt) - new Date(a.createdAt)
+				})
+			});
 			return res.status(200).json(doc.tasks);
 		});
 

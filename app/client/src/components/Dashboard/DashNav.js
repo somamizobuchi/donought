@@ -25,7 +25,7 @@ export default function DashNav() {
 	return (
 		<Nav tabs>
 			{navItems.map(navItem => (
-				<NavItem>
+				<NavItem key={navItem.title}>
 					<Link to={navItem.path}>
 						<NavLink className={classnames({ 'active': activeTab === navItem.path })} onClick={() => toggle(navItem.path)}>{navItem.title}</NavLink>
 					</Link>
