@@ -152,17 +152,15 @@ router.post('/log', (req, res) => {
 					let update;
 					if (consecutive) {
 						update = {
-
 							$addToSet: { 'tasks.$.logs': logID },
 							$inc: { 'tasks.$.consecutive': 1 }
 						}
 					} else {
-						console.log("Not")
 						update = {
-							$addToSet: { 'tasks.$.logs': logID }
+							$addToSet: { 'tasks.$.logs': logID },
+							'tasks.$.consecutive': 0
 						}
 					}
-					console.log(update)
 					User.findOneAndUpdate({
 						_id: res.locals._id,
 						tasks: { $elemMatch: { task: req.body.tid } }
@@ -174,7 +172,6 @@ router.post('/log', (req, res) => {
 						})
 					})
 				}
-
 			})
 		})
 })

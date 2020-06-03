@@ -68,8 +68,8 @@ export default function TaskCard(props) {
 				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
 				<CardText><Badge pill>{props.cat}</Badge></CardText>
 				<CardText>{props.desc}</CardText>
-				<Button onClick={props.handleDelete} color="danger">Delete</Button>
-				<Button onClick={props.handleJoin} color="success">Join</Button>
+				<Button onClick={handleDelete} color="danger">Delete</Button>
+				<Button onClick={handleJoin} color="success">Join</Button>
 			</CardBody>
 		</Card>
 	)

@@ -123,7 +123,7 @@ router.get('/isauth', auth, (req, res) => {
 router.get('/tasks', auth, (req, res) => {
 	User
 		.findById(res.locals._id)
-		.select('tasks.task tasks.logs')
+		.select('tasks.task tasks.logs tasks.consecutive')
 		.populate({
 			path: 'tasks.task',
 			select: [
@@ -148,11 +148,6 @@ router.get('/tasks', auth, (req, res) => {
 				ok: false,
 				message: "No user found"
 			})
-			doc.tasks.forEach(task => {
-				task.logs = task.logs.sort((a, b) => {
-					return new Date(b.createdAt) - new Date(a.createdAt)
-				})
-			});
 			return res.status(200).json(doc.tasks);
 		});
 
