@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const apiRouter = require('./routes/api');
 const cors = require('cors');
 const chalk = require('chalk');
+const updateConsecutive = require('./utils/crons/updateConsecutive');
 // Environment Variables 
 require('dotenv').config();
 
@@ -24,9 +25,9 @@ mongoose.connect(process.env.MONGO_URI, mongooseOptions)
 // Open server on port
 const port = process.env.PORT | 5000;
 app.listen(port, (err) => {
-    if(!err){
+    if (!err) {
         console.log("Server started on port: " + chalk.blue(port));
-    }else{
+    } else {
         console.log(err);
     }
 })
@@ -34,3 +35,5 @@ app.listen(port, (err) => {
 // Middlewares and Routers
 app.use(cors());    // Cross-Origin API calls (React -> :5000)
 app.use('/api', apiRouter); // Rest API methods
+
+updateConsecutive();
