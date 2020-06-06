@@ -23,7 +23,8 @@ const userSchema = new Schema({
 			type: Schema.Types.ObjectId,
 			ref: 'Log'
 		}]
-	}]
+	}],
+	timezone: String
 }, {
 	timestamps: true
 });
