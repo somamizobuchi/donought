@@ -22,6 +22,9 @@ mongoose.connect(process.env.MONGO_URI, mongooseOptions)
         console.log(chalk.red(err));
     })
 
+// Cron Jobs
+updateConsecutive('America/New_York');
+
 // Open server on port
 const port = process.env.PORT | 5000;
 app.listen(port, (err) => {
@@ -36,4 +39,3 @@ app.listen(port, (err) => {
 app.use(cors());    // Cross-Origin API calls (React -> :5000)
 app.use('/api', apiRouter); // Rest API methods
 
-updateConsecutive();
