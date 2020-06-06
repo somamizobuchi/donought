@@ -133,7 +133,7 @@ router.post('/log', (req, res) => {
 					message: "You have already submitted a log for this task today"
 				})
 				// Check if consecutive successes
-				if (startOfDay.subtract(1, 'days').isAfter(createdAt) && log.success && req.body.success) consecutive = true;
+				if (startOfDay.subtract(1, 'days').isAfter(createdAt) && log.successs) consecutive = true;
 			}
 
 			// Create a log 

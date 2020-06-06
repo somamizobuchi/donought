@@ -36,7 +36,8 @@ router.post('/new', async (req, res) => {
 						lastname: req.body.lastname,
 						email: req.body.email,
 						password: hash,
-						_role: 0
+						_role: 0,
+						timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
 					});
 					newUser.save((err, doc) => {
 						if (err) {
