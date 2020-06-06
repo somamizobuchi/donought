@@ -3,9 +3,6 @@ import TaskCard from './TaskCard'
 import TaskForm from './TaskForm'
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap'
 
-
-
-
 const Explore = (props) => {
 
 	const [tasks, setTasks] = useState([]);

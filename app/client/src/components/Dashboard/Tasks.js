@@ -47,7 +47,6 @@ export default function Tasks() {
 	if (tasks.length > 0) {
 		return (
 			<>
-				<h1>My Donoughts</h1>
 				{tasks.map(task => (
 					<Task setRefresh={setRefresh}
 						refresh={refresh}

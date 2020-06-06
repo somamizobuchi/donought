@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import moment from 'moment'
 import {
+	Modal,
 	Badge,
 	Form,
 	FormGroup,
@@ -12,7 +13,10 @@ import {
 	CardText,
 	CardHeader,
 	Button,
-	Progress
+	Progress,
+	ModalHeader,
+	ModalBody,
+	ButtonGroup
 } from 'reactstrap'
 
 export default function TaskCard(props) {
@@ -23,9 +27,13 @@ export default function TaskCard(props) {
 		message: ""
 	});
 
-	const task = props.task
-	const logs = props.logs
-	const logged = props.logged
+	const [modal, setModal] = useState(false)
+
+	const {
+		task,
+		logs,
+		logged
+	} = props
 
 	const items = [];
 	const val = 100 / 10;
@@ -47,26 +55,39 @@ export default function TaskCard(props) {
 		if (!flag) items.push(<Progress bar value={val} color="light" />)
 	}
 
+	const consecutiveBadge = (props.consecutive > 0) ?
+		(<Badge color="warning" pill>&#x1F525; {props.consecutive}</Badge>) :
+		null;
+	const logButton = (logged) ?
+		(<Button disabled block>Log</Button>) :
+		(<Button onClick={toggleLogModal} block>Log</Button>);
+
+	const toggleLogModal = (e) => {
+		e.preventDefault()
+		setModal(true)
+	}
 	// Render
 	return (
 		<Card>
-			<CardHeader><h2>{task.title}</h2></CardHeader>
+			<CardHeader>{task.title} {consecutiveBadge}</CardHeader>
 			<CardBody>
 				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
 				<CardText><Badge pill>{task.description}</Badge></CardText>
 				<CardText>{task.category}</CardText>
-				<LogForm logged={logged} tid={task._id} alert={{ alert, setAlert }} />
-				<h3><Badge color="warning" pill>&#x1F525; {props.consecutive}</Badge></h3>
+				<LogFormModal tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
 				Last 10:
 				<Progress multi>
 					{items}
 				</Progress>
+				<hr></hr>
+				{logButton}
 			</CardBody>
 		</Card>
 	)
 }
 
-const LogForm = (props) => {
+// Form Component
+const LogFormModal = (props) => {
 	// Form State
 	const [form, setForm] = useState({
 		tid: props.tid,
@@ -112,6 +133,7 @@ const LogForm = (props) => {
 						message: json.message
 					})
 				}
+				props.setModal(false)
 			})
 			.catch(err => { // Client side error
 				props.alert.setAlert({
@@ -123,32 +145,28 @@ const LogForm = (props) => {
 			})
 	}
 
-	if (props.logged) {
-		return <></>
-	} else {
-		return (
-			<Form>
-				<FormGroup>
-					<Label for="comment">Comment</Label>
-					<Input name="comment" type="text" value={form.comment} onChange={updateForm} />
-				</FormGroup>
-				<FormGroup tag="fieldset">
-					<legend>Did you?</legend>
-					<FormGroup check>
-						<Label check>
-							<Input type="radio" name="success" onChange={updateForm} value={false} />
-							Yes
-          </Label>
-					</FormGroup>
-					<FormGroup check>
-						<Label check>
-							<Input type="radio" name="success" onChange={updateForm} value={true} />
-							No
-          	</Label>
-					</FormGroup>
-				</FormGroup>
-				<Button onClick={handleLog} color="primary">Submit</Button>
-			</Form>
-		)
+	const toggleModal = () => {
+		props.setModal(!props.modal)
 	}
+
+	return (
+		<Modal isOpen={props.modal} toggle={toggleModal}>
+			<ModalHeader toggle={toggleModal}>Success?</ModalHeader>
+			<ModalBody>
+				<Form>
+					<FormGroup>
+						<ButtonGroup block>
+							<Button onClick={() => setForm({ ...form, success: true })} active={form.success === true}>Yes</Button>
+							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false}>No</Button>
+						</ButtonGroup>
+					</FormGroup>
+					<FormGroup>
+						<Label for="comment">Comment</Label>
+						<Input name="comment" type="text" value={form.comment} onChange={updateForm} />
+					</FormGroup>
+					<Button onClick={handleLog} color="primary">Submit</Button>
+				</Form>
+			</ModalBody>
+		</Modal>
+	)
 }
