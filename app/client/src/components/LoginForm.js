@@ -57,9 +57,7 @@ export default function LoginForm() {
 			</Form>
 			<hr></hr>
 			<p>Or</p>
-			<Button>
-				<Link to="/">Register</Link>
-			</Button>
+			<Link to="/" className="btn btn-primary">Register</Link>
 		</div>
 	);
 }
