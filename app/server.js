@@ -45,8 +45,8 @@ app.use('/api', apiRouter); // Rest API methods
 if (process.env.NODE_ENV === 'production') {
     console.log("Production Environment")
     const path = require('path');
-    app.use(express.static('./client/build'));
-    app.get("*", (req, res) => {
-        res.sendFile('./client/build/index.html');
-    })
+    app.use(express.static('client/build')); // serve the static react app
+    app.get(/^\/(?!api).*/, (req, res) => { // don't serve api routes to react app
+        res.sendFile(path.join(__dirname, './client/build/index.html'));
+    });
 }
