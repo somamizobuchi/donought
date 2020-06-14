@@ -13,8 +13,7 @@
     "build-react": "npm run build --prefix client",
     "build-server": "node server.js",
     "build": "concurrently \"npm:build-*\"",
-    "heroku-postbuild": "npm install --prefix client && npm run build-react",
-    "postinstall": "npm run build"
+    "heroku-postbuild": "npm install --prefix client && npm run build-react"
   },
   "author": "Soma Mizobuchi",
   "license": "MIT",
