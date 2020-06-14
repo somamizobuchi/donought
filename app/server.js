@@ -26,6 +26,16 @@ mongoose.connect(process.env.MONGO_URI, mongooseOptions)
 // Cron Jobs
 updateConsecutive('America/New_York');
 
+// Production build: static page
+if (process.env.NODE_ENV === 'production') {
+    console.log("Production Environment")
+    const path = require('path');
+    app.use(express.static(path.join(__dirname, 'client', 'build')));
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    })
+}
+
 // Open server on port
 const port = process.env.PORT | 5000;
 app.listen(port, (err) => {
@@ -40,12 +50,3 @@ app.listen(port, (err) => {
 app.use(cors());    // Cross-Origin API calls (React -> :5000)
 app.use('/api', apiRouter); // Rest API methods
 
-
-if (process.env.NODE_ENV === 'production') {
-    console.log("Production Environment")
-    const path = require('path');
-    app.use(express.static(path.join(__dirname, 'client', 'build')));
-    app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-    })
-}
