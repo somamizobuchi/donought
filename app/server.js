@@ -9,13 +9,6 @@ const updateConsecutive = require('./utils/crons/updateConsecutive');
 require('dotenv').config();
 
 // Production environment
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('client/build'));
-    const path = require('path');
-    app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-    })
-}
 // Database connection
 var mongooseOptions = {
     useNewUrlParser: true,
@@ -47,3 +40,11 @@ app.listen(port, (err) => {
 app.use(cors());    // Cross-Origin API calls (React -> :5000)
 app.use('/api', apiRouter); // Rest API methods
 
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'));
+    const path = require('path');
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    })
+}
