@@ -42,6 +42,7 @@ app.use('/api', apiRouter); // Rest API methods
 
 
 if (process.env.NODE_ENV === 'production') {
+    console.log("Production Environment")
     const path = require('path');
     app.use(express.static(path.join(__dirname, 'client', 'build')));
     app.get("*", (req, res) => {
