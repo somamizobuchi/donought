@@ -16,7 +16,8 @@ import {
 	Progress,
 	ModalHeader,
 	ModalBody,
-	ButtonGroup
+	ButtonGroup,
+	Col
 } from 'reactstrap'
 
 export default function TaskCard(props) {
@@ -35,6 +36,7 @@ export default function TaskCard(props) {
 		logged
 	} = props
 
+	// Progress Bar logic
 	const items = [];
 	const val = 100 / 10;
 	var i;
@@ -52,41 +54,46 @@ export default function TaskCard(props) {
 				return false
 			}
 		})
-		if (!flag) items.push(<Progress bar value={val} color="light" />)
+		if (!flag) items.push(<Progress striped bar value={val} color="light" />)
 	}
 
-	const consecutiveBadge = (props.consecutive > 0) ?
-		(<Badge color="warning" pill>&#x1F525; {props.consecutive}</Badge>) :
-		null;
-	const logButton = (logged) ?
-		(<Button disabled block>Log</Button>) :
-		(<Button onClick={toggleLogModal} block>Log</Button>);
-
+	// Form modal
 	const toggleLogModal = (e) => {
 		e.preventDefault()
 		setModal(true)
 	}
+
+	// Log Button
+	const logButton = (logged) ?
+		(<Button disabled className="float-right">Log</Button>) :
+		(<Button onClick={toggleLogModal} className="float-right" color="success">Log</Button>);
+
+	// Consecutive (streak) badge
+	const consecutiveBadge = (props.consecutive > 0) ?
+		(<Badge color="warning" pill>&#x1F525; {props.consecutive}</Badge>) :
+		null;
+
 	// Render
 	return (
 		<Card>
-			<CardHeader>{task.title} {consecutiveBadge}</CardHeader>
+			<CardHeader>{task.title} {consecutiveBadge} {logButton} </CardHeader>
 			<CardBody>
 				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
-				<CardText><Badge pill>{task.description}</Badge></CardText>
-				<CardText>{task.category}</CardText>
+				<CardText><Badge pill>{task.category}</Badge></CardText>
+				<CardText>{task.description}</CardText>
 				<LogFormModal tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
 				Last 10:
-				<Progress multi>
+				<Progress multi className="border">
 					{items}
 				</Progress>
-				<hr></hr>
-				{logButton}
+				<Col className="text-center mt-3">
+				</Col>
 			</CardBody>
 		</Card>
 	)
 }
 
-// Form Component
+// Form Modal
 const LogFormModal = (props) => {
 	// Form State
 	const [form, setForm] = useState({
@@ -156,8 +163,8 @@ const LogFormModal = (props) => {
 				<Form>
 					<FormGroup>
 						<ButtonGroup block>
-							<Button onClick={() => setForm({ ...form, success: true })} active={form.success === true}>Yes</Button>
-							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false}>No</Button>
+							<Button onClick={() => setForm({ ...form, success: true })} active={form.success === true} color="success">Yes</Button>
+							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false} color="secondary">No</Button>
 						</ButtonGroup>
 					</FormGroup>
 					<FormGroup>

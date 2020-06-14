@@ -23,14 +23,14 @@ export default function DashNav() {
 		if (activeTab !== tab) setActiveTab(tab);
 	}
 	return (
-		<Nav tabs>
+		<>
 			{navItems.map(navItem => (
 				<NavItem key={navItem.title}>
 					<Link to={navItem.path}>
-						<NavLink className={classnames({ 'active': activeTab === navItem.path })} onClick={() => toggle(navItem.path)}>{navItem.title}</NavLink>
+						<NavLink className={classnames({ 'text-dark': activeTab === navItem.path, 'text-muted': activeTab != navItem.path })} onClick={() => toggle(navItem.path)}>{navItem.title}</NavLink>
 					</Link>
 				</NavItem>
 			))}
-		</Nav>
+		</>
 	)
 }

@@ -6,7 +6,10 @@
   "scripts": {
     "dev-server": "nodemon server.js",
     "dev-client": "npm start --prefix client",
-    "dev": "concurrently \"npm:dev-*\""
+    "dev": "concurrently \"npm:dev-*\"",
+    "build-react": "npm build --prefix clien",
+    "build-server": "node server.js",
+    "build": "concurrently \"npm:build-*\""
   },
   "author": "Soma Mizobuchi",
   "license": "MIT",

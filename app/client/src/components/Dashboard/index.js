@@ -4,6 +4,7 @@ import Tasks from './Tasks'
 import DashNav from './DashNav'
 import { Button, Container } from 'reactstrap'
 import Explore from './Explore'
+import HomeNav from '../HomeNav'
 import {
 	BrowserRouter as Router,
 	Switch,
@@ -27,8 +28,10 @@ export default function Dashboard() {
 	// Render
 	return (
 		<Router>
-			<Container>
+			<HomeNav authorized={true} >
 				<DashNav />
+			</HomeNav>
+			<Container>
 				<Switch>
 					<Route path="/tasks">
 						<Tasks />
@@ -37,9 +40,6 @@ export default function Dashboard() {
 						<Explore />
 					</Route>
 				</Switch>
-				<div>
-					<Button onClick={logout}>Logout</Button>
-				</div>
 			</Container>
 		</Router>
 	);

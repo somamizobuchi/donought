@@ -116,7 +116,6 @@ router.post('/log', (req, res) => {
 		ok: false,
 		message: "Internal Server Error!"
 	}
-	let consecutive = false;
 	Log.findOne({
 		user: res.locals._id,
 		task: req.body.tid
@@ -132,8 +131,6 @@ router.post('/log', (req, res) => {
 					ok: false,
 					message: "You have already submitted a log for this task today"
 				})
-				// Check if consecutive successes
-				if (startOfDay.subtract(1, 'days').isAfter(createdAt) && log.successs) consecutive = true;
 			}
 
 			// Create a log 
@@ -150,7 +147,7 @@ router.post('/log', (req, res) => {
 				if (prod._id) {
 					const logID = prod._id
 					let update;
-					if (consecutive) {
+					if (req.body.success) {
 						update = {
 							$addToSet: { 'tasks.$.logs': logID },
 							$inc: { 'tasks.$.consecutive': 1 }

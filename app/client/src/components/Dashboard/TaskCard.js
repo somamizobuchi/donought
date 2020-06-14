@@ -63,7 +63,7 @@ export default function TaskCard(props) {
 	// Render
 	return (
 		<Card>
-			<CardHeader><h2>{props.title} <Badge pill>{props.numUsers}</Badge></h2></CardHeader>
+			<CardHeader>{props.title} <Badge pill>&#x1F464; {props.numUsers}</Badge></CardHeader>
 			<CardBody>
 				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
 				<CardText><Badge pill>{props.cat}</Badge></CardText>

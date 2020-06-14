@@ -106,10 +106,11 @@ router.post('/login', (req, res) => {
 // Logout
 router.get('/logout', (req, res) => {
 	res.clearCookie('auth')
-	res.json({
-		success: true
-	})
-})
+	return res.status(200).json({
+		ok: true,
+		message: "Logged user out"
+	});
+});
 
 // Check Authorization Status
 router.get('/isauth', auth, (req, res) => {

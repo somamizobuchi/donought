@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Task from './MyTaskCard'
-import { Spinner, Button } from 'reactstrap'
+import { Spinner, Button, Col, Row } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
 import moment from 'moment'
 
@@ -25,10 +25,15 @@ export default function Tasks() {
 			.then(json => {
 				// Check if logged today
 				json.forEach(task => {
-					const createdAt = moment(task.logs[task.logs.length - 1].createdAt);
-					const startOfDay = moment().startOf('day');
-					if (createdAt.isAfter(startOfDay)) {
-						task.logged = true
+					if (task.logs.length > 0) {
+						const createdAt = moment(task.logs[task.logs.length - 1].createdAt);
+						const startOfDay = moment().startOf('day');
+						if (createdAt.isAfter(startOfDay)) {
+							task.logged = true
+						} else {
+							task.logged = false
+						}
+
 					} else {
 						task.logged = false
 					}
@@ -48,28 +53,31 @@ export default function Tasks() {
 		return (
 			<>
 				{tasks.map(task => (
-					<Task setRefresh={setRefresh}
-						refresh={refresh}
-						key={task.task._id}
-						task={task.task}
-						consecutive={task.consecutive}
-						logs={task.logs}
-						logged={task.logged}
-					/>
+					<Row className="mt-3">
+						<Col>
+							<Task setRefresh={setRefresh}
+								refresh={refresh}
+								key={task.task._id}
+								task={task.task}
+								consecutive={task.consecutive}
+								logs={task.logs}
+								logged={task.logged} />
+						</Col>
+					</Row>
 				))}
 			</>
 		);
 	} else if (loading) {
 		return (
-			<><Spinner /></>
+			<><Row><Col className="text-center"><Spinner /></Col></Row></>
 		)
 	} else {
 		return (
-			<>
+			<Col className="text-center">
 				<Button onClick={() => push('/explore')} color="primary">
 					Join a Donought
 				</Button>
-			</>
+			</Col>
 		)
 	}
 }

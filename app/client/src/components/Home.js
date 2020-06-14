@@ -10,11 +10,11 @@ import {
     Link
 } from "react-router-dom";
 
-export default function Home(){
-    return(
+export default function Home(props) {
+    return (
         <div>
             <Router>
-                <HomeNav />
+                <HomeNav authorized={props.authorized} />
                 <Switch>
                     <Route path="/login">
                         <LoginForm />
