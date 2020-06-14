@@ -40,7 +40,6 @@ app.listen(port, (err) => {
 app.use(cors());    // Cross-Origin API calls (React -> :5000)
 app.use('/api', apiRouter); // Rest API methods
 
-
 // Production build: static page
 if (process.env.NODE_ENV === 'production') {
     console.log("Production Environment")
