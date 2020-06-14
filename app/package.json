@@ -10,11 +10,11 @@
     "dev-server": "nodemon server.js",
     "dev-client": "npm start --prefix client",
     "dev": "concurrently \"npm:dev-*\"",
-    "build-react": "npm run build --prefix client",
+    "build-react": "npm install --prefix cleint && npm run build --prefix client",
     "build-server": "node server.js",
     "build": "concurrently \"npm:build-*\"",
     "start": "node server.js",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "heroku-postbuild": "npm run build-react"
   },
   "author": "Soma Mizobuchi",
   "license": "MIT",
