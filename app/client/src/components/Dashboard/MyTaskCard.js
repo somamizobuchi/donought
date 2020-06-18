@@ -12,11 +12,17 @@ import {
 	CardBody,
 	CardText,
 	CardHeader,
+	CardFooter,
 	Button,
 	Progress,
 	ModalHeader,
 	ModalBody,
 	ButtonGroup,
+	ButtonDropdown,
+	DropdownToggle,
+	DropdownMenu,
+	DropdownItem,
+	Row,
 	Col
 } from 'reactstrap'
 
@@ -65,8 +71,8 @@ export default function TaskCard(props) {
 
 	// Log Button
 	const logButton = (logged) ?
-		(<Button disabled className="float-right">Log</Button>) :
-		(<Button onClick={toggleLogModal} className="float-right" color="success">Log</Button>);
+		(<Button disabled>Log</Button>) :
+		(<Button onClick={toggleLogModal} color="success">Log</Button>);
 
 	// Consecutive (streak) badge
 	const consecutiveBadge = (props.consecutive > 0) ?
@@ -76,7 +82,16 @@ export default function TaskCard(props) {
 	// Render
 	return (
 		<Card>
-			<CardHeader>{task.title} {consecutiveBadge} {logButton} </CardHeader>
+			<CardHeader>
+				<Row>
+					<Col>
+						<h3>{task.title} {consecutiveBadge}</h3>
+					</Col>
+					<Col className="text-right">
+						<TaskMenu />
+					</Col>
+				</Row>
+			</CardHeader>
 			<CardBody>
 				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
 				<CardText><Badge pill>{task.category}</Badge></CardText>
@@ -86,9 +101,10 @@ export default function TaskCard(props) {
 				<Progress multi className="border">
 					{items}
 				</Progress>
-				<Col className="text-center mt-3">
-				</Col>
 			</CardBody>
+			<CardFooter>
+				{logButton}
+			</CardFooter>
 		</Card>
 	)
 }
@@ -175,5 +191,31 @@ const LogFormModal = (props) => {
 				</Form>
 			</ModalBody>
 		</Modal>
+	)
+}
+
+const TaskMenu = (props) => {
+
+	const [isOpen, setIsOpen] = useState(false)
+	const toggle = () => {
+		setIsOpen(!isOpen)
+	}
+	return (
+		<ButtonDropdown isOpen={isOpen} direction="left" toggle={toggle}>
+			<DropdownToggle
+				tag="span"
+				data-toggle="dropdown"
+				aria-expanded={isOpen}
+			>
+				<Button color="light"><b>&#8942;</b></Button>
+			</DropdownToggle>
+			<DropdownMenu>
+				<DropdownItem header>Header</DropdownItem>
+				<DropdownItem disabled>Action</DropdownItem>
+				<DropdownItem>Another Action</DropdownItem>
+				<DropdownItem divider />
+				<DropdownItem>Another Action</DropdownItem>
+			</DropdownMenu>
+		</ButtonDropdown>
 	)
 }

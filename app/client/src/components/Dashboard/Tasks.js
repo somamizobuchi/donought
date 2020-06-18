@@ -50,7 +50,6 @@ export default function Tasks() {
 	}, [])
 
 	if (tasks.length > 0) {
-		console.log(tasks)
 		return (
 			<>
 				{tasks.map(task => (
