@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
 const auth = require('./auth')
+const moment = require('moment')
 
 
 
@@ -19,9 +20,8 @@ router.post('/new', async (req, res) => {
 	// Email duplicate check
 	User.exists({ email: req.body.email }, (err, exists) => {
 		if (err) {
-			console.log(err);
 			return res.status(500).json({
-				Error: "Database query error"
+				message: err.message
 			})
 		} else if (exists) {
 			return res.status(409).json({
@@ -37,7 +37,7 @@ router.post('/new', async (req, res) => {
 						email: req.body.email,
 						password: hash,
 						_role: 0,
-						timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+						timezone: moment.tz.guess()
 					});
 					newUser.save((err, doc) => {
 						if (err) {
