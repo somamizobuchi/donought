@@ -66,12 +66,30 @@ router.post('/new', isAdmin, (req, res) => {
 // Delete task
 router.delete('/delete', isAdmin, (req, res) => {
 	const task_id = req.body.tid;
+	// Deleting task from tasks
 	Task.findByIdAndDelete(task_id, (err, doc) => {
-		if (err) {
-			return res.status(500);
-		} else {
-			return res.status(200).json(doc);
-		}
+		if (err) return res.status(500).json({
+			ok: false,
+			message: err.message
+		})
+		// Deleting all user tasks
+		User.updateMany({}, { $pull: { tasks: { task: req.body.tid } } }, (err, doc) => {
+			if (err) return res.status(500).json({
+				ok: false,
+				message: err.message
+			})
+			// Deleting all logs
+			Log.deleteMany({ task: req.body.tid }, err => {
+				if (err) res.status(500).json({
+					ok: false,
+					message: err.message
+				})
+				return res.status(200).json({
+					ok: true,
+					message: "Successfully deleted task id " + doc._id
+				})
+			})
+		})
 	})
 })
 
