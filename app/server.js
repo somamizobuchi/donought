@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const apiRouter = require('./routes/api');
 const cors = require('cors');
 const chalk = require('chalk');
-const updateConsecutive = require('./utils/crons/updateConsecutive');
+const consecutiveCron = require('./utils/crons/updateConsecutive');
 // Environment Variables 
 require('dotenv').config();
 
@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI, mongooseOptions)
     })
 
 // Cron Jobs
-updateConsecutive('America/New_York');
+consecutiveCron.start();
 
 // Open server on port
 const port = process.env.PORT || 5000;
