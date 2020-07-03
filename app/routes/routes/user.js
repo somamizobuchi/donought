@@ -2,8 +2,7 @@ const router = require('express').Router();
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
 const auth = require('./auth')
-const moment = require('moment')
-
+const moment = require('moment-timezone')
 
 
 // Create new User
@@ -114,6 +113,8 @@ router.get('/logout', (req, res) => {
 
 // Check Authorization Status
 router.get('/isauth', auth, (req, res) => {
+	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	console.log(ip);
 	res.status(200).json({
 		_id: res.locals._id,
 		email: res.locals.email,

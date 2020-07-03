@@ -2,7 +2,7 @@ const cronJob = require('cron').CronJob;
 const User = require('../../models/User');
 const moment = require('moment-timezone');
 
-module.exports = new cronJob('50 11 * * *', () => {
+module.exports = new cronJob('0 0 * * *', () => {
 	console.log("Updating 'consecutive' field for each user");
 	var startOfYesterday = moment().tz('America/New_York').subtract(1, 'days').startOf('day').toISOString();
 	var endOfYesterday = moment().tz('America/New_York').subtract(1, 'days').endOf('day').toISOString();
