@@ -5,6 +5,7 @@ const apiRouter = require('./routes/api');
 const cors = require('cors');
 const chalk = require('chalk');
 const consecutiveCron = require('./utils/crons/updateConsecutive');
+
 // Environment Variables 
 require('dotenv').config();
 

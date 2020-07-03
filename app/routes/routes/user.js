@@ -2,8 +2,7 @@ const router = require('express').Router();
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
 const auth = require('./auth')
-const moment = require('moment-timezone')
-
+const geoip = require('geoip-lite');
 
 // Create new User
 router.post('/new', async (req, res) => {
@@ -14,7 +13,6 @@ router.post('/new', async (req, res) => {
 			Error: "missing fields"
 		})
 	}
-	let password;
 
 	// Email duplicate check
 	User.exists({ email: req.body.email }, (err, exists) => {
@@ -27,6 +25,10 @@ router.post('/new', async (req, res) => {
 				Error: "A user with that email already exists"
 			})
 		} else {
+			// Obtain IP Address
+			var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+			var tz = geoip.lookup(ip).timezone;
+			console.log("Extracted " + tz + " from " + ip);
 			// Hash password
 			User.generateHash(req.body.password)
 				.then(hash => {
@@ -36,7 +38,7 @@ router.post('/new', async (req, res) => {
 						email: req.body.email,
 						password: hash,
 						_role: 0,
-						timezone: moment.tz.guess()
+						timezone: tz
 					});
 					newUser.save((err, doc) => {
 						if (err) {
@@ -113,8 +115,6 @@ router.get('/logout', (req, res) => {
 
 // Check Authorization Status
 router.get('/isauth', auth, (req, res) => {
-	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-	console.log(ip);
 	res.status(200).json({
 		_id: res.locals._id,
 		email: res.locals.email,
