@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "bcrypt": "^4.0.1",
-    "chalk": "^4.0.0",
+    "chalk": "^4.1.0",
     "concurrently": "^5.2.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -33,9 +33,9 @@
     "geoip-lite": "^1.4.2",
     "ip": "^1.1.5",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.26.0",
+    "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
-    "mongoose": "^5.9.14",
+    "mongoose": "^5.9.21",
     "npm": "^6.14.5"
   }
 }

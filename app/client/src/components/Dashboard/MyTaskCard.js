@@ -23,11 +23,14 @@ import {
 	DropdownMenu,
 	DropdownItem,
 	Row,
-	Col
+	Col,
+	Container
 } from 'reactstrap'
+import { BsCheck, BsX } from 'react-icons/bs';
 
 export default function TaskCard(props) {
 
+	// States
 	const [alert, setAlert] = useState({
 		isOpen: false,
 		color: "",
@@ -36,11 +39,33 @@ export default function TaskCard(props) {
 
 	const [modal, setModal] = useState(false)
 
+	// Props
 	const {
 		task,
 		logs,
 		logged
 	} = props
+
+	const {
+		refresh,
+		setRefresh
+	} = props.refresh;
+
+	// testing new progress
+	const Streak = (props) => {
+		const style = {
+			borderRadius: "10px",
+			border: "1px solid #888",
+			width: "20px",
+			height: "20px",
+			padding: 0
+		}
+		return (
+			<Col className="text-center pl-0">
+				<div style={style} className={"bg-" + props.color}></div>
+			</Col>
+		)
+	}
 
 	// Progress Bar logic
 	const items = [];
@@ -52,15 +77,17 @@ export default function TaskCard(props) {
 		day.subtract(i, 'days')
 		let flag = logs.some(log => {
 			if (day.isSame(log.createdAt, 'day')) {
-				let color = log.success ? "primary" : "secondary"
+				let color = log.success ? "success" : "danger"
 				let text = (i === 0) ? "Today" : "";
-				items.push(<Progress bar value={val} color={color} >{text}</Progress>)
+				items.push(<Streak color={color} text={text} />)
+				// items.push(<Progress bar value={val} color={color} >{text}</Progress>)
 				return true
 			} else {
 				return false
 			}
 		})
-		if (!flag) items.push(<Progress striped bar value={val} color="light" />)
+		if (!flag) items.push(<Streak color="light" />)
+		// if (!flag) items.push(<Progress striped bar value={val} color="light" />)
 	}
 
 	// Form modal
@@ -71,8 +98,8 @@ export default function TaskCard(props) {
 
 	// Log Button
 	const logButton = (logged) ?
-		(<Button disabled>Log</Button>) :
-		(<Button onClick={toggleLogModal} color="success">Log</Button>);
+		(<Button disabled block>Log</Button>) :
+		(<Button onClick={toggleLogModal} color="success" block>Log</Button>);
 
 	// Consecutive (streak) badge
 	const consecutiveBadge = (props.consecutive > 0) ?
@@ -84,11 +111,11 @@ export default function TaskCard(props) {
 		<Card>
 			<CardHeader>
 				<Row>
-					<Col>
+					<Col xs="8">
 						<h3>{task.title} {consecutiveBadge}</h3>
 					</Col>
-					<Col className="text-right">
-						<TaskMenu />
+					<Col className="text-right" >
+						<TaskMenu tid={task._id} refresh={{ refresh, setRefresh }} />
 					</Col>
 				</Row>
 			</CardHeader>
@@ -96,16 +123,18 @@ export default function TaskCard(props) {
 				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
 				<CardText><Badge pill>{task.category}</Badge></CardText>
 				<CardText>{task.description}</CardText>
-				<LogFormModal tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
-				Last 10:
-				<Progress multi className="border">
-					{items}
-				</Progress>
+				<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
+				{/* Streak */}
+				<Container>
+					<Row>
+						{items}
+					</Row>
+				</Container>
 			</CardBody>
 			<CardFooter>
 				{logButton}
 			</CardFooter>
-		</Card>
+		</Card >
 	)
 }
 
@@ -115,7 +144,7 @@ const LogFormModal = (props) => {
 	const [form, setForm] = useState({
 		tid: props.tid,
 		comment: '',
-		success: false
+		success: null
 	})
 	// Update Form
 	const updateForm = (e) => {
@@ -124,6 +153,7 @@ const LogFormModal = (props) => {
 			[e.target.name]: e.target.value
 		})
 	}
+
 
 	// Handle Logging
 	const handleLog = (e) => {
@@ -157,6 +187,7 @@ const LogFormModal = (props) => {
 					})
 				}
 				props.setModal(false)
+				props.refresh.setRefresh(!props.refresh.refresh);
 			})
 			.catch(err => { // Client side error
 				props.alert.setAlert({
@@ -172,15 +203,16 @@ const LogFormModal = (props) => {
 		props.setModal(!props.modal)
 	}
 
+	// Render Modal
 	return (
 		<Modal isOpen={props.modal} toggle={toggleModal}>
 			<ModalHeader toggle={toggleModal}>Success?</ModalHeader>
 			<ModalBody>
 				<Form>
 					<FormGroup>
-						<ButtonGroup block>
-							<Button onClick={() => setForm({ ...form, success: true })} active={form.success === true} color="success">Yes</Button>
-							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false} color="secondary">No</Button>
+						<ButtonGroup className="w-100">
+							<Button onClick={() => setForm({ ...form, success: true })} active={form.success === true} color="secondary"><BsCheck /></Button>
+							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false} color="secondary"><BsX /></Button>
 						</ButtonGroup>
 					</FormGroup>
 					<FormGroup>
@@ -200,6 +232,21 @@ const TaskMenu = (props) => {
 	const toggle = () => {
 		setIsOpen(!isOpen)
 	}
+	const handleDelete = (e) => {
+		e.preventDefault();
+		const requestOptions = {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				tid: props.tid
+			})
+		};
+		fetch('/api/user/task', requestOptions)
+			.then(res => res.json())
+			.then(json => {
+				props.refresh.setRefresh(!props.refresh.refresh)
+			})
+	}
 	return (
 		<ButtonDropdown isOpen={isOpen} direction="left" toggle={toggle}>
 			<DropdownToggle
@@ -210,11 +257,8 @@ const TaskMenu = (props) => {
 				<Button color="light"><b>&#8942;</b></Button>
 			</DropdownToggle>
 			<DropdownMenu>
-				<DropdownItem header>Header</DropdownItem>
-				<DropdownItem disabled>Action</DropdownItem>
-				<DropdownItem>Another Action</DropdownItem>
-				<DropdownItem divider />
-				<DropdownItem>Another Action</DropdownItem>
+				<DropdownItem header>Action</DropdownItem>
+				<DropdownItem className="text-danger" onClick={handleDelete}>Delete</DropdownItem>
 			</DropdownMenu>
 		</ButtonDropdown>
 	)

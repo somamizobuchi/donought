@@ -3,6 +3,8 @@ const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
 const auth = require('./auth')
 const geoip = require('geoip-lite');
+const Task = require('../../models/Task');
+const Log = require('../../models/TaskLog')
 
 // Create new User
 router.post('/new', async (req, res) => {
@@ -154,6 +156,38 @@ router.get('/tasks', auth, (req, res) => {
 			return res.status(200).json(doc.tasks);
 		});
 
+})
+
+router.delete('/task', auth, (req, res) => {
+	console.log("Deleting task from user")
+	const uid = res.locals._id;
+	const tid = req.body.tid;
+	User.findByIdAndUpdate(uid, {
+		$pull: { tasks: { task: tid } }
+	}, (err, doc) => {
+		if (err) return res.status(500).json({
+			ok: false
+		})
+		console.log(doc)
+		Log.deleteMany({
+			user: uid,
+			task: tid
+		}, err => {
+			if (err) return res.status(500).json({
+				ok: false,
+				message: err.message
+			});
+			Task.findByIdAndUpdate(tid, {
+				$pull: { users: uid }
+			}, (err, res) => {
+				if (err) return res.status(500).json({
+					ok: false,
+					message: err.message
+				});
+			})
+		})
+		return res.status(200).json(tid)
+	})
 })
 
 module.exports = router

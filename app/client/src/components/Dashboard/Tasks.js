@@ -47,16 +47,16 @@ export default function Tasks() {
 				console.log(err)
 			})
 		setLoading(false)
-	}, [])
+	}, [refresh])
 
 	if (tasks.length > 0) {
 		return (
 			<>
 				{tasks.map(task => (
-					<Row className="mt-3">
+					<Row className="mt-3" sm="1" md="2" lg="3">
 						<Col>
-							<Task setRefresh={setRefresh}
-								refresh={refresh}
+							<Task
+								refresh={{ refresh, setRefresh }}
 								key={task.task._id}
 								task={task.task}
 								consecutive={task.consecutive}
@@ -69,13 +69,13 @@ export default function Tasks() {
 		);
 	} else if (loading) {
 		return (
-			<><Row><Col className="text-center"><Spinner /></Col></Row></>
+			<Row><Col className="text-center"><Spinner /></Col></Row>
 		)
 	} else {
 		return (
-			<Col className="text-center">
+			<Col className="text-center mt-3">
 				<Button onClick={() => push('/explore')} color="primary">
-					Join a Donought
+					Explore Donoughts!
 				</Button>
 			</Col>
 		)
