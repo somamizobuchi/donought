@@ -52,8 +52,8 @@ export default function Tasks() {
 	if (tasks.length > 0) {
 		return (
 			<>
-				{tasks.map(task => (
-					<Row className="mt-3" sm="1" md="2" lg="3">
+				<Row className="mt-3" sm="1" md="2" lg="3">
+					{tasks.map(task => (
 						<Col>
 							<Task
 								refresh={{ refresh, setRefresh }}
@@ -63,8 +63,8 @@ export default function Tasks() {
 								logs={task.logs}
 								logged={task.logged} />
 						</Col>
-					</Row>
-				))}
+					))}
+				</Row>
 			</>
 		);
 	} else if (loading) {
