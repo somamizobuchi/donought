@@ -1,18 +1,25 @@
 import React, { useContext } from 'react'
 import { UserContext } from '../../UserContext'
-import Tasks from './Tasks'
 import DashNav from './DashNav'
-import { Button, Container } from 'reactstrap'
-import Explore from './Explore'
+import { Container } from 'reactstrap'
 import HomeNav from '../HomeNav'
 import {
 	BrowserRouter as Router,
 	Switch,
-	Route,
-	Link
+	Route
 } from "react-router-dom";
+import Loadable from 'react-loadable'
 
 export default function Dashboard() {
+
+	const Tasks = Loadable({
+		loader: () => import('./Tasks'),
+		loading: "loading",
+	});
+	const Explore = Loadable({
+		loader: () => import('./Explore'),
+		loading: "loading",
+	});
 
 	var { user, setUser } = useContext(UserContext);
 
