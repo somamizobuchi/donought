@@ -10,7 +10,7 @@
     "dev-server": "nodemon server.js",
     "dev-client": "npm start --prefix client",
     "dev": "concurrently \"npm:dev-*\"",
-    "build-react": "npm install --prefix client && npm run build --prefix client",
+    "build-react": "npm install --dev --prefix client && npm run build --prefix client",
     "build-server": "node server.js",
     "start": "node server.js",
     "heroku-postbuild": "npm run build-react"
