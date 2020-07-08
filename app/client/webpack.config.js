@@ -1,5 +1,6 @@
 const path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
 	entry: './src/index.js',
@@ -34,8 +35,20 @@ module.exports = {
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: './public/index.html'
-		})
+		}),
+		new BundleAnalyzerPlugin()
 	],
+	optimization: {
+		splitChunks: {
+			cacheGroups: {
+				defaultVendors: {
+					test: /[\\/]node_modules[\\/]/,
+					name: "vendors",
+					chunks: "all"
+				}
+			}
+		}
+	},
 	devServer: {
 		proxy: {
 			'/api': 'http://localhost:5000'
