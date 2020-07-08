@@ -23,7 +23,11 @@ const userSchema = new Schema({
 		logs: [{
 			type: Schema.Types.ObjectId,
 			ref: 'Log'
-		}]
+		}],
+		isLogged: {
+			type: Boolean,
+			default: false
+		}
 	}],
 	timezone: String
 }, {

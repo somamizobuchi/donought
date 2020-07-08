@@ -32,7 +32,7 @@ module.exports = new cronJob('0 0 * * *', () => {
 							_id: user._id,
 							'tasks._id': task._id
 						}, {
-							$set: { 'tasks.$.consecutive': 0 }
+							$set: { 'tasks.$.consecutive': 0, 'tasks.$.isLogged': false }
 						}, (err, doc) => {
 							if (err) console.log(err);
 						})

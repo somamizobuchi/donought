@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Button } from 'reactstrap'
+import { Navbar, NavbarBrand, Nav, NavItem, Button } from 'reactstrap'
 import logo from '../logo.png'
 import { Link, useLocation } from 'react-router-dom'
 import { UserContext } from '../UserContext'

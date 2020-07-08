@@ -14,7 +14,6 @@ import {
 	CardHeader,
 	CardFooter,
 	Button,
-	Progress,
 	ModalHeader,
 	ModalBody,
 	ButtonGroup,
@@ -67,12 +66,12 @@ export default function TaskCard(props) {
 		)
 	}
 
-	// Progress Bar logic
-	const items = [];
-	const val = 100 / 10;
+	var items = []
 	var i;
 	const today = moment();
+	console.log(today)
 	for (i = 9; i >= 0; i--) {
+		console.log(day)
 		let day = today.clone()
 		day.subtract(i, 'days')
 		let flag = logs.some(log => {
@@ -87,7 +86,6 @@ export default function TaskCard(props) {
 			}
 		})
 		if (!flag) items.push(<Streak color="light" />)
-		// if (!flag) items.push(<Progress striped bar value={val} color="light" />)
 	}
 
 	// Form modal
@@ -98,8 +96,8 @@ export default function TaskCard(props) {
 
 	// Log Button
 	const logButton = (logged) ?
-		(<Button disabled block>Log</Button>) :
-		(<Button onClick={toggleLogModal} color="success" block>Log</Button>);
+		(<Button color="primary" disabled block>Log</Button>) :
+		(<Button onClick={toggleLogModal} color="primary" block>Log</Button>);
 
 	// Consecutive (streak) badge
 	const consecutiveBadge = (props.consecutive > 0) ?
@@ -111,10 +109,10 @@ export default function TaskCard(props) {
 		<Card>
 			<CardHeader>
 				<Row>
-					<Col xs="8">
-						<h3>{task.title} {consecutiveBadge}</h3>
+					<Col xs="8" className="align-self-center">
+						<span className="font-weight-bold">{task.title} {consecutiveBadge}</span>
 					</Col>
-					<Col className="text-right" >
+					<Col className="text-right">
 						<TaskMenu tid={task._id} refresh={{ refresh, setRefresh }} />
 					</Col>
 				</Row>
@@ -211,7 +209,7 @@ const LogFormModal = (props) => {
 				<Form>
 					<FormGroup>
 						<ButtonGroup className="w-100">
-							<Button onClick={() => setForm({ ...form, success: true })} active={form.success === true} color="secondary"><BsCheck /></Button>
+							<Button onClick={() => setForm({ ...form, success: true })} active={form.success} color={form.success ? "success" : "secondary"}><BsCheck /></Button>
 							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false} color="secondary"><BsX /></Button>
 						</ButtonGroup>
 					</FormGroup>
@@ -254,7 +252,7 @@ const TaskMenu = (props) => {
 				data-toggle="dropdown"
 				aria-expanded={isOpen}
 			>
-				<Button color="light"><b>&#8942;</b></Button>
+				<span className="font-weight-bold btn btn-light">&#8942;</span>
 			</DropdownToggle>
 			<DropdownMenu>
 				<DropdownItem header>Action</DropdownItem>

@@ -168,12 +168,18 @@ router.post('/log', (req, res) => {
 					if (req.body.success) {
 						update = {
 							$addToSet: { 'tasks.$.logs': logID },
-							$inc: { 'tasks.$.consecutive': 1 }
+							$inc: { 'tasks.$.consecutive': 1 },
+							$set: {
+								'tasks.$.isLogged': true
+							}
 						}
 					} else {
 						update = {
 							$addToSet: { 'tasks.$.logs': logID },
-							'tasks.$.consecutive': 0
+							$set: {
+								'tasks.$.consecutive': 0,
+								'tasks.$.isLogged': true
+							}
 						}
 					}
 					User.findOneAndUpdate({

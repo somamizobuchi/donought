@@ -29,8 +29,8 @@ router.post('/new', async (req, res) => {
 		} else {
 			// Obtain IP Address
 			var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-			var tz = geoip.lookup(ip).timezone;
-			console.log("Extracted " + tz + " from " + ip);
+			var geo = geoip.lookup(ip) || null;
+			var tz = geo || 'America/New_York';
 			// Hash password
 			User.generateHash(req.body.password)
 				.then(hash => {
@@ -128,7 +128,7 @@ router.get('/isauth', auth, (req, res) => {
 router.get('/tasks', auth, (req, res) => {
 	User
 		.findById(res.locals._id)
-		.select('tasks.task tasks.logs tasks.consecutive')
+		.select('tasks.task tasks.logs tasks.consecutive tasks.isLogged')
 		.populate({
 			path: 'tasks.task',
 			select: [
@@ -168,7 +168,6 @@ router.delete('/task', auth, (req, res) => {
 		if (err) return res.status(500).json({
 			ok: false
 		})
-		console.log(doc)
 		Log.deleteMany({
 			user: uid,
 			task: tid
