@@ -36,7 +36,7 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: './public/index.html'
 		}),
-		new BundleAnalyzerPlugin()
+		//new BundleAnalyzerPlugin()
 	],
 	optimization: {
 		splitChunks: {
