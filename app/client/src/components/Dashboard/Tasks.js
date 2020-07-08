@@ -52,9 +52,9 @@ export default function Tasks() {
 	if (tasks.length > 0) {
 		return (
 			<>
-				<Row className="mt-3" sm="1" md="2" lg="3">
+				<Row >
 					{tasks.map(task => (
-						<Col>
+						<Col sm="12" md="6" lg="4" className="mt-3">
 							<Task
 								refresh={{ refresh, setRefresh }}
 								key={task.task._id}
