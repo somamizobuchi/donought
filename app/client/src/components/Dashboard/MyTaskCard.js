@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import moment from 'moment'
+import React, { useState, useEffect } from 'react'
+import spacetime from 'spacetime'
 import {
 	Modal,
 	Badge,
@@ -66,27 +66,30 @@ export default function TaskCard(props) {
 		)
 	}
 
-	var items = []
-	var i;
-	const today = moment();
-	console.log(today)
-	for (i = 9; i >= 0; i--) {
-		console.log(day)
-		let day = today.clone()
-		day.subtract(i, 'days')
-		let flag = logs.some(log => {
-			if (day.isSame(log.createdAt, 'day')) {
-				let color = log.success ? "success" : "danger"
-				let text = (i === 0) ? "Today" : "";
-				items.push(<Streak color={color} text={text} />)
-				// items.push(<Progress bar value={val} color={color} >{text}</Progress>)
-				return true
-			} else {
-				return false
-			}
-		})
-		if (!flag) items.push(<Streak color="light" />)
-	}
+	const [streaks, setStreaks] = useState([]);
+
+	// Use Effect Hook
+	useEffect(() => {
+		var items = []
+		var i;
+		let s = spacetime.now('America/New_York');
+		for (i = 9; i >= 0; i--) {
+			let day = s.clone().subtract(i, 'days')
+			let flag = logs.some(log => {
+				let logDate = spacetime(log.createdAt);
+				if (logDate.isBetween(day.startOf('day'), day.endOf('day'))) {
+					let color = log.success ? "success" : "danger"
+					let text = (i === 0) ? "Today" : "";
+					items.push(<Streak color={color} text={text} />)
+					return true
+				} else {
+					return false
+				}
+			})
+			if (!flag) items.push(<Streak color="light" />)
+		}
+		setStreaks(items)
+	}, [])
 
 	// Form modal
 	const toggleLogModal = (e) => {
@@ -125,7 +128,7 @@ export default function TaskCard(props) {
 				{/* Streak */}
 				<Container>
 					<Row>
-						{items}
+						{streaks}
 					</Row>
 				</Container>
 			</CardBody>

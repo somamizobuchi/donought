@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Home from './components/Home'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UserProvider } from './UserContext';
-import Dashboard from './components/Dashboard/';
+import Loadable from 'react-loadable';
 
 function App() {
 	// Create user state -> context
@@ -29,6 +28,28 @@ function App() {
 			})
 	}
 
+	const LandingPage = (props) => {
+		const authorized = props.authorized;
+		if (authorized) {
+			return (
+				<Dashboard />
+			)
+		} else {
+			return (
+				<Home />
+			)
+		}
+	}
+	// Dynamic imports
+	const Dashboard = Loadable({
+		loader: () => import('./components/Dashboard'),
+		loading: "Loading...",
+	});
+	const Home = Loadable({
+		loader: () => import('./components/Home'),
+		loading: "Loading..."
+	})
+
 	useEffect(() => {
 		authorize()
 	}, [user.authorized])
@@ -44,17 +65,5 @@ function App() {
 
 }
 
-const LandingPage = (props) => {
-	const authorized = props.authorized;
-	if (authorized) {
-		return (
-			<Dashboard />
-		)
-	} else {
-		return (
-			<Home />
-		)
-	}
-}
 
 export default App;
