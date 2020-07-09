@@ -30,7 +30,7 @@ router.post('/new', async (req, res) => {
 			// Obtain IP Address
 			var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 			var geo = geoip.lookup(ip) || null;
-			var tz = geo || 'America/New_York';
+			var tz = geo.timezone || 'America/New_York';
 			// Hash password
 			User.generateHash(req.body.password)
 				.then(hash => {
