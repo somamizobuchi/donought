@@ -10,7 +10,7 @@ module.exports = new cronJob('0 0 * * *', () => {
 		.find({
 			timezone: 'America/New_York'
 		})
-		.select('tasks._id tasks.logs tasks.consecutive')
+		.select('tasks._id tasks.logs tasks.consecutive tasks.isLogged')
 		.populate({
 			path: 'tasks.logs',
 			match: {
@@ -27,16 +27,17 @@ module.exports = new cronJob('0 0 * * *', () => {
 			if (err) console.log(err)
 			docs.forEach(user => {
 				user.tasks.forEach(task => {
+					// No log was posted yesterday...
 					if (task.logs.length < 1) {
-						User.findOneAndUpdate({
-							_id: user._id,
-							'tasks._id': task._id
-						}, {
-							$set: { 'tasks.$.consecutive': 0, 'tasks.$.isLogged': false }
-						}, (err, doc) => {
-							if (err) console.log(err);
-						})
-					};
+						task.consecutive = 0;
+					}
+					// Reset isLogged to false
+					task.isLogged = false;
+				})
+				// Save users
+				user.save(err => {
+					if (err) console.log(err);
+					console.log("Cron job complete!");
 				})
 			});
 		})
