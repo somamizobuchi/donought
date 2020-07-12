@@ -20,11 +20,13 @@ router.post('/new', async (req, res) => {
 	User.exists({ email: req.body.email }, (err, exists) => {
 		if (err) {
 			return res.status(500).json({
+				ok: false,
 				message: err.message
 			})
 		} else if (exists) {
 			return res.status(409).json({
-				Error: "A user with that email already exists"
+				ok: false,
+				message: "A user with that email already exists"
 			})
 		} else {
 			// Obtain IP Address
@@ -44,7 +46,6 @@ router.post('/new', async (req, res) => {
 					});
 					newUser.save((err, doc) => {
 						if (err) {
-							console.log(err);
 							return res.status(500).json({
 								Error: "Database save error"
 							})
@@ -72,40 +73,47 @@ router.post('/new', async (req, res) => {
 router.post('/login', (req, res) => {
 	if (!req.body.email | !req.body.password) {
 		return res.status(422).json({
+			ok: false,
 			Error: "Missing fields"
 		})
 	}
 	User.findOne({ email: req.body.email }, (err, user) => {
 		if (err) {
 			return res.status(500).json({
-				Error: "Database query error"
+				ok: false,
+				message: "Internal server error"
 			})
 		}
 		if (!user) {
 			return res.status(404).json({
-				Error: "User does not exist"
+				ok: false,
+				message: "That user does not exist"
 			})
 		}
 		User.compareHash(req.body.password, user.password)
 			.then(same => {
 				if (!same) {
 					return res.status(401).json({
-						Error: "Incorrect password"
+						ok: false,
+						message: "Username and password do not match"
 					})
 				}
 				var token = jwt.sign({
 					_id: user._id,
 					email: user.email,
-					_role: user._role
+					_role: user._role,
+					timezone: user.timezone
 				}, process.env.JWT_KEY)
 				res.status(200).cookie('auth', token).json({
 					_id: user._id,
 					email: user.email,
+					timezone: user.timezone,
 					ok: true
 				})
 			});
 	})
 })
+
 // Logout
 router.get('/logout', (req, res) => {
 	res.clearCookie('auth')
@@ -158,6 +166,7 @@ router.get('/tasks', auth, (req, res) => {
 
 })
 
+// Delete a task from user 
 router.delete('/task', auth, (req, res) => {
 	console.log("Deleting task from user")
 	const uid = res.locals._id;

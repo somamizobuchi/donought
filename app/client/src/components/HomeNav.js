@@ -33,7 +33,7 @@ export default function HomeNav({ children }) {
 		} else {
 			if (location.pathname === "/login") {
 				return (
-					<Link className="btn btn-outline-primary" to="/">Register</Link>
+					<Link className="btn btn-outline-primary" to="/">Sign up</Link>
 				)
 			} else {
 				return (

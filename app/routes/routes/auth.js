@@ -9,6 +9,7 @@ module.exports = (req, res, next) => {
             res.locals._id = doc._id;
             res.locals.email = doc.email;
             res.locals._role = doc._role;
+            res.locals.timezone = doc.timezone;
             return next();
         }
     })

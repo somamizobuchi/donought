@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Navbar, Nav, NavItem, NavLink } from 'reactstrap'
+import { NavItem, NavLink } from 'reactstrap'
 import { Link, useLocation } from 'react-router-dom'
 import classnames from 'classnames'
 
