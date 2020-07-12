@@ -23,7 +23,8 @@ import {
 	DropdownItem,
 	Row,
 	Col,
-	Container
+	Container,
+	Tooltip
 } from 'reactstrap'
 import { BsCheck, BsX } from 'react-icons/bs';
 
@@ -52,16 +53,31 @@ export default function TaskCard(props) {
 
 	// testing new progress
 	const Streak = (props) => {
+		const {
+			target,
+			today,
+			date
+		} = props;
+		const [tooltipOpen, setTooltipOpen] = useState(false);
+		const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 		const style = {
 			borderRadius: "10px",
-			border: "1px solid #888",
+			border: today ? "2px solid #888" : "1px solid #888",
 			width: "20px",
 			height: "20px",
 			padding: 0
 		}
 		return (
-			<Col className="text-center pl-0">
-				<div style={style} className={"bg-" + props.color}></div>
+			<Col className="text-center pl-0" >
+				<div id={target} style={style} className={"bg-" + props.color}></div>
+				<Tooltip
+					isOpen={tooltipOpen}
+					toggle={toggleTooltip}
+					target={target}
+					placement="top"
+				>
+					{date}
+				</Tooltip>
 			</Col>
 		)
 	}
@@ -75,18 +91,19 @@ export default function TaskCard(props) {
 		let s = spacetime.now('America/New_York');
 		for (i = 9; i >= 0; i--) {
 			let day = s.clone().subtract(i, 'days')
+			let date = i === 0 ? "Today" : day.clone().format('{day-short}, {month-short} {date-ordinal}');
 			let flag = logs.some(log => {
 				let logDate = spacetime(log.createdAt);
 				if (logDate.isBetween(day.startOf('day'), day.endOf('day'))) {
 					let color = log.success ? "success" : "danger"
-					let text = (i === 0) ? "Today" : "";
-					items.push(<Streak color={color} text={text} />)
+					date = date + " " + log.comment;
+					items.push(<Streak color={color} today={i === 0} date={date} target={task.title + i} />)
 					return true
 				} else {
 					return false
 				}
 			})
-			if (!flag) items.push(<Streak color="light" />)
+			if (!flag) items.push(<Streak color="light" today={i === 0} date={date} target={task.title + i} />)
 		}
 		setStreaks(items)
 	}, [])

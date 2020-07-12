@@ -148,6 +148,7 @@ router.get('/tasks', auth, (req, res) => {
 		.populate({
 			path: 'tasks.logs',
 			select: [
+				'comment',
 				'success',
 				'createdAt'
 			],
