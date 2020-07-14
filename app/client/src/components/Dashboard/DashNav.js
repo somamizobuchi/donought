@@ -1,36 +1,48 @@
-import React, { useState, useEffect } from 'react'
-import { NavItem, NavLink } from 'reactstrap'
+import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import classnames from 'classnames'
 
 // Dashboard NavBar
-export default function DashNav() {
+export default function DashNav(props) {
 
-	const [activeTab, setActiveTab] = useState(useLocation().pathname);
+
+	const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
 	const navItems = [
 		{
 			title: "Explore",
-			path: "/explore"
+			path: "/explore",
+			key: "explore"
 		},
 		{
 			title: "My Donoughts",
-			path: "/tasks"
+			path: "/d",
+			key: "donoughts"
 		}
 	]
 
-	const toggle = tab => {
-		if (activeTab !== tab) setActiveTab(tab);
+	const toggle = page => {
+		if (currentPage !== page) setCurrentPage(page);
 	}
 	return (
-		<>
+		<div className="nav">
 			{navItems.map(navItem => (
-				<NavItem key={navItem.title}>
-					<Link to={navItem.path}>
-						<NavLink className={classnames({ 'text-dark': activeTab === navItem.path, 'text-muted': activeTab != navItem.path })} onClick={() => toggle(navItem.path)}>{navItem.title}</NavLink>
+				<div className="nav-item" key={navItem.key}>
+					<Link
+						to={navItem.path}
+						className={
+							classnames(
+								{
+									'text-dark': currentPage === navItem.path,
+									'text-muted': currentPage !== navItem.path,
+									'nav-link': true
+								})}
+						onClick={() => toggle(navItem.path)}
+					>
+						{navItem.title}
 					</Link>
-				</NavItem>
+				</div>
 			))}
-		</>
+		</div>
 	)
 }

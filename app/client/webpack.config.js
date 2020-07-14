@@ -19,22 +19,34 @@ module.exports = {
 				}
 			},
 			{
+				test: /\.s[ac]ss$/i,
+				use: [
+					'style-loader',
+					'css-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							implementation: require('sass'),
+						},
+					},
+				]
+			},
+			{
 				test: /\.css$/i,
 				use: ['style-loader', 'css-loader'],
 			},
 			{
-				test: /\.(png|jpe?g|gif|svg)$/i,
-				use: [
-					{
-						loader: 'file-loader',
-					},
-				],
+				test: /\.(png|jpe?g|gif|svg|ico)$/i,
+				loader: 'file-loader',
+				options: {
+					name: '[name].[ext]'
+				}
 			}
 		]
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: './public/index.html'
+			template: './src/index.html'
 		}),
 		// new BundleAnalyzerPlugin()
 	],

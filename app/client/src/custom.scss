@@ -1,0 +1,9 @@
+// Overide theme colors
+$theme-colors: (
+	"primary": #3498db,
+	"success": #2ecc71,
+  "danger": #e74c3c
+);
+
+// Import Bootstrap and its default variables
+@import '~bootstrap';

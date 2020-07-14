@@ -1,63 +1,87 @@
-import React, { useContext } from 'react'
-import { Navbar, NavbarBrand, Nav, NavItem, Button } from 'reactstrap'
-import logo from '../logo.svg'
-import { Link, useLocation } from 'react-router-dom'
-import { UserContext } from '../UserContext'
+import React, { useState, useContext } from 'react'
+import { UserContext } from '../UserContext';
 
-export default function HomeNav({ children }) {
+const HomeNav = (props) => {
 
-	var { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useContext(UserContext);
 
-	let location = useLocation();
+	const [form, setState] = useState({
+		email: '',
+		password: ''
+	});
 
-	const logout = (e) => {
+	const [alert, setAlert] = useState({
+		open: false,
+		message: ""
+	})
+
+	const [loading, setLoading] = useState(false)
+
+	const updateField = (e) => {
+		setState({
+			...form,
+			[e.target.name]: e.target.value
+		})
+	}
+
+	// Login 
+	const handleSubmit = (e) => {
+		// loading...
+		setLoading(true);
+		// Prevent default submit behavior
 		e.preventDefault();
-		fetch('/api/user/logout')
+		// Validate
+		if (!form.email || !form.password) {
+			setAlert({
+				...alert,
+				open: true,
+				message: "Please fill in all fields"
+			})
+			setLoading(false);
+			return;
+		}
+		// Header information
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(form)
+		};
+		// request
+		fetch('/api/user/login', requestOptions)
 			.then(res => res.json())
 			.then(json => {
 				if (json.ok) {
 					setUser({
-						...user,
-						authorized: false
+						_id: json._id,
+						email: json.email,
+						authorized: json.ok,
+						timezone: json.timezone,
+						tasks: []
+					})
+				} else {
+					setAlert({
+						...alert,
+						open: true,
+						message: json.message
 					})
 				}
+				setLoading(false);
 			})
+			.catch(err => console.log(err.message));
 	}
-
-
-	let loginButton = () => {
-		if (user.authorized) {
-			return (
-				<Button outline onClick={logout}>Logout</Button>
-			)
-		} else {
-			if (location.pathname === "/login") {
-				return (
-					<Link className="btn btn-outline-primary" to="/">Sign up</Link>
-				)
-			} else {
-				return (
-					<Link className="btn btn-outline-primary" to="/login">Login</Link>
-				)
-			}
-		}
-	}
-
-
-	// Render
 	return (
-		<Navbar color="light">
-			<NavbarBrand>
-				<Link to="/">
-					<img src={logo} width="32px" alt="" />
-				</Link>
-			</NavbarBrand>
-			<Nav>
-				{children}
-				<NavItem>
-					{loginButton()}
-				</NavItem>
-			</Nav>
-		</Navbar>
+		<div className="nav">
+			<div className="nav-item">
+				<form className="form-inline">
+					<label className="sr-only" for="email">Email</label>
+					<input type="text" className="form-control mr-sm-2" name="email" placeholder="example@email.com" value={form.email} onChange={updateField} />
+					<label className="sr-only" for="inlineFormInputGroupUsername2">Password</label>
+					<input type="password" className="form-control mr-sm-2" name="password" placeholder="Password" value={form.password} onChange={updateField} />
+					<button type="submit" className="btn btn-primary" onClick={handleSubmit}>Log in</button>
+				</form>
+			</div>
+		</div>
 	)
 }
+
+export default HomeNav;

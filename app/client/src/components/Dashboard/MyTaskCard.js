@@ -97,13 +97,13 @@ export default function TaskCard(props) {
 				if (logDate.isBetween(day.startOf('day'), day.endOf('day'))) {
 					let color = log.success ? "success" : "danger"
 					date = date + " " + log.comment;
-					items.push(<Streak color={color} today={i === 0} date={date} target={task.title + i} />)
+					items.push(<Streak key={i} color={color} today={i === 0} date={date} target={task.title + i} />)
 					return true
 				} else {
 					return false
 				}
 			})
-			if (!flag) items.push(<Streak color="light" today={i === 0} date={date} target={task.title + i} />)
+			if (!flag) items.push(<Streak key={i} color="light" today={i === 0} date={date} target={task.title + i} />)
 		}
 		setStreaks(items)
 	}, [])
@@ -152,7 +152,7 @@ export default function TaskCard(props) {
 			<CardFooter>
 				{logButton}
 			</CardFooter>
-		</Card >
+		</Card>
 	)
 }
 

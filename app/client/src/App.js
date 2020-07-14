@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './custom.scss';
 import { UserProvider } from './UserContext';
 import Loadable from 'react-loadable';
+import MainNav from './components/MainNav';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 function App() {
 	// Create user state -> context
 	const [user, setUser] = useState({
 		_id: '',
 		email: '',
-		authorized: false,
+		authorized: null,
 		tasks: []
 	});
 
-	const authorize = () => {
+	useEffect(() => {
 		fetch('/api/user/isauth')
 			.then(res => res.json())
 			.then(json => {
@@ -24,46 +26,51 @@ function App() {
 				})
 			})
 			.catch(err => {
-				console.log(err.message);
+				console.log(err.message)
 			})
-	}
-
-	const LandingPage = (props) => {
-		const authorized = props.authorized;
-		if (authorized) {
-			return (
-				<Dashboard />
-			)
-		} else {
-			return (
-				<Home />
-			)
-		}
-	}
-	// Dynamic imports
-	const Dashboard = Loadable({
-		loader: () => import('./components/Dashboard'),
-		loading: "Loading...",
-	});
-	const Home = Loadable({
-		loader: () => import('./components/Home'),
-		loading: "Loading..."
-	})
-
-	useEffect(() => {
-		authorize()
-	}, [user.authorized])
-
+	}, [])
 
 	return (
 		<div className="App">
 			<UserProvider value={{ user, setUser }}>
-				<LandingPage authorized={user.authorized} />
+				<Router>
+					<MainNav authorized={user.authorized} />
+					<LandingPage authorized={user.authorized} />
+				</Router>
 			</UserProvider>
 		</div>
 	)
-
 }
 
+
+const LandingPage = (props) => {
+
+	const { authorized } = props;
+
+	const Loading = (props) => {
+		return <></>
+	}
+
+	const Home = Loadable({
+		loader: () => import('./components/Home'),
+		loading: Loading
+	})
+
+	const Dashboard = Loadable({
+		loader: () => import('./components/Dashboard'),
+		loading: Loading
+	})
+
+	switch (authorized) {
+		case (null):
+			return (<></>)
+		case (false):
+			return (<Home />)
+		case (true):
+			return (<Dashboard />)
+		default:
+			return (<></>)
+	}
+}
 
 export default App;

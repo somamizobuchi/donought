@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Spinner, Button, Col, Row } from 'reactstrap'
+import { Spinner, Button } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
 import Loadable from 'react-loadable'
 
@@ -17,10 +17,15 @@ export default function Tasks() {
 	// loading state
 	const [loading, setLoading] = useState(true);
 
+	// Loading
+	const Loading = () => {
+		return <></>
+	}
+
 	// Loadable: MyTaskCard
 	const Task = Loadable({
 		loader: () => import('./MyTaskCard'),
-		loading: "Loading...",
+		loading: Loading,
 	});
 	// Before component render: 
 	useEffect(() => {
@@ -37,33 +42,33 @@ export default function Tasks() {
 
 	if (tasks.length > 0) {
 		return (
-			<>
-				<Row >
-					{tasks.map(task => (
-						<Col sm="12" md="6" lg="4" className="mt-3">
-							<Task
-								refresh={{ refresh, setRefresh }}
-								key={task.task._id}
-								task={task.task}
-								consecutive={task.consecutive}
-								logs={task.logs}
-								logged={task.isLogged} />
-						</Col>
-					))}
-				</Row>
-			</>
+			<div className="row">
+				{tasks.map(task => (
+					<div className="col-sm-12 col-md-6 col-lg-4 mt-3" >
+						<Task
+							key={task._id}
+							refresh={{ refresh, setRefresh }}
+							task={task.task}
+							consecutive={task.consecutive}
+							logs={task.logs}
+							logged={task.isLogged} />
+					</div>
+				))}
+			</div>
 		);
 	} else if (loading) {
 		return (
-			<Row><Col className="text-center"><Spinner /></Col></Row>
+			<div className="col text-center">
+				<Spinner />
+			</div>
 		)
 	} else {
 		return (
-			<Col className="text-center mt-3">
+			<div className="col text-center mt-3">
 				<Button onClick={() => push('/explore')} color="primary">
 					Explore Donoughts!
 				</Button>
-			</Col>
+			</div>
 		)
 	}
 }
