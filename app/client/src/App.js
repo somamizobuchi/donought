@@ -62,14 +62,12 @@ const LandingPage = (props) => {
 	})
 
 	switch (authorized) {
-		case (null):
-			return (<></>)
 		case (false):
 			return (<Home />)
 		case (true):
 			return (<Dashboard />)
 		default:
-			return (<></>)
+			return (<Home />)
 	}
 }
 
