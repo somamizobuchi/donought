@@ -116,7 +116,9 @@ router.post('/login', (req, res) => {
 
 // Logout
 router.get('/logout', (req, res) => {
+	// Clear authentication cookie
 	res.clearCookie('auth')
+	// Return true
 	return res.status(200).json({
 		ok: true,
 		message: "Logged user out"

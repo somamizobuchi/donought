@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Form, FormGroup, Label, Input, Button, Alert, Spinner } from 'reactstrap'
+import { Alert, Spinner } from 'reactstrap'
 import { UserContext } from '../UserContext'
 
 
@@ -77,28 +77,30 @@ export default function RegisterForm() {
 			})
 	}
 	return (
-		<div className="w-50 m-auto">
-			<Form className="p-50">
+		<div className="row justify-content-center">
+			<form autocomplete="off" className="col-sm-8 col-md-7 md-auto">
+				<Alert isOpen={alert.open} color="danger">{alert.message}</Alert>
 				<h2>Sign Up</h2>
-				<Alert color="danger" isOpen={alert.open}>{alert.message}</Alert>
-				<FormGroup>
-					<Label for="firstname">First:</Label>
-					<Input value={form.firstname} type="text" name="firstname" onChange={updateField}></Input>
-				</FormGroup>
-				<FormGroup>
-					<Label for="lastname">Last:</Label>
-					<Input value={form.lastname} type="text" name="lastname" onChange={updateField}></Input>
-				</FormGroup>
-				<FormGroup>
-					<Label for="email">Email:</Label>
-					<Input value={form.email} type="email" name="email" onChange={updateField}></Input>
-				</FormGroup>
-				<FormGroup>
-					<Label for="password">Password:</Label>
-					<Input value={form.password} type="password" name="password" onChange={updateField}></Input>
-				</FormGroup>
-				{loading ? (<Button><Spinner size="sm" color="light" /></Button>) : (<Button color="success" onClick={handleSubmit}>Sign up</Button>)}
-			</Form>
+				<div className="form-row">
+					<div className="form-group col-sm-6">
+						<input type="text" class="form-control" name="firstname" placeholder="First name" onChange={updateField} value={form.firstname} />
+					</div>
+					<div class="form-group col-sm-6">
+						<input type="text" class="form-control" name="lastname" placeholder="Last name" onChange={updateField} value={form.lastname} />
+					</div>
+				</div>
+				<div class="form-group">
+					<input type="email" class="form-control" name="email" placeholder="Email" onChange={updateField} value={form.email} />
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" name="password" placeholder="Password" onChange={updateField} value={form.password} />
+				</div>
+				{loading ? (
+					<button className="btn btn-primary"><Spinner /></button>
+				) : (
+						<button type="submit" class="btn btn-primary" onClick={handleSubmit}>Sign up</button>
+					)}
+			</form>
 		</div>
 	)
 }

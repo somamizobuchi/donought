@@ -14,12 +14,14 @@ export default function Home(props) {
         <div>
             <Router>
                 <Switch>
-                    <Route path="/login">
-                        <LoginForm />
-                    </Route>
-                    <Route path="/">
-                        <RegisterForm />
-                    </Route>
+                    <div className="container">
+                        <Route path="/login">
+                            <LoginForm />
+                        </Route>
+                        <Route path="/">
+                            <RegisterForm />
+                        </Route>
+                    </div>
                 </Switch>
                 <Footer />
             </Router>
