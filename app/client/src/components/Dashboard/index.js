@@ -28,7 +28,7 @@ export default function Dashboard() {
 	return (
 		<Container>
 			<Switch>
-				<Route path="/d" component={Tasks} />
+				<Route path="/" component={Tasks} />
 				<Route path="/explore" component={Explore} />
 			</Switch>
 		</Container>

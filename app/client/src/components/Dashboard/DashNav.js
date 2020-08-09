@@ -13,11 +13,6 @@ export default function DashNav(props) {
 			title: "Explore",
 			path: "/explore",
 			key: "explore"
-		},
-		{
-			title: "My Donoughts",
-			path: "/d",
-			key: "donoughts"
 		}
 	]
 

@@ -46,7 +46,6 @@ export default function TaskForm(props) {
 	return (
 		<div>
 			<Form>
-				<h2>Create a new Donought</h2>
 				<FormGroup>
 					<Label for="title">Title</Label>
 					<Input value={form.title} type="text" name="title" onChange={updateField}></Input>
