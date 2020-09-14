@@ -1,18 +1,18 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import logo from '../logo.svg'
-import { Link, useLocation } from 'react-router-dom'
-import { UserContext } from '../UserContext'
+import { Link } from 'react-router-dom'
 import Loadable from 'react-loadable';
+import { UserContext } from '../UserContext'
 
 export default function MainNav(props) {
 
-	var { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useContext(UserContext);
 
-	const [currentPage, setCurrentPage] = useState(useLocation().pathname);
+	// const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
-	const toggleActivePage = (page) => {
-		if (currentPage !== page) setCurrentPage(page);
-	}
+	// const toggleActivePage = (page) => {
+	// 	if (currentPage !== page) setCurrentPage(page);
+	// }
 
 	// Loading component
 	const Loading = () => {
@@ -32,7 +32,7 @@ export default function MainNav(props) {
 
 	let NavContent;
 	if (user.authorized === true) {
-		NavContent = <DashNav currentPageState={{ currentPage, setCurrentPage }} />
+		NavContent = <DashNav user={user} />
 	} else if (user.authorized === false) {
 		NavContent = <HomeNav />
 	} else {
@@ -42,10 +42,12 @@ export default function MainNav(props) {
 	// Render
 	return (
 		<div className="navbar navbar-light bg-light" color="light">
-			<Link to="/" className="navbar-brand" onClick={toggleActivePage("home")}>
-				<img src={logo} width="32px" alt="logo" />
-			</Link>
-			{NavContent}
+			<div className="container">
+				<Link to="/" className="navbar-brand" >
+					<img src={logo} width="32px" alt="logo" />
+				</Link>
+				{NavContent}
+			</div>
 		</div>
 	)
 }

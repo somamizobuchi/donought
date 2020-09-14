@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { UserContext } from '../../UserContext'
-import { Container } from 'reactstrap'
 import {
 	Switch,
 	Route
@@ -26,11 +25,11 @@ export default function Dashboard() {
 
 	// Render
 	return (
-		<Container>
+		<div className="container">
 			<Switch>
 				<Route path="/explore" component={Explore} />
 				<Route path="/" component={Tasks} />
 			</Switch>
-		</Container>
+		</div>
 	);
 }

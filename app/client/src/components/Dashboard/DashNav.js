@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { UserContext } from '../../UserContext'
 import classnames from 'classnames'
 
 // Dashboard NavBar
 export default function DashNav(props) {
 
+	const { user } = props;
+	console.log(user)
 
 	const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
@@ -38,6 +41,9 @@ export default function DashNav(props) {
 					</Link>
 				</div>
 			))}
+			<div className="nav-item">
+				hello, {user.firstname}
+			</div>
 		</div>
 	)
 }

@@ -67,7 +67,7 @@ const LandingPage = (props) => {
 		case (true):
 			return (<Dashboard />)
 		default:
-			return (<Home />)
+			return (<Loading />)
 	}
 }
 
