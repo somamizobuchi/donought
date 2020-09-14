@@ -28,8 +28,8 @@ export default function Dashboard() {
 	return (
 		<Container>
 			<Switch>
-				<Route path="/" component={Tasks} />
 				<Route path="/explore" component={Explore} />
+				<Route path="/" component={Tasks} />
 			</Switch>
 		</Container>
 	);
