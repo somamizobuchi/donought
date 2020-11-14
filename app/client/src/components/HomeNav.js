@@ -54,6 +54,9 @@ const HomeNav = (props) => {
 					setUser({
 						_id: json._id,
 						email: json.email,
+						firstname: json.firstname,
+						lastname: json.lastname,
+						_role: json._role,
 						authorized: json.ok,
 						timezone: json.timezone,
 						tasks: []

@@ -53,13 +53,17 @@ export default function LoginForm() {
 			.then(res => res.json())
 			.then(json => {
 				if (json.ok) {
-					setUser({
-						_id: json._id,
-						email: json.email,
-						authorized: json.ok,
-						timezone: json.timezone,
-						tasks: []
-					})
+					console.log(json);
+					// setUser({
+					// 	_id: json._id,
+					// 	email: json.email,
+					// 	firstname: json.firstname,
+					// 	lastname: json.lastname,
+					// 	_role: json._role,
+					// 	authorized: json.ok,
+					// 	timezone: json.timezone,
+					// 	tasks: []
+					// })
 				} else {
 					setAlert({
 						...alert,

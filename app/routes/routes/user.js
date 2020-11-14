@@ -113,6 +113,9 @@ router.post('/login', (req, res) => {
 				res.status(200).cookie('auth', token).json({
 					_id: user._id,
 					email: user.email,
+					firstname: user.firstname,
+					lastname: user.lastname,
+					_role: user._role,
 					timezone: user.timezone,
 					ok: true
 				})
@@ -133,6 +136,7 @@ router.get('/logout', (req, res) => {
 
 // Check Authorization Status
 router.get('/isauth', auth, (req, res) => {
+	console.log(res.locals);
 	res.status(200).json({
 		_id: res.locals._id,
 		firstname: res.locals.firstname,

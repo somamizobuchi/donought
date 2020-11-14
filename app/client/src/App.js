@@ -25,7 +25,7 @@ function App() {
 					email: json.email,
 					firstname: json.firstname,
 					lastname: json.lastname,
-					timezone: json.timzezone,
+					timezone: json.timezone,
 					authorized: json.ok,
 					tasks: []
 				})
