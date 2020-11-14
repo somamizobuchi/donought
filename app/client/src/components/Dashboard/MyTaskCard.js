@@ -101,7 +101,7 @@ export default function TaskCard(props) {
 					items.push(<Streak key={i} color={color} today={i === 0} date={date} target={task.title.replace(/ /g, '') + i} />)
 					return true
 				} else {
-					console.log("False");
+					// console.log("False");
 					return false
 				}
 			})

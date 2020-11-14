@@ -137,7 +137,7 @@ router.get('/isauth', auth, (req, res) => {
 		_id: res.locals._id,
 		firstname: res.locals.firstname,
 		lastname: res.locals.lastname,
-		timezone: res.locals.timezon,
+		timezone: res.locals.timezone,
 		email: res.locals.email,
 		ok: true
 	})

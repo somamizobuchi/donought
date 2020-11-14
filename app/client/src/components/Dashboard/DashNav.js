@@ -7,7 +7,7 @@ import classnames from 'classnames'
 export default function DashNav(props) {
 
 	var { user, setUser } = useContext(UserContext)
-	console.log(user);
+	// console.log(user);
 	const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
 	const navItems = [
