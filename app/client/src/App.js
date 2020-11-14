@@ -21,6 +21,9 @@ function App() {
 				setUser({
 					_id: json._id,
 					email: json.email,
+					firstname: json.firstname,
+					lastname: json.lastname,
+					timezone: json.timzezone,
 					authorized: json.ok,
 					tasks: []
 				})

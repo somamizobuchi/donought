@@ -54,6 +54,7 @@ export default function TaskCard(props) {
 	// testing new progress
 	const Streak = (props) => {
 		const {
+			color,
 			target,
 			today,
 			date
@@ -69,7 +70,7 @@ export default function TaskCard(props) {
 		}
 		return (
 			<div className="col row">
-				<div id={target} className={"col" + "bg-" + props.color} style={style}></div>
+				<div id={target} className={"bg-" + color} style={style}></div>
 				<Tooltip
 					isOpen={tooltipOpen}
 					toggle={toggleTooltip}
@@ -89,6 +90,7 @@ export default function TaskCard(props) {
 		var items = []
 		var i;
 		let s = spacetime.now('America/New_York');
+
 		for (i = 9; i >= 0; i--) {
 			let day = s.clone().subtract(i, 'days')
 			let date = i === 0 ? "Today" : day.clone().format('{day-short}, {month-short} {date-ordinal}');
@@ -96,10 +98,10 @@ export default function TaskCard(props) {
 				let logDate = spacetime(log.createdAt);
 				if (logDate.isBetween(day.startOf('day'), day.endOf('day'))) {
 					let color = log.success ? "success" : "danger"
-					date = date + " " + log.comment;
 					items.push(<Streak key={i} color={color} today={i === 0} date={date} target={task.title.replace(/ /g, '') + i} />)
 					return true
 				} else {
+					console.log("False");
 					return false
 				}
 			})

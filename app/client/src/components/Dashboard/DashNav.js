@@ -6,9 +6,8 @@ import classnames from 'classnames'
 // Dashboard NavBar
 export default function DashNav(props) {
 
-	const { user } = props;
-	console.log(user)
-
+	var { user, setUser } = useContext(UserContext)
+	console.log(user);
 	const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
 	const navItems = [
@@ -42,7 +41,7 @@ export default function DashNav(props) {
 				</div>
 			))}
 			<div className="nav-item">
-				hello, {user.firstname}
+				<Link to="/user/id" className="nav-link">{user.firstname}</Link>
 			</div>
 		</div>
 	)

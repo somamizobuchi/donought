@@ -52,10 +52,14 @@ router.post('/new', async (req, res) => {
 						}
 						// Generate cookie
 						var token = jwt.sign({
-							_id: doc._id,
-							email: doc.email,
-							_role: doc._role
+							_id: user._id,
+							email: user.email,
+							firstname: user.firstname,
+							lastname: user.lastname,
+							_role: user._role,
+							timezone: user.timezone
 						}, process.env.JWT_KEY)
+						// Send response
 						res.status(200)
 							.cookie('auth', token)
 							.json({
@@ -101,6 +105,8 @@ router.post('/login', (req, res) => {
 				var token = jwt.sign({
 					_id: user._id,
 					email: user.email,
+					firstname: user.firstname,
+					lastname: user.lastname,
 					_role: user._role,
 					timezone: user.timezone
 				}, process.env.JWT_KEY)
@@ -129,6 +135,9 @@ router.get('/logout', (req, res) => {
 router.get('/isauth', auth, (req, res) => {
 	res.status(200).json({
 		_id: res.locals._id,
+		firstname: res.locals.firstname,
+		lastname: res.locals.lastname,
+		timezone: res.locals.timezon,
 		email: res.locals.email,
 		ok: true
 	})
