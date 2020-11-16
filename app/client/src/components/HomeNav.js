@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../UserContext';
-import login from './utils/login'
+import { login } from './utils/user_utils'
 
 const HomeNav = (props) => {
 
@@ -65,15 +65,15 @@ const HomeNav = (props) => {
 		<div className="nav">
 			<div className="nav-item d-none d-md-block">
 				<form className="form-inline">
-					<label className="sr-only" for="email">Email</label>
+					<label className="sr-only" htmlFor="email">Email</label>
 					<input type="text" className="form-control mr-sm-2" name="email" placeholder="example@email.com" value={form.email} onChange={updateField} />
-					<label className="sr-only" for="inlineFormInputGroupUsername2">Password</label>
+					<label className="sr-only" htmlFor="inlineFormInputGroupUsername2">Password</label>
 					<input type="password" className="form-control mr-sm-2" name="password" placeholder="Password" value={form.password} onChange={updateField} />
 					<button type="submit" className="btn btn-primary" onClick={handleSubmit}>Log in</button>
 				</form>
 			</div>
 			<div className="nav-item d-block d-md-none">
-				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#loginFormCollapse" aria-expanded="false" aria-controls="collapseExample">
+				<button className="btn btn-primary" type="button" data-toggle="collapse" data-target="#loginFormCollapse" aria-expanded="false" aria-controls="collapseExample">
 					Already a user?
   			</button>
 			</div>

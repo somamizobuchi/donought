@@ -37,7 +37,7 @@ function App() {
 	}, [])
 
 	return (
-		<div className="App">
+		<div className="App bg-light">
 			<UserProvider value={{ user, setUser }}>
 				<Router>
 					<MainNav authorized={user.authorized} />

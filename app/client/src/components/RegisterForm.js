@@ -30,6 +30,9 @@ export default function RegisterForm() {
 						...user,
 						_id: res._id,
 						email: res.email,
+						firstname: res.firstname,
+						lastname: res.lastname,
+						_role: res._role,
 						authorized: true
 					})
 				} else {
@@ -80,27 +83,27 @@ export default function RegisterForm() {
 			})
 	}
 	return (
-		<form autoComplete="off" className="md-auto py-3">
+		<form autoComplete="off" className="bg-white rounded p-3 shadow">
 			<Alert isOpen={alert.open} color="danger">{alert.message}</Alert>
 			<h2>Sign Up</h2>
 			<div className="form-row">
 				<div className="form-group col-sm-6">
-					<input type="text" class="form-control" name="firstname" placeholder="First name" onChange={updateField} value={form.firstname} />
+					<input type="text" className="form-control" name="firstname" placeholder="First name" onChange={updateField} value={form.firstname} />
 				</div>
-				<div class="form-group col-sm-6">
-					<input type="text" class="form-control" name="lastname" placeholder="Last name" onChange={updateField} value={form.lastname} />
+				<div className="form-group col-sm-6">
+					<input type="text" className="form-control" name="lastname" placeholder="Last name" onChange={updateField} value={form.lastname} />
 				</div>
 			</div>
-			<div class="form-group">
-				<input type="email" class="form-control" name="email" placeholder="Email" onChange={updateField} value={form.email} />
+			<div className="form-group">
+				<input type="email" className="form-control" name="email" placeholder="Email" onChange={updateField} value={form.email} />
 			</div>
-			<div class="form-group">
-				<input type="password" class="form-control" name="password" placeholder="Password" onChange={updateField} value={form.password} />
+			<div className="form-group">
+				<input type="password" className="form-control" name="password" placeholder="Password" onChange={updateField} value={form.password} />
 			</div>
 			{loading ? (
 				<button className="btn btn-primary"><Spinner /></button>
 			) : (
-					<button type="submit" class="btn btn-primary" onClick={handleSubmit}>Sign up</button>
+					<button type="submit" className="btn btn-primary" onClick={handleSubmit}>Sign up</button>
 				)}
 		</form>
 	)

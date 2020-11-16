@@ -1,5 +1,5 @@
-// import React from 'react'
-export default function login(email, pass, cb) {
+// User Login
+export const login = (email, pass, cb) => {
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
@@ -32,5 +32,22 @@ export default function login(email, pass, cb) {
 		})
 		.catch(err => {
 			return cb(err, null);
+		})
+}
+
+// Logout
+export const logout = (cb) => {
+	fetch('api/user/logout')
+		.then(res => res.json())
+		.then(res => {
+			if (res.ok) {
+				return cb(true);
+			} else {
+				return cb(false);
+			}
+		})
+		.catch(err => {
+			console.log(err);
+			return cb(false);
 		})
 }

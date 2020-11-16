@@ -56,7 +56,9 @@ export default function MainNav(props) {
 					{NavContent}
 				</div>
 			</div>
-			{LoginCollapse}
+			<div className="container bg-light justify-content-center">
+				{LoginCollapse}
+			</div>
 		</>
 	)
 }

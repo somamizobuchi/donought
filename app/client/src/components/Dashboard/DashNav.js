@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { UserContext } from '../../UserContext'
 import classnames from 'classnames'
+import { logout } from '../utils/user_utils'
 
 // Dashboard NavBar
 export default function DashNav(props) {
@@ -22,15 +23,15 @@ export default function DashNav(props) {
 		if (currentPage !== page) setCurrentPage(page);
 	}
 
-	const logout = (e) => {
-		fetch('api/user/logout')
-			.then(res => res.json())
-			.then(res => {
+	const handleLogout = (e) => {
+		logout(success => {
+			if (success) {
 				setUser({
 					...user,
 					authorized: false
 				})
-			})
+			}
+		})
 	}
 
 	return (
@@ -53,13 +54,13 @@ export default function DashNav(props) {
 				</div>
 			))}
 			<div className="nav-item">
-				<div class="dropdown nav-link">
-					<a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<div className="dropdown nav-link">
+					<a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						{user.firstname}
 					</a>
-					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+					<div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
 						<Link to="/profile" className="dropdown-item">Profile</Link>
-						<a className="dropdown-item text-danger" onClick={logout}>Logout</a>
+						<a className="dropdown-item text-danger" onClick={handleLogout}>Logout</a>
 					</div>
 				</div>
 			</div>

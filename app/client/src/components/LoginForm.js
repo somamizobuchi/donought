@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react'
-import { Button, Form, FormGroup, Label, Input, Alert, Spinner } from 'reactstrap';
+import { Alert } from 'reactstrap';
 import { UserContext } from '../UserContext'
-import { Link } from 'react-router-dom'
-import login from '../components/utils/login'
+import { login } from './utils/user_utils'
 
 export default function LoginForm() {
 
@@ -65,17 +64,18 @@ export default function LoginForm() {
 
 
 	return (
-		<div className="bg-light w-100 d-block d-md-none py-3">
-			<Form className="container bg-light">
+		<div className="d-block d-md-none py-3 bg-light w-75 m-auto">
+			<form>
 				<Alert isOpen={alert.open} color="danger">{alert.message}</Alert>
-				< FormGroup >
-					<Input value={form.email} type="email" name="email" onChange={updateField}></Input>
-				</FormGroup >
-				<FormGroup>
-					<Input value={form.password} type="password" name="password" onChange={updateField}></Input>
-				</FormGroup>
-				{loading ? (<Button><Spinner size="sm" color="light" /></Button>) : (<Button onClick={handleSubmit}>Login</Button>)}
-			</Form >
+				<div className="form-group">
+					<input className="form-control" value={form.email} type="email" name="email" onChange={updateField} placeholder="Email" />
+				</div>
+				<div className="form-group">
+					<input className="form-control" value={form.password} type="password" name="password" onChange={updateField} placeholder="Password" />
+				</div>
+				<button className="btn btn-primary btn-block" onClick={handleSubmit}>Log in</button>
+				{/* {loading ? (<Button><Spinner size="sm" color="light" /></Button>) : (<Button onClick={handleSubmit}>Login</Button>)} */}
+			</form>
 		</div>
 
 	);
