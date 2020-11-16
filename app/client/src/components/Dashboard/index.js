@@ -5,6 +5,7 @@ import {
 	Route
 } from "react-router-dom";
 import Loadable from 'react-loadable'
+import Profile from './Profile'
 
 export default function Dashboard() {
 
@@ -27,6 +28,7 @@ export default function Dashboard() {
 	return (
 		<div className="container">
 			<Switch>
+				<Route path="/profile" component={Profile} />
 				<Route path="/explore" component={Explore} />
 				<Route path="/" component={Tasks} />
 			</Switch>

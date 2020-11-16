@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Spinner, Button } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
 import Loadable from 'react-loadable'
+import Loading from '../Loading'
 
 export default function Tasks() {
 
@@ -17,10 +18,6 @@ export default function Tasks() {
 	// loading state
 	const [loading, setLoading] = useState(true);
 
-	// Loading
-	const Loading = () => {
-		return <></>
-	}
 
 	// Loadable: MyTaskCard
 	const Task = Loadable({
@@ -58,9 +55,7 @@ export default function Tasks() {
 		);
 	} else if (loading) {
 		return (
-			<div className="col text-center">
-				<Spinner />
-			</div>
+			<Loading />
 		)
 	} else {
 		return (

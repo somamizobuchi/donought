@@ -32,7 +32,7 @@ router.post('/new', async (req, res) => {
 			// Obtain IP Address
 			var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 			var geo = geoip.lookup(ip) || null;
-			var tz = geo.timezone || 'America/New_York';
+			var tz = geo ? geo.timezone : 'America/New_York';
 			// Hash password
 			User.generateHash(req.body.password)
 				.then(hash => {
@@ -52,12 +52,12 @@ router.post('/new', async (req, res) => {
 						}
 						// Generate cookie
 						var token = jwt.sign({
-							_id: user._id,
-							email: user.email,
-							firstname: user.firstname,
-							lastname: user.lastname,
-							_role: user._role,
-							timezone: user.timezone
+							_id: doc._id,
+							email: doc.email,
+							firstname: doc.firstname,
+							lastname: doc.lastname,
+							_role: doc._role,
+							timezone: doc.timezone
 						}, process.env.JWT_KEY)
 						// Send response
 						res.status(200)
@@ -136,7 +136,6 @@ router.get('/logout', (req, res) => {
 
 // Check Authorization Status
 router.get('/isauth', auth, (req, res) => {
-	console.log(res.locals);
 	res.status(200).json({
 		_id: res.locals._id,
 		firstname: res.locals.firstname,
@@ -211,6 +210,48 @@ router.delete('/task', auth, (req, res) => {
 			})
 		})
 		return res.status(200).json(tid)
+	})
+})
+// delete user
+router.delete('/', auth, (req, res) => {
+	let uid = res.locals._id;
+	Task.updateMany({
+		users: uid
+	}, {
+		$pull: { users: res.locals._id }
+	}, (err, task) => {
+		if (!err) {
+			console.log("deleting Logs");
+			Log.deleteMany({
+				user: uid
+			}, (err) => {
+				if (!err) {
+					console.log("Deleting user")
+					User.findByIdAndDelete(
+						uid,
+						(err, user) => {
+							if (!err) {
+								console.log(res)
+							}
+						}
+					)
+				} else {
+					return res.status(500).json({
+						ok: false,
+						message: err.message
+					})
+				}
+			})
+		} else {
+			return res.status(500).json({
+				ok: false,
+				message: err.message
+			})
+		}
+		return res.status(500).json({
+			ok: true,
+			message: "Successfully deleted user"
+		})
 	})
 })
 

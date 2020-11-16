@@ -4,6 +4,7 @@ import { UserProvider } from './UserContext';
 import Loadable from 'react-loadable';
 import MainNav from './components/MainNav';
 import { BrowserRouter as Router } from 'react-router-dom';
+import Loading from './components/Loading'
 
 function App() {
 	// Create user state -> context
@@ -12,7 +13,7 @@ function App() {
 		email: '',
 		firstname: '',
 		lastname: '',
-		authorized: null,
+		authorized: false,
 		tasks: []
 	});
 
@@ -52,9 +53,7 @@ const LandingPage = (props) => {
 
 	const { authorized } = props;
 
-	const Loading = (props) => {
-		return <></>
-	}
+
 
 	const Home = Loadable({
 		loader: () => import('./components/Home'),
@@ -72,7 +71,7 @@ const LandingPage = (props) => {
 		case (true):
 			return (<Dashboard />)
 		default:
-			return (<Loading />)
+			return (<Home />)
 	}
 }
 

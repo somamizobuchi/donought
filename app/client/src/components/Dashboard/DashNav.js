@@ -7,7 +7,7 @@ import classnames from 'classnames'
 export default function DashNav(props) {
 
 	var { user, setUser } = useContext(UserContext)
-	console.log(user);
+
 	const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
 	const navItems = [
@@ -21,6 +21,18 @@ export default function DashNav(props) {
 	const toggle = page => {
 		if (currentPage !== page) setCurrentPage(page);
 	}
+
+	const logout = (e) => {
+		fetch('api/user/logout')
+			.then(res => res.json())
+			.then(res => {
+				setUser({
+					...user,
+					authorized: false
+				})
+			})
+	}
+
 	return (
 		<div className="nav">
 			{navItems.map(navItem => (
@@ -41,7 +53,15 @@ export default function DashNav(props) {
 				</div>
 			))}
 			<div className="nav-item">
-				<Link to="/user/id" className="nav-link">{user.firstname}</Link>
+				<div class="dropdown nav-link">
+					<a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{user.firstname}
+					</a>
+					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+						<Link to="/profile" className="dropdown-item">Profile</Link>
+						<a className="dropdown-item text-danger" onClick={logout}>Logout</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	)

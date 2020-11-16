@@ -1,5 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../UserContext';
+import { Link } from 'react-router-dom'
+import LoginForm from './LoginForm';
 
 const HomeNav = (props) => {
 
@@ -74,7 +76,7 @@ const HomeNav = (props) => {
 	}
 	return (
 		<div className="nav">
-			<div className="nav-item">
+			<div className="nav-item d-none d-md-block">
 				<form className="form-inline">
 					<label className="sr-only" for="email">Email</label>
 					<input type="text" className="form-control mr-sm-2" name="email" placeholder="example@email.com" value={form.email} onChange={updateField} />
@@ -83,7 +85,17 @@ const HomeNav = (props) => {
 					<button type="submit" className="btn btn-primary" onClick={handleSubmit}>Log in</button>
 				</form>
 			</div>
+			<div className="nav-item d-block d-md-none">
+				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#loginFormCollapse" aria-expanded="false" aria-controls="collapseExample">
+					Already a user?
+  			</button>
+
+				{/* <Link to="/login" className="btn btn-primary">Login</Link> */}
+			</div>
+
 		</div>
+
+
 	)
 }
 

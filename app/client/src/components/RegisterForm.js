@@ -75,32 +75,33 @@ export default function RegisterForm() {
 			.then(res => {
 				handleHttpResponse(res)
 			})
+			.catch(err => {
+				console.log(err);
+			})
 	}
 	return (
-		<div className="row justify-content-center">
-			<form autocomplete="off" className="col-sm-8 col-md-7 md-auto">
-				<Alert isOpen={alert.open} color="danger">{alert.message}</Alert>
-				<h2>Sign Up</h2>
-				<div className="form-row">
-					<div className="form-group col-sm-6">
-						<input type="text" class="form-control" name="firstname" placeholder="First name" onChange={updateField} value={form.firstname} />
-					</div>
-					<div class="form-group col-sm-6">
-						<input type="text" class="form-control" name="lastname" placeholder="Last name" onChange={updateField} value={form.lastname} />
-					</div>
+		<form autoComplete="off" className="md-auto py-3">
+			<Alert isOpen={alert.open} color="danger">{alert.message}</Alert>
+			<h2>Sign Up</h2>
+			<div className="form-row">
+				<div className="form-group col-sm-6">
+					<input type="text" class="form-control" name="firstname" placeholder="First name" onChange={updateField} value={form.firstname} />
 				</div>
-				<div class="form-group">
-					<input type="email" class="form-control" name="email" placeholder="Email" onChange={updateField} value={form.email} />
+				<div class="form-group col-sm-6">
+					<input type="text" class="form-control" name="lastname" placeholder="Last name" onChange={updateField} value={form.lastname} />
 				</div>
-				<div class="form-group">
-					<input type="password" class="form-control" name="password" placeholder="Password" onChange={updateField} value={form.password} />
-				</div>
-				{loading ? (
-					<button className="btn btn-primary"><Spinner /></button>
-				) : (
-						<button type="submit" class="btn btn-primary" onClick={handleSubmit}>Sign up</button>
-					)}
-			</form>
-		</div>
+			</div>
+			<div class="form-group">
+				<input type="email" class="form-control" name="email" placeholder="Email" onChange={updateField} value={form.email} />
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control" name="password" placeholder="Password" onChange={updateField} value={form.password} />
+			</div>
+			{loading ? (
+				<button className="btn btn-primary"><Spinner /></button>
+			) : (
+					<button type="submit" class="btn btn-primary" onClick={handleSubmit}>Sign up</button>
+				)}
+		</form>
 	)
 }

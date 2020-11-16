@@ -12,19 +12,17 @@ import {
 export default function Home(props) {
     return (
         <div>
-            <Router>
+            <div className="container">
                 <Switch>
-                    <div className="container">
-                        <Route path="/login">
-                            <LoginForm />
-                        </Route>
-                        <Route path="/">
-                            <RegisterForm />
-                        </Route>
-                    </div>
+                    <Route path="/login" exact={true}>
+                        <LoginForm />
+                    </Route>
+                    <Route path="/">
+                        <RegisterForm />
+                    </Route>
                 </Switch>
-                <Footer />
-            </Router>
+            </div>
+            <Footer />
         </div>
     )
 }
