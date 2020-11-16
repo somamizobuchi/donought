@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../UserContext';
-import { Link } from 'react-router-dom'
-import LoginForm from './LoginForm';
+import login from './utils/login'
 
 const HomeNav = (props) => {
 
@@ -41,38 +40,26 @@ const HomeNav = (props) => {
 			})
 			setLoading(false);
 			return;
-		}
-		// Header information
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(form)
-		};
-		// request
-		fetch('/api/user/login', requestOptions)
-			.then(res => res.json())
-			.then(json => {
-				if (json.ok) {
-					setUser({
-						_id: json._id,
-						email: json.email,
-						firstname: json.firstname,
-						lastname: json.lastname,
-						_role: json._role,
-						authorized: json.ok,
-						timezone: json.timezone,
-						tasks: []
-					})
-				} else {
-					setAlert({
-						...alert,
-						open: true,
-						message: json.message
-					})
+		} else {
+			// Call util/login function
+			login(
+				form.email,
+				form.password,
+				(err, usr) => {
+					if (!err) {
+						setUser(usr)
+					} else {
+						setAlert({
+							...alert,
+							open: true,
+							message: err.message
+						})
+					}
+					setLoading(false);
 				}
-				setLoading(false);
-			})
-			.catch(err => console.log(err.message));
+			)
+		}
+
 	}
 	return (
 		<div className="nav">
@@ -89,8 +76,6 @@ const HomeNav = (props) => {
 				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#loginFormCollapse" aria-expanded="false" aria-controls="collapseExample">
 					Already a user?
   			</button>
-
-				{/* <Link to="/login" className="btn btn-primary">Login</Link> */}
 			</div>
 
 		</div>
