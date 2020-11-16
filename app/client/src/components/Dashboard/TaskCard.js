@@ -62,15 +62,17 @@ export default function TaskCard(props) {
 
 	// Render
 	return (
-		<Card>
-			<CardHeader>{props.title} <Badge pill>&#x1F464; {props.numUsers}</Badge></CardHeader>
-			<CardBody>
-				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
-				<CardText><Badge pill>{props.cat}</Badge></CardText>
-				<CardText>{props.desc}</CardText>
-				<Button onClick={handleDelete} color="danger">Delete</Button>
-				<Button onClick={handleJoin} color="success">Join</Button>
-			</CardBody>
-		</Card>
+		<div className="col-sm-8 col-md-5 col-lg-4">
+			<div className="card">
+				<div className="card-header">{props.title} <Badge pill>&#x1F464; {props.numUsers}</Badge></div>
+				<div className="card-body">
+					<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
+					<div className="card-text"><Badge pill>{props.cat}</Badge></div>
+					<div className="card-text">{props.desc}</div>
+					<button className="btn btn-danger" onClick={handleDelete}>Delete</button>
+					<button className="btn btn-success" onClick={handleJoin}>Join</button>
+				</div>
+			</div>
+		</div>
 	)
 }

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../UserContext';
 import { login } from './utils/user_utils'
+import { useHistory } from 'react-router-dom'
 
 const HomeNav = (props) => {
 
@@ -15,6 +16,8 @@ const HomeNav = (props) => {
 		open: false,
 		message: ""
 	})
+
+	const history = useHistory();
 
 	const [loading, setLoading] = useState(false)
 
@@ -48,6 +51,7 @@ const HomeNav = (props) => {
 				(err, usr) => {
 					if (!err) {
 						setUser(usr)
+						history.replace('/')
 					} else {
 						setAlert({
 							...alert,

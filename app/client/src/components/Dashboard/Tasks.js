@@ -59,7 +59,7 @@ export default function Tasks() {
 		)
 	} else {
 		return (
-			<div className="col text-center mt-3">
+			<div className="row text-center mt-3">
 				<Button onClick={() => push('/explore')} color="primary">
 					Explore Donoughts!
 				</Button>

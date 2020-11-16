@@ -20,13 +20,16 @@ export default function Home(props) {
                             <Route path="/login" exact={true}>
                                 <LoginForm />
                             </Route>
-                            <Route path="/">
+                            <Route path="/" exact={true}>
                                 <div className="col-sm-8 col-md-auto py-3 mr-none mr-lg-5">
                                     <Panel />
                                 </div>
                                 <div className="col-xs-8 col-sm-7 col-md-6 col-lg-5 col-xl-4">
                                     <RegisterForm />
                                 </div>
+                            </Route>
+                            <Route path="*">
+                                <h1>Page not found</h1>
                             </Route>
                         </Switch>
                     </div>
