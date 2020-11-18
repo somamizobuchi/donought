@@ -7,24 +7,10 @@ import {
 	FormGroup,
 	Label,
 	Input,
-	Alert,
-	Card,
-	CardBody,
-	CardText,
-	CardHeader,
-	CardFooter,
 	Button,
 	ModalHeader,
 	ModalBody,
-	ButtonGroup,
-	ButtonDropdown,
-	DropdownToggle,
-	DropdownMenu,
-	DropdownItem,
-	Row,
-	Col,
-	Container,
-	Tooltip
+	ButtonGroup
 } from 'reactstrap'
 import { BsCheck, BsX } from 'react-icons/bs';
 
@@ -43,7 +29,8 @@ export default function TaskCard(props) {
 	const {
 		task,
 		logs,
-		logged
+		logged,
+		consecutive
 	} = props
 
 	const {
@@ -53,32 +40,20 @@ export default function TaskCard(props) {
 
 	// testing new progress
 	const Streak = (props) => {
-		const {
-			color,
-			target,
-			today,
-			date
-		} = props;
-		const [tooltipOpen, setTooltipOpen] = useState(false);
-		const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
-		const style = {
+		var bg_color = "bg-light";
+		if (props.success != null) {
+			bg_color = props.success ? "bg-success" : "bg-danger";
+		}
+		var style = {
 			borderRadius: "10px",
-			border: today ? "2px solid #888" : "1px solid #888",
+			border: "2px solid #999",
 			width: "20px",
-			height: "20px",
-			padding: 0
+			height: "20px"
+
 		}
 		return (
-			<div className="col row">
-				<div id={target} className={"bg-" + color} style={style}></div>
-				<Tooltip
-					isOpen={tooltipOpen}
-					toggle={toggleTooltip}
-					target={target}
-					placement="top"
-				>
-					{date}
-				</Tooltip>
+			<div className="d-inline-block mx-2">
+				<div style={style} className={bg_color}></div>
 			</div>
 		)
 	}
@@ -87,27 +62,26 @@ export default function TaskCard(props) {
 
 	// Use Effect Hook
 	useEffect(() => {
-		var items = []
-		var i;
-		let s = spacetime.now('America/New_York');
-
-		for (i = 9; i >= 0; i--) {
-			let day = s.clone().subtract(i, 'days')
-			let date = i === 0 ? "Today" : day.clone().format('{day-short}, {month-short} {date-ordinal}');
-			let flag = logs.some(log => {
-				let logDate = spacetime(log.createdAt);
-				if (logDate.isBetween(day.startOf('day'), day.endOf('day'))) {
-					let color = log.success ? "success" : "danger"
-					items.push(<Streak key={i} color={color} today={i === 0} date={date} target={task.title.replace(/ /g, '') + i} />)
-					return true
+		const ndays = 5;
+		const nlogs = logs.length;
+		var j = 0;
+		let s_tz = spacetime.now('America/New_York');
+		let strks = new Array(ndays);
+		for (var i = 0; i < ndays; i++) {
+			if (j > nlogs - 1) {
+				strks[i] = (<Streak success={null} />);
+			} else {
+				let day_to_compare = spacetime(logs[nlogs - 1 - j].createdAt);
+				let d = s_tz.subtract(i, 'days');
+				if (day_to_compare.isBetween(d.startOf('day'), d.endOf('day'))) {
+					strks[i] = (<Streak success={logs[j].success} />);
+					j += 1;
 				} else {
-					// console.log("False");
-					return false
+					strks[i] = (<Streak success={null} />);
 				}
-			})
-			if (!flag) items.push(<Streak key={i} color="light" today={i === 0} date={date} target={task.title.replace(/ /g, '') + i} />)
+			}
+			setStreaks(strks)
 		}
-		setStreaks(items)
 	}, [])
 
 	// Form modal
@@ -118,43 +92,40 @@ export default function TaskCard(props) {
 
 	// Log Button
 	const logButton = (logged) ?
-		(<Button color="primary" disabled block>Log</Button>) :
-		(<Button onClick={toggleLogModal} color="primary" block>Log</Button>);
-
-	// Consecutive (streak) badge
-	const consecutiveBadge = (props.consecutive > 0) ?
-		(<Badge color="warning" pill>&#x1F525; {props.consecutive}</Badge>) :
-		null;
+		(<button className="btn btn-primary disabled">Log</button>) :
+		(<button className="btn btn-primary" onClick={toggleLogModal}>Log</button>);
 
 	// Render
 	return (
-		<Card>
-			<CardHeader>
-				<Row>
-					<Col xs="8" className="align-self-center">
-						<span className="font-weight-bold">{task.title} {consecutiveBadge}</span>
-					</Col>
-					<Col className="text-right">
-						<TaskMenu tid={task._id} refresh={{ refresh, setRefresh }} />
-					</Col>
-				</Row>
-			</CardHeader>
-			<CardBody>
-				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
-				<CardText><Badge pill>{task.category}</Badge></CardText>
-				<CardText>{task.description}</CardText>
-				<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
-				{/* Streak */}
-				<Container>
-					<div className="row">
-						{streaks}
-					</div>
-				</Container>
-			</CardBody>
-			<CardFooter>
+		<div className="row shadow rounded py-2 my-3 align-items-center justify-content-around">
+			<div className="col">{task.title}</div>
+			<div className="col">
+				<span className="badge badge-pill badge-warning">
+					{consecutive}
+				</span>
+			</div>
+			<div className="col-5">
+				<div className="row align-items-center">
+					Last 5:
+					{streaks}
+				</div>
+			</div>
+			<div className="col">
 				{logButton}
-			</CardFooter>
-		</Card>
+			</div>
+			<div className="col">
+				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapseExample">
+					&#8897;
+  			</button>
+			</div>
+
+			<div class="collapse container" id={"task-" + task._id}>
+				<hr></hr>
+				<TaskMenu tid={task._id} refresh={props.refresh} />
+			</div>
+
+			<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
+		</div>
 	)
 }
 
@@ -248,10 +219,6 @@ const LogFormModal = (props) => {
 
 const TaskMenu = (props) => {
 
-	const [isOpen, setIsOpen] = useState(false)
-	const toggle = () => {
-		setIsOpen(!isOpen)
-	}
 	const handleDelete = (e) => {
 		e.preventDefault();
 		const requestOptions = {
@@ -268,18 +235,6 @@ const TaskMenu = (props) => {
 			})
 	}
 	return (
-		<ButtonDropdown isOpen={isOpen} direction="left" toggle={toggle}>
-			<DropdownToggle
-				tag="span"
-				data-toggle="dropdown"
-				aria-expanded={isOpen}
-			>
-				<span className="font-weight-bold btn btn-light">&#8942;</span>
-			</DropdownToggle>
-			<DropdownMenu>
-				<DropdownItem header>Action</DropdownItem>
-				<DropdownItem className="text-danger" onClick={handleDelete}>Delete</DropdownItem>
-			</DropdownMenu>
-		</ButtonDropdown>
+		<button className="btn btn-danger" onClick={handleDelete}>Leave this task</button>
 	)
 }

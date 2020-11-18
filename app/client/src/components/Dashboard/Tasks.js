@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Spinner, Button } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
 import Loadable from 'react-loadable'
 import Loading from '../Loading'
@@ -26,6 +25,7 @@ export default function Tasks() {
 	});
 	// Before component render: 
 	useEffect(() => {
+		// Fetch user tasks
 		fetch('/api/user/tasks')
 			.then(res => res.json())
 			.then(tasks => {
@@ -37,19 +37,19 @@ export default function Tasks() {
 			})
 	}, [refresh])
 
+	// If user has tasks
 	if (tasks.length > 0) {
 		return (
-			<div className="row">
+			<div className="container">
+				<h1>Tasks</h1>
 				{tasks.map(task => (
-					<div className="col-sm-12 col-md-6 col-lg-4 mt-3" >
-						<Task
-							key={task._id}
-							refresh={{ refresh, setRefresh }}
-							task={task.task}
-							consecutive={task.consecutive}
-							logs={task.logs}
-							logged={task.isLogged} />
-					</div>
+					<Task
+						key={task._id}
+						refresh={{ refresh, setRefresh }}
+						task={task.task}
+						consecutive={task.consecutive}
+						logs={task.logs}
+						logged={task.isLogged} />
 				))}
 			</div>
 		);
@@ -60,9 +60,9 @@ export default function Tasks() {
 	} else {
 		return (
 			<div className="col text-center mt-3">
-				<Button onClick={() => push('/explore')} color="primary">
+				<button className="btn btn-primary" onClick={() => push('/explore')}>
 					Explore Donoughts!
-				</Button>
+				</button>
 			</div>
 		)
 	}
