@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import spacetime from 'spacetime'
-import {
-	Modal,
-	Form,
-	FormGroup,
-	Label,
-	Input,
-	Button,
-	ModalHeader,
-	ModalBody,
-	ButtonGroup
-} from 'reactstrap'
 import { BsCheck, BsChevronCompactDown, BsPlusCircle, BsCircle, BsX, BsList } from 'react-icons/bs';
 import { log_task } from '../utils/task_utils'
 import logo from '../../logo.svg'
+import Toggle from 'react-toggle'
+
 
 export default function TaskCard(props) {
 
@@ -39,7 +30,7 @@ export default function TaskCard(props) {
 		setRefresh
 	} = props.refresh;
 
-	// testing new progress
+	// Streak
 	const Streak = (props) => {
 		var bg_color = "bg-light";
 		if (props.success != null) {
@@ -190,6 +181,12 @@ const LogFormModal = (props) => {
 					</div>
 					<div className="modal-body">
 						<form>
+							<label>
+								<Toggle
+									defaultChecked={form.success}
+									icons={false}
+								/>
+							</label>
 							<div className="form-group">
 								<input className="form-control" name="comment" type="text" value={form.content} onChange={updateForm} placeholder="Anything to say?" />
 							</div>
