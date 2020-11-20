@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import spacetime from 'spacetime'
-import { BsCheck, BsChevronCompactDown, BsPlusCircle, BsCircle, BsX, BsList } from 'react-icons/bs';
-import { log_task } from '../utils/task_utils'
+import { log_task } from '../../utils/task_utils'
 import logo from '../../logo.svg'
-import Toggle from 'react-toggle'
-
+import Toggle from '../Widgets/Toggle'
+// import $ from 'jquery'
 
 export default function TaskCard(props) {
 
@@ -43,7 +42,7 @@ export default function TaskCard(props) {
 			height: "20px"
 		}
 		return (
-			<div className="d-inline-block mx-2">
+			<div className="d-inline-block mx-1 mx-md-2 ">
 				<div style={style} className={bg_color}></div>
 			</div>
 		)
@@ -75,38 +74,19 @@ export default function TaskCard(props) {
 		}
 	}, [])
 
-	// Form modal
-	const toggleLogModal = (e) => {
-		e.preventDefault()
-		setModal(true)
-	}
 
-
-	const LogButtons = (props) => {
-
-		const handleLog = (e) => {
-			e.preventDefault();
-			console.log("hello world");
-		}
-
-		return (
-			<>
-				<button className="btn btn-light" data-toggle="modal" data-target="#logModal">
-					<img src={logo} alt="logo" width="24px" height="24px" />
-				</button>
-			</>
-		)
-	}
 
 	// Render
 	return (
-		<div className="row shadow rounded py-1 my-3 align-items-center justify-content-around" >
-			<div className="col-auto" data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapse">{task.title}</div>
-			<div className="col-auto">
-				<span className="badge badge-pill badge-warning">
-					🔥
+		<div className="row shadow rounded py-1 my-3 align-items-center justify-content-around bg-white" >
+			<div className="col-3 cursor-pointer" data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapse">{task.title}</div>
+			<div className="col-1 align-middle">
+				<div className="row align-items-center">
+					<span className="badge badge-pill badge-warning">
+						🔥
 					{consecutive}
-				</span>
+					</span>
+				</div>
 			</div>
 			<div className="col-auto">
 				<div className="row align-items-center">
@@ -115,7 +95,9 @@ export default function TaskCard(props) {
 			</div>
 			<div className="col-auto">
 				<div className="row align-items-center">
-					<LogButtons />
+					<button className="btn btn-light" data-toggle="modal" data-target={"#modal-" + task._id}>
+						<img src={logo} alt="logo" width="24px" height="24px" />
+					</button>
 				</div>
 			</div>
 
@@ -123,7 +105,7 @@ export default function TaskCard(props) {
 				<hr></hr>
 				<TaskMenu tid={task._id} refresh={props.refresh} />
 			</div>
-			<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
+			<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} />
 		</div>
 	)
 }
@@ -134,7 +116,7 @@ const LogFormModal = (props) => {
 	const [form, setForm] = useState({
 		tid: props.tid,
 		comment: '',
-		success: null
+		success: false
 	})
 	// Update Form
 	const updateForm = (e) => {
@@ -144,6 +126,7 @@ const LogFormModal = (props) => {
 		})
 	}
 
+	const modal_id = "modal-" + props.tid;
 
 	// Handle Logging
 	const handleLog = (e) => {
@@ -152,25 +135,24 @@ const LogFormModal = (props) => {
 
 		log_task(form, (err, res) => {
 			if (err) {
-				props.alert.setAlert({
-					...alert,
-					isOpen: true,
-					color: "success",
-					message: "Successs"
-				})
+				$("#" + modal_id).modal("hide");
 			} else {
+				$("#" + modal_id).modal("hide");
 				props.refresh.setRefresh(!props.refresh.refresh);
 			}
 		})
 	}
 
-	const toggleModal = () => {
-		props.setModal(!props.modal)
+	const updateToggle = () => {
+		setForm({
+			...form,
+			success: !form.success
+		});
 	}
 
 	// Render Modal
 	return (
-		<div className="modal fade" id="logModal" aria-labelby="logModal" tabindex="-1" role="dialog">
+		<div className="modal fade" id={modal_id} aria-labelledby={modal_id} tabIndex="-1" role="dialog">
 			<div className="modal-dialog" role="document">
 				<div className="modal-content">
 					<div className="modal-header">
@@ -181,19 +163,17 @@ const LogFormModal = (props) => {
 					</div>
 					<div className="modal-body">
 						<form>
-							<label>
-								<Toggle
-									defaultChecked={form.success}
-									icons={false}
-								/>
-							</label>
+							<div className="form-group align-middle">
+								<Toggle name="success" value={form.success} onChange={updateToggle} checked={form.success} />
+								{form.success ? ("I didn't :)") : ("I did :(")}
+							</div>
 							<div className="form-group">
-								<input className="form-control" name="comment" type="text" value={form.content} onChange={updateForm} placeholder="Anything to say?" />
+								<input className="form-control" name="comment" type="text" value={form.comment} onChange={updateForm} placeholder="Anything to say?" />
 							</div>
 						</form>
 					</div>
 					<div className="modal-footer">
-						<button type="button" className="btn btn-primary">Sumbit</button>
+						<button type="button" className="btn btn-primary" onClick={handleLog}>Sumbit</button>
 						<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
 					</div>
 				</div>
