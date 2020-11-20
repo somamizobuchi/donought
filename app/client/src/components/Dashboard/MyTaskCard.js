@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import spacetime from 'spacetime'
 import {
 	Modal,
-	Badge,
 	Form,
 	FormGroup,
 	Label,
@@ -12,7 +11,9 @@ import {
 	ModalBody,
 	ButtonGroup
 } from 'reactstrap'
-import { BsCheck, BsX } from 'react-icons/bs';
+import { BsCheck, BsChevronCompactDown, BsPlusCircle, BsCircle, BsX, BsList } from 'react-icons/bs';
+import { log_task } from '../utils/task_utils'
+import logo from '../../logo.svg'
 
 export default function TaskCard(props) {
 
@@ -49,7 +50,6 @@ export default function TaskCard(props) {
 			border: "2px solid #999",
 			width: "20px",
 			height: "20px"
-
 		}
 		return (
 			<div className="d-inline-block mx-2">
@@ -69,15 +69,15 @@ export default function TaskCard(props) {
 		let strks = new Array(ndays);
 		for (var i = 0; i < ndays; i++) {
 			if (j > nlogs - 1) {
-				strks[i] = (<Streak success={null} />);
+				strks[i] = (<Streak key={"t-" + task._id + i} success={null} />);
 			} else {
 				let day_to_compare = spacetime(logs[nlogs - 1 - j].createdAt);
 				let d = s_tz.subtract(i, 'days');
 				if (day_to_compare.isBetween(d.startOf('day'), d.endOf('day'))) {
-					strks[i] = (<Streak success={logs[j].success} />);
+					strks[i] = (<Streak key={"t-" + task._id + i} success={logs[j].success} />);
 					j += 1;
 				} else {
-					strks[i] = (<Streak success={null} />);
+					strks[i] = (<Streak key={"t-" + task._id + i} success={null} />);
 				}
 			}
 			setStreaks(strks)
@@ -90,40 +90,48 @@ export default function TaskCard(props) {
 		setModal(true)
 	}
 
-	// Log Button
-	const logButton = (logged) ?
-		(<button className="btn btn-primary disabled">Log</button>) :
-		(<button className="btn btn-primary" onClick={toggleLogModal}>Log</button>);
+
+	const LogButtons = (props) => {
+
+		const handleLog = (e) => {
+			e.preventDefault();
+			console.log("hello world");
+		}
+
+		return (
+			<>
+				<button className="btn btn-light" data-toggle="modal" data-target="#logModal">
+					<img src={logo} alt="logo" width="24px" height="24px" />
+				</button>
+			</>
+		)
+	}
 
 	// Render
 	return (
-		<div className="row shadow rounded py-2 my-3 align-items-center justify-content-around">
-			<div className="col">{task.title}</div>
-			<div className="col">
+		<div className="row shadow rounded py-1 my-3 align-items-center justify-content-around" >
+			<div className="col-auto" data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapse">{task.title}</div>
+			<div className="col-auto">
 				<span className="badge badge-pill badge-warning">
+					🔥
 					{consecutive}
 				</span>
 			</div>
-			<div className="col-5">
+			<div className="col-auto">
 				<div className="row align-items-center">
-					Last 5:
 					{streaks}
 				</div>
 			</div>
-			<div className="col">
-				{logButton}
-			</div>
-			<div className="col">
-				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapseExample">
-					&#8897;
-  			</button>
+			<div className="col-auto">
+				<div className="row align-items-center">
+					<LogButtons />
+				</div>
 			</div>
 
-			<div class="collapse container" id={"task-" + task._id}>
+			<div className="collapse container" id={"task-" + task._id}>
 				<hr></hr>
 				<TaskMenu tid={task._id} refresh={props.refresh} />
 			</div>
-
 			<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
 		</div>
 	)
@@ -151,43 +159,18 @@ const LogFormModal = (props) => {
 		// prevent default behavior
 		e.preventDefault();
 
-		// Request Options
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(form)
-		};
-
-		// Make http request
-		fetch('/api/task/log', requestOptions)
-			.then(res => res.json())
-			.then(json => {
-				if (json.ok) { // No errors
-					props.alert.setAlert({
-						...alert,
-						isOpen: true,
-						color: "success",
-						message: json.message
-					})
-				} else {		// Server Side errors
-					props.alert.setAlert({
-						...alert,
-						isOpen: true,
-						color: "danger",
-						message: json.message
-					})
-				}
-				props.setModal(false)
-				props.refresh.setRefresh(!props.refresh.refresh);
-			})
-			.catch(err => { // Client side error
+		log_task(form, (err, res) => {
+			if (err) {
 				props.alert.setAlert({
 					...alert,
 					isOpen: true,
-					color: "danger",
-					message: "Something went wrong!"
+					color: "success",
+					message: "Successs"
 				})
-			})
+			} else {
+				props.refresh.setRefresh(!props.refresh.refresh);
+			}
+		})
 	}
 
 	const toggleModal = () => {
@@ -196,24 +179,29 @@ const LogFormModal = (props) => {
 
 	// Render Modal
 	return (
-		<Modal isOpen={props.modal} toggle={toggleModal}>
-			<ModalHeader toggle={toggleModal}>Success?</ModalHeader>
-			<ModalBody>
-				<Form>
-					<FormGroup>
-						<ButtonGroup className="w-100">
-							<Button onClick={() => setForm({ ...form, success: true })} active={form.success} color={form.success ? "success" : "secondary"}><BsCheck /></Button>
-							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false} color="secondary"><BsX /></Button>
-						</ButtonGroup>
-					</FormGroup>
-					<FormGroup>
-						<Label for="comment">Comment</Label>
-						<Input name="comment" type="text" value={form.comment} onChange={updateForm} />
-					</FormGroup>
-					<Button onClick={handleLog} color="primary">Submit</Button>
-				</Form>
-			</ModalBody>
-		</Modal>
+		<div className="modal fade" id="logModal" aria-labelby="logModal" tabindex="-1" role="dialog">
+			<div className="modal-dialog" role="document">
+				<div className="modal-content">
+					<div className="modal-header">
+						<h5 className="modal-title">How did you do today?</h5>
+						<button type="button" className="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div className="modal-body">
+						<form>
+							<div className="form-group">
+								<input className="form-control" name="comment" type="text" value={form.content} onChange={updateForm} placeholder="Anything to say?" />
+							</div>
+						</form>
+					</div>
+					<div className="modal-footer">
+						<button type="button" className="btn btn-primary">Sumbit</button>
+						<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	)
 }
 
@@ -235,6 +223,6 @@ const TaskMenu = (props) => {
 			})
 	}
 	return (
-		<button className="btn btn-danger" onClick={handleDelete}>Leave this task</button>
+		<button className="btn btn-danger" onClick={handleDelete}>Leave</button>
 	)
 }

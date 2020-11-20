@@ -41,10 +41,10 @@ export default function Tasks() {
 	if (tasks.length > 0) {
 		return (
 			<div className="container">
-				<h1>Tasks</h1>
+				<h3>Tasks</h3>
 				{tasks.map(task => (
 					<Task
-						key={task._id}
+						key={"t" + task.task._id}
 						refresh={{ refresh, setRefresh }}
 						task={task.task}
 						consecutive={task.consecutive}

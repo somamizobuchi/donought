@@ -29,7 +29,7 @@ const Explore = (props) => {
 				tasks.map(task => (
 					<Row className="mt-3" >
 						<Col>
-							<TaskCard refresh={refresh} setRefresh={setRefresh} key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
+							<TaskCard refresh={refresh} setRefresh={setRefresh} key={"t" + task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
 						</Col>
 					</Row>
 				))
