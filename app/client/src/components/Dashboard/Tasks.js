@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
 import Loadable from 'react-loadable'
 import Loading from '../Loading'
+import LogFormModal from './LogFormModal'
 
 export default function Tasks() {
 
@@ -13,6 +14,9 @@ export default function Tasks() {
 
 	// tasks state
 	const [tasks, setTasks] = useState([]);
+
+	// modal state
+	const [modalTaskId, setModalTaskId] = useState(null);
 
 	// loading state
 	const [loading, setLoading] = useState(true);
@@ -41,7 +45,13 @@ export default function Tasks() {
 	if (tasks.length > 0) {
 		return (
 			<div className="container">
-				<h3>Tasks</h3>
+				{/* <h3>Tasks</h3> */}
+				<div className="row justify-content-around align-items-center">
+					<div className="col-4">Name</div>
+					<div className="col-1">Streak</div>
+					<div className="col-5">Last 5</div>
+					<div className="col-2">Log</div>
+				</div>
 				{tasks.map(task => (
 					<Task
 						key={"t" + task.task._id}
@@ -49,8 +59,11 @@ export default function Tasks() {
 						task={task.task}
 						consecutive={task.consecutive}
 						logs={task.logs}
-						logged={task.isLogged} />
+						logged={task.isLogged}
+						modalTaskId={{ modalTaskId, setModalTaskId }}
+					/>
 				))}
+				<LogFormModal refresh={{ refresh, setRefresh }} tid={modalTaskId} />
 			</div>
 		);
 	} else if (loading) {

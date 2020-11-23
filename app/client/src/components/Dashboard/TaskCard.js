@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import {
 	Badge,
 	Alert,
 } from 'reactstrap'
+import { UserContext } from '../../UserContext';
 
 export default function TaskCard(props) {
+
+	const { user, setUser } = useContext(UserContext);
 
 	const [alert, setAlert] = useState({
 		isOpen: false,

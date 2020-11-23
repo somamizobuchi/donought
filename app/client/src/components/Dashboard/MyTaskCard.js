@@ -3,7 +3,6 @@ import spacetime from 'spacetime'
 import { log_task } from '../../utils/task_utils'
 import logo from '../../logo.svg'
 import Toggle from '../Widgets/Toggle'
-// import $ from 'jquery'
 
 export default function TaskCard(props) {
 
@@ -14,7 +13,7 @@ export default function TaskCard(props) {
 		message: ""
 	});
 
-	const [modal, setModal] = useState(false)
+	// const [modal, setModal] = useState(false)
 
 	// Props
 	const {
@@ -23,6 +22,11 @@ export default function TaskCard(props) {
 		logged,
 		consecutive
 	} = props
+
+	const {
+		modalTaskId,
+		setModalTaskId,
+	} = props.modalTaskId;
 
 	const {
 		refresh,
@@ -74,113 +78,56 @@ export default function TaskCard(props) {
 		}
 	}, [])
 
-
+	const openModal = (e) => {
+		e.preventDefault();
+		$("#logFormModal").modal("show");
+		setModalTaskId(task._id);
+	}
 
 	// Render
 	return (
-		<div className="row shadow rounded py-1 my-3 align-items-center justify-content-around bg-white" >
-			<div className="col-3 cursor-pointer" data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapse">{task.title}</div>
-			<div className="col-1 align-middle">
-				<div className="row align-items-center">
-					<span className="badge badge-pill badge-warning">
-						🔥
+		<>
+			<div className="row shadow rounded py-1 my-3 align-items-center justify-content-around bg-white" >
+				<div className="col-4" style={{ cursor: "pointer" }} data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapse">{task.title}</div>
+				<div className="col-1 align-middle">
+					<div className="row align-items-center">
+						<span className="badge badge-pill badge-warning">
+							🔥
 					{consecutive}
-					</span>
+						</span>
+					</div>
+				</div>
+				<div className="col-5">
+					<div className="row align-items-center">
+						{streaks}
+					</div>
+				</div>
+				<div className="col-2">
+					<div className="row align-items-center">
+						{logged ? (
+							<span className="text-muted py-2">Logged</span>
+						) : (
+								<button className="btn btn-light" onClick={openModal}>
+									<img src={logo} alt="logo" width="24px" height="24px" />
+								</button>
+							)}
+					</div>
+				</div>
+				<div className="collapse col-12" id={"task-" + task._id}>
+					<div className="row">
+						<div className="container">
+							<hr></hr>
+							<TaskMenu tid={task._id} refresh={props.refresh} />
+						</div>
+					</div>
 				</div>
 			</div>
-			<div className="col-auto">
-				<div className="row align-items-center">
-					{streaks}
-				</div>
-			</div>
-			<div className="col-auto">
-				<div className="row align-items-center">
-					<button className="btn btn-light" data-toggle="modal" data-target={"#modal-" + task._id}>
-						<img src={logo} alt="logo" width="24px" height="24px" />
-					</button>
-				</div>
-			</div>
-
-			<div className="collapse container" id={"task-" + task._id}>
-				<hr></hr>
-				<TaskMenu tid={task._id} refresh={props.refresh} />
-			</div>
-			<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} />
-		</div>
+		</>
 	)
 }
 
 // Form Modal
-const LogFormModal = (props) => {
-	// Form State
-	const [form, setForm] = useState({
-		tid: props.tid,
-		comment: '',
-		success: false
-	})
-	// Update Form
-	const updateForm = (e) => {
-		setForm({
-			...form,
-			[e.target.name]: e.target.value
-		})
-	}
 
-	const modal_id = "modal-" + props.tid;
-
-	// Handle Logging
-	const handleLog = (e) => {
-		// prevent default behavior
-		e.preventDefault();
-
-		log_task(form, (err, res) => {
-			if (err) {
-				$("#" + modal_id).modal("hide");
-			} else {
-				$("#" + modal_id).modal("hide");
-				props.refresh.setRefresh(!props.refresh.refresh);
-			}
-		})
-	}
-
-	const updateToggle = () => {
-		setForm({
-			...form,
-			success: !form.success
-		});
-	}
-
-	// Render Modal
-	return (
-		<div className="modal fade" id={modal_id} aria-labelledby={modal_id} tabIndex="-1" role="dialog">
-			<div className="modal-dialog" role="document">
-				<div className="modal-content">
-					<div className="modal-header">
-						<h5 className="modal-title">How did you do today?</h5>
-						<button type="button" className="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div className="modal-body">
-						<form>
-							<div className="form-group align-middle">
-								<Toggle name="success" value={form.success} onChange={updateToggle} checked={form.success} />
-								{form.success ? ("I didn't :)") : ("I did :(")}
-							</div>
-							<div className="form-group">
-								<input className="form-control" name="comment" type="text" value={form.comment} onChange={updateForm} placeholder="Anything to say?" />
-							</div>
-						</form>
-					</div>
-					<div className="modal-footer">
-						<button type="button" className="btn btn-primary" onClick={handleLog}>Sumbit</button>
-						<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
-}
 
 const TaskMenu = (props) => {
 

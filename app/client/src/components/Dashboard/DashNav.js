@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { UserContext } from '../../UserContext'
 import classnames from 'classnames'
-import { logout } from '../utils/user_utils'
+import { logout } from '../../utils/user_utils'
 
 // Dashboard NavBar
 export default function DashNav(props) {

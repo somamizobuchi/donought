@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../UserContext';
-import { login } from './utils/user_utils'
+import { login } from '../utils/user_utils'
 
 const HomeNav = (props) => {
 

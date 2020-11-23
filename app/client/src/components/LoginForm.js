@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { Alert } from 'reactstrap';
 import { UserContext } from '../UserContext'
-import { login } from './utils/user_utils'
+import { login } from '../utils/user_utils'
 
 export default function LoginForm() {
 

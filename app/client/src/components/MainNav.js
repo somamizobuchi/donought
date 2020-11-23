@@ -48,7 +48,7 @@ export default function MainNav(props) {
 	// Render
 	return (
 		<>
-			<div className="navbar navbar-light bg-light" color="light">
+			<div className="navbar navbar-light bg-dark">
 				<div className="container">
 					<Link to="/" className="navbar-brand" >
 						<img src={logo} width="32px" alt="logo" />
