@@ -1,28 +1,25 @@
 import React, { useContext } from 'react'
 import { UserContext } from '../../UserContext'
+import { delete_user } from '../../utils/user_utils'
 
 export default function Profile(props) {
 
 	var { user, setUser } = useContext(UserContext);
+
 	const handleDelete = (e) => {
 		e.preventDefault();
-		const requestOptions = {
-			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				tid: props.tid
-			})
-		};
-		fetch('/api/user/', requestOptions)
-			.then(res => res.json())
-			.then(json => {
-				if (json.ok) {
+		delete_user((err, res) => {
+			if (err) {
+				console.log(err.message)
+			} else {
+				if (res.ok) {
 					setUser({
 						...user,
 						authorized: false
 					})
 				}
-			})
+			}
+		})
 	}
 
 	return (

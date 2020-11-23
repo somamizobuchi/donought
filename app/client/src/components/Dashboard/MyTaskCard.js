@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import spacetime from 'spacetime'
-import { log_task } from '../../utils/task_utils'
 import logo from '../../logo.svg'
-import Toggle from '../Widgets/Toggle'
 
 export default function TaskCard(props) {
 

@@ -51,3 +51,18 @@ export const logout = (cb) => {
 			return cb(false);
 		})
 }
+
+export const delete_user = (cb) => {
+	let err = null;
+	let res = null;
+	fetch('/api/user/', { method: 'DELETE' })
+		.then(res => res.json())
+		.then(json => {
+			if (json.ok) {
+				res = json;
+			} else {
+				err = json.message
+			}
+			cb(err, res);
+		})
+}

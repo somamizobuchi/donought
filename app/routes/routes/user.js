@@ -248,6 +248,7 @@ router.delete('/', auth, (req, res) => {
 				message: err.message
 			})
 		}
+		res.clearCookie('auth');
 		return res.status(500).json({
 			ok: true,
 			message: "Successfully deleted user"
