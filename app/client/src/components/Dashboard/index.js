@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import Loadable from 'react-loadable'
 import Profile from './Profile'
+import NotFound from '../NotFound'
+import User from '../User'
 
 export default function Dashboard() {
 
@@ -30,7 +32,9 @@ export default function Dashboard() {
 			<Switch>
 				<Route path="/profile" component={Profile} />
 				<Route path="/explore" component={Explore} />
-				<Route path="/" component={Tasks} />
+				<Route path="/user/:id" component={User} />
+				<Route path="/" exact={true} component={Tasks} />
+				<Route path="*" component={NotFound} />
 			</Switch>
 		</div>
 	);

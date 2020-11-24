@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const auth = require('./auth')
 const geoip = require('geoip-lite');
 const Task = require('../../models/Task');
-const Log = require('../../models/TaskLog')
+const Log = require('../../models/TaskLog');
+const { restart } = require('nodemon');
 
 // Create new User
 router.post('/new', async (req, res) => {
@@ -253,6 +254,55 @@ router.delete('/', auth, (req, res) => {
 			ok: true,
 			message: "Successfully deleted user"
 		})
+	})
+})
+
+router.get('/search', auth, (req, res) => {
+	const searchText = "^" + req.query.text;
+	const regexp = new RegExp(searchText, "i",);
+	console.log(regexp);
+	User.find({
+		firstname: regexp
+	})
+		.limit(10)
+		.select('firstname lastname')
+		.exec((err, doc) => {
+			if (err) {
+				console.log(err.message)
+				return res.status(500).json({
+					ok: false,
+					message: "Something went wrong"
+				})
+			} else {
+				return res.status(200).json({
+					ok: true,
+					doc: doc
+				})
+			}
+		})
+})
+
+router.get('/:id', (req, res) => {
+	const id = req.params.id;
+	User.findById(id, (err, user) => {
+		if (err) {
+			return res.status(500).json({
+				ok: false,
+				message: "Internal Server Error"
+			})
+		} else {
+			if (!user) {
+				return res.status(404).json({
+					ok: false,
+					message: "User not found"
+				})
+			} else {
+				return res.status(200).json({
+					ok: true,
+					user
+				})
+			}
+		}
 	})
 })
 

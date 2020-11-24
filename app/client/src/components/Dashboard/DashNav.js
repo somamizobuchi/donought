@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { UserContext } from '../../UserContext'
 import classnames from 'classnames'
 import { logout } from '../../utils/user_utils'
+import SearchBar from './SearchBar'
 
 // Dashboard NavBar
 export default function DashNav(props) {
@@ -36,6 +37,9 @@ export default function DashNav(props) {
 
 	return (
 		<div className="nav">
+			<div className="nav-item">
+				<SearchBar />
+			</div>
 			{navItems.map(navItem => (
 				<div className="nav-item" key={navItem.key}>
 					<Link
