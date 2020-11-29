@@ -37,19 +37,25 @@ export const login = (email, pass, cb) => {
 
 // Logout
 export const logout = (cb) => {
-	fetch('api/user/logout')
-		.then(res => res.json())
-		.then(res => {
-			if (res.ok) {
-				return cb(true);
-			} else {
-				return cb(false);
-			}
-		})
-		.catch(err => {
-			console.log(err);
-			return cb(false);
-		})
+	return new Promise((resolve, reject) => {
+		fetch('api/user/logout')
+			.then(res => {
+				if (res.ok) {
+					resolve(true)
+				} else {
+					reject(err = {
+						status: res.status,
+						message: "Failed to logout user"
+					})
+				}
+			})
+			.catch(err => {
+				reject(err = {
+					status: 500,
+					message: "Internal Server Error!"
+				});
+			})
+	})
 }
 
 export const delete_user = (cb) => {

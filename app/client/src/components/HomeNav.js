@@ -49,13 +49,9 @@ const HomeNav = (props) => {
 					if (!err) {
 						setUser(usr)
 					} else {
-						setAlert({
-							...alert,
-							open: true,
-							message: err.message
-						})
+
 					}
-					setLoading(false);
+					// setLoading(false);
 				}
 			)
 		}
@@ -68,7 +64,7 @@ const HomeNav = (props) => {
 					<label className="sr-only" htmlFor="email">Email</label>
 					<input type="text" className="form-control mr-sm-2" name="email" placeholder="example@email.com" value={form.email} onChange={updateField} />
 					<label className="sr-only" htmlFor="inlineFormInputGroupUsername2">Password</label>
-					<input type="password" className="form-control mr-sm-2" name="password" placeholder="Password" value={form.password} onChange={updateField} />
+					<input type="password" className="form-control mr-sm-2" name="password" placeholder="Password" value={form.password} onChange={updateField} autoComplete="off" />
 					<button type="submit" className="btn btn-primary" onClick={handleSubmit}>Log in</button>
 				</form>
 			</div>
@@ -77,10 +73,7 @@ const HomeNav = (props) => {
 					Already a user?
   			</button>
 			</div>
-
 		</div>
-
-
 	)
 }
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
-import Loadable from 'react-loadable'
 import Loading from '../Loading'
 import LogFormModal from './LogFormModal'
+import loadable from "@loadable/component";
 
 export default function Tasks() {
 
@@ -21,12 +21,9 @@ export default function Tasks() {
 	// loading state
 	const [loading, setLoading] = useState(true);
 
+	// Dynamic import
+	const Task = loadable(() => import('./MyTaskCard'));
 
-	// Loadable: MyTaskCard
-	const Task = Loadable({
-		loader: () => import('./MyTaskCard'),
-		loading: Loading,
-	});
 	// Before component render: 
 	useEffect(() => {
 		// Fetch user tasks

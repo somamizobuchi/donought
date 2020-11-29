@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import loadable from '@loadable/component'
 import spacetime from 'spacetime'
 import logo from '../../logo.svg'
 
+
 export default function TaskCard(props) {
 
-	// States
-	const [alert, setAlert] = useState({
-		isOpen: false,
-		color: "",
-		message: ""
-	});
-
-	// const [modal, setModal] = useState(false)
+	// const spacetime = loadable.lib(() => import('spacetime'))
 
 	// Props
 	const {
@@ -74,12 +69,12 @@ export default function TaskCard(props) {
 			}
 			setStreaks(strks)
 		}
-	}, [])
+	}, [refresh])
 
 	const openModal = (e) => {
 		e.preventDefault();
-		$("#logFormModal").modal("show");
 		setModalTaskId(task._id);
+		$("#logFormModal").modal("show");
 	}
 
 	// Render
@@ -115,7 +110,7 @@ export default function TaskCard(props) {
 					<div className="row">
 						<div className="container">
 							<hr></hr>
-							<TaskMenu tid={task._id} refresh={props.refresh} />
+							<TaskDetails tid={task._id} refresh={{ refresh, setRefresh }} />
 						</div>
 					</div>
 				</div>
@@ -127,7 +122,12 @@ export default function TaskCard(props) {
 // Form Modal
 
 
-const TaskMenu = (props) => {
+const TaskDetails = (props) => {
+
+	const {
+		refresh,
+		setRefresh
+	} = props.refresh;
 
 	const handleDelete = (e) => {
 		e.preventDefault();
@@ -141,7 +141,7 @@ const TaskMenu = (props) => {
 		fetch('/api/user/task', requestOptions)
 			.then(res => res.json())
 			.then(json => {
-				props.refresh.setRefresh(!props.refresh.refresh)
+				setRefresh(!refresh)
 			})
 	}
 	return (

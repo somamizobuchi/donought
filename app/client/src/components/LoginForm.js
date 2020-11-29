@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react'
-import { Alert } from 'reactstrap';
 import { UserContext } from '../UserContext'
 import { login } from '../utils/user_utils'
 
@@ -25,6 +24,7 @@ export default function LoginForm() {
 			[e.target.name]: e.target.value
 		})
 	}
+
 
 	// Login 
 	const handleSubmit = (e) => {
@@ -63,15 +63,15 @@ export default function LoginForm() {
 	}
 
 
+
 	return (
 		<div className="d-block d-md-none py-3 bg-light w-75 m-auto">
-			<form>
-				<Alert isOpen={alert.open} color="danger">{alert.message}</Alert>
+			<form autoComplete="on">
 				<div className="form-group">
 					<input className="form-control" value={form.email} type="email" name="email" onChange={updateField} placeholder="Email" />
 				</div>
 				<div className="form-group">
-					<input className="form-control" value={form.password} type="password" name="password" onChange={updateField} placeholder="Password" />
+					<input autoComplete="off" className="form-control" value={form.password} type="password" name="password" onChange={updateField} placeholder="Password" />
 				</div>
 				<button className="btn btn-primary btn-block" onClick={handleSubmit}>Log in</button>
 				{/* {loading ? (<Button><Spinner size="sm" color="light" /></Button>) : (<Button onClick={handleSubmit}>Login</Button>)} */}

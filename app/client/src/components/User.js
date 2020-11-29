@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useHistory } from "react-router-dom"
 
-const User = (props) => {
+export default function User() {
 
 	const history = useHistory();
 
@@ -39,5 +39,3 @@ const User = (props) => {
 		</>
 	)
 }
-
-export default User;

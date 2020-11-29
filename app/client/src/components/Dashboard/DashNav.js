@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { UserContext } from '../../UserContext'
-import classnames from 'classnames'
 import { logout } from '../../utils/user_utils'
 import SearchBar from './SearchBar'
 
@@ -25,39 +24,34 @@ export default function DashNav(props) {
 	}
 
 	const handleLogout = (e) => {
-		logout(success => {
-			if (success) {
+		logout()
+			.then(() => {
 				setUser({
 					...user,
 					authorized: false
-				})
-			}
-		})
+				});
+			})
+			.catch(err => {
+				console.log(err.message)
+			})
 	}
 
 	return (
-		<div className="nav">
-			<div className="nav-item">
-				<SearchBar />
-			</div>
-			{navItems.map(navItem => (
-				<div className="nav-item" key={navItem.key}>
-					<Link
-						to={navItem.path}
-						className={
-							classnames(
-								{
-									'text-dark': currentPage === navItem.path,
-									'text-muted': currentPage !== navItem.path,
-									'nav-link': true
-								})}
-						onClick={() => toggle(navItem.path)}
-					>
-						{navItem.title}
-					</Link>
-				</div>
-			))}
-			<div className="nav-item">
+		<>
+			<ul className="navbar-nav">
+				{navItems.map(navItem => (
+					<li className="nav-item" key={navItem.key}>
+						<Link
+							to={navItem.path}
+							className="text-light nav-link"
+							onClick={() => toggle(navItem.path)}
+						>
+							{navItem.title}
+						</Link>
+					</li>
+				))}
+			</ul>
+			<li className="nav-item">
 				<div className="dropdown nav-link">
 					<a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						{user.firstname}
@@ -67,7 +61,9 @@ export default function DashNav(props) {
 						<a className="dropdown-item text-danger" onClick={handleLogout}>Logout</a>
 					</div>
 				</div>
-			</div>
-		</div>
+			</li>
+			<SearchBar />
+		</>
 	)
 }
+
