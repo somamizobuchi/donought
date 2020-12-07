@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './custom.scss';
 import { UserProvider } from './UserContext';
-import Loadable from 'react-loadable';
+import loadable from '@loadable/component'
 import MainNav from './components/MainNav';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Loading from './components/Loading'
 
 function App() {
 	// Create user state -> context
@@ -53,17 +52,10 @@ const LandingPage = (props) => {
 
 	const { authorized } = props;
 
+	// Dynamic imports
+	const Home = loadable(() => import('./components/Home'))
+	const Dashboard = loadable(() => import('./components/Dashboard'))
 
-
-	const Home = Loadable({
-		loader: () => import('./components/Home'),
-		loading: Loading
-	})
-
-	const Dashboard = Loadable({
-		loader: () => import('./components/Dashboard'),
-		loading: Loading
-	})
 
 	switch (authorized) {
 		case (false):

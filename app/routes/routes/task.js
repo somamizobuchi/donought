@@ -115,7 +115,7 @@ router.get('/join/:tid', (req, res) => {
 			User.findByIdAndUpdate(
 				res.locals._id,
 				{
-					$addToSet: { tasks: { task: req.params.tid, comment: "hello" } }
+					$addToSet: { tasks: { task: req.params.tid } }
 				}, (err, user) => {
 					if (err) return res.status(500).json(err);
 					return res.status(200).json({
@@ -194,6 +194,52 @@ router.post('/log', (req, res) => {
 					})
 				}
 			})
+		})
+})
+
+// get logs
+router.get('/logs', (req, res) => {
+	let uid = res.locals._id;
+	let tid = req.body.tid;
+	let ndays = req.body.ndays;
+	let n_days_ago = moment().tz(res.locals.timezone).subtract(ndays, 'days').startOf('day');
+	Log.find({
+		user: uid,
+		task: tid,
+		createdAt: { $gte: n_days_ago.format() }
+	}, 'success createdAt comment')
+		.sort({ createdAt: -1 })
+		.exec((err, doc) => {
+			if (err) {
+				return res.status(500).json({
+					ok: false,
+					message: "Internal server error"
+				})
+			} else {
+				if (doc) {
+					let j = 0;
+					var out = new Array(ndays);
+					var day;
+					for (i = 0; i < ndays; i++) {
+						day = n_days_ago.add(1, 'days');
+						if (day.isSame(moment.tz(doc[j].createdAt, res.locals.timezone), 'day')) {
+							out[i] = doc[j]
+							j += 1;
+						} else {
+							out[i] = {
+								_id: null,
+								success: null,
+								createdAt: day.format(),
+								comment: null
+							}
+						}
+					}
+					return res.status(200).json({
+						ok: true,
+						out
+					})
+				}
+			}
 		})
 })
 

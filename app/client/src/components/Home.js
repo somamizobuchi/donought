@@ -7,6 +7,7 @@ import {
     Route
 } from "react-router-dom";
 import { BsCheck, BsCheckAll, BsCheckBox, BsPeopleFill, BsXSquare } from 'react-icons/bs'
+import NotFound from './NotFound'
 
 
 export default function Home(props) {
@@ -29,7 +30,11 @@ export default function Home(props) {
                                 </div>
                             </Route>
                             <Route path="*">
+<<<<<<< HEAD
                                 <h1>Page not found</h1>
+=======
+                                <NotFound />
+>>>>>>> myTaskCardRemake
                             </Route>
                         </Switch>
                     </div>

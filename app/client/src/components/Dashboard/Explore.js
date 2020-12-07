@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import TaskCard from './TaskCard'
-import TaskForm from './TaskForm'
-import { Button, Modal, ModalHeader, ModalBody, Row, Col } from 'reactstrap'
+// import TaskForm from './TaskForm'
 
 const Explore = (props) => {
 
@@ -24,11 +23,18 @@ const Explore = (props) => {
 	// Render: 
 	return (
 		<>
-			<FormModal refresh={refresh} setRefresh={setRefresh} />
+			{/* <FormModal refresh={refresh} setRefresh={setRefresh} /> */}
 			{
 				tasks.map(task => (
+<<<<<<< HEAD
 					<div className="row py-3" >
 						<TaskCard refresh={refresh} setRefresh={setRefresh} key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
+=======
+					<div className="row mt-3" >
+						<div className="col">
+							<TaskCard refresh={refresh} setRefresh={setRefresh} key={"t" + task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
+						</div>
+>>>>>>> myTaskCardRemake
 					</div>
 				))
 			}
@@ -36,29 +42,6 @@ const Explore = (props) => {
 	)
 }
 
-const FormModal = (props) => {
-	// props
-	const refresh = props.refresh;
-	const setRefresh = props.setRefresh;
 
-	// Modal State
-	const [modal, setModal] = useState(false);
-	const toggle = () => setModal(!modal);
-
-	// render
-	return (
-		<>
-			<Button onClick={toggle} color="success">New</Button>
-			<Modal isOpen={modal} toggle={toggle}>
-				<ModalHeader toggle={toggle}>
-					New Donought
-    		</ModalHeader>
-				<ModalBody>
-					<TaskForm refresh={refresh} setRefresh={setRefresh} toggle={toggle} />
-				</ModalBody>
-			</Modal>
-		</>
-	)
-}
 
 export default Explore;

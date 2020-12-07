@@ -4,25 +4,15 @@ import {
 	Switch,
 	Route
 } from "react-router-dom";
-import Loadable from 'react-loadable'
+import loadable from '@loadable/component'
 import Profile from './Profile'
+import NotFound from '../NotFound'
+// Dynamic imports
+const User = loadable(() => import('../User'));
+const Tasks = loadable(() => import('./Tasks'));
+const Explore = loadable(() => import('./Explore'));
 
 export default function Dashboard() {
-
-	const Loading = () => {
-		return <></>
-	}
-	// Dynamic Imports
-	const Tasks = Loadable({
-		loader: () => import('./Tasks'),
-		loading: Loading,
-	});
-	const Explore = Loadable({
-		loader: () => import('./Explore'),
-		loading: Loading,
-	});
-
-	var { user, setUser } = useContext(UserContext);
 
 	// Render
 	return (
@@ -30,7 +20,9 @@ export default function Dashboard() {
 			<Switch>
 				<Route path="/profile" component={Profile} />
 				<Route path="/explore" component={Explore} />
-				<Route path="/" component={Tasks} />
+				<Route path="/user/:id" component={User} />
+				<Route path="/" exact={true} component={Tasks} />
+				<Route path="*" component={NotFound} />
 			</Switch>
 		</div>
 	);

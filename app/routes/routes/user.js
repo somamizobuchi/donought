@@ -1,10 +1,17 @@
 const router = require('express').Router();
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const auth = require('./auth')
 const geoip = require('geoip-lite');
 const Task = require('../../models/Task');
-const Log = require('../../models/TaskLog')
+const Log = require('../../models/TaskLog');
+const mongoose = require("mongoose");
+const { route } = require('./task');
+const { log_task } = require('../../client/src/utils/task_utils');
+
+
+
 
 // Create new User
 router.post('/new', async (req, res) => {
@@ -72,7 +79,16 @@ router.post('/new', async (req, res) => {
 		}
 	})
 });
-
+//logout
+router.get('/logout', (req, res) => {
+	// Clear authentication cookie
+	res.clearCookie('auth')
+	// Return true
+	return res.status(200).json({
+		ok: true,
+		message: "Logged user out"
+	});
+});
 // Login User
 router.post('/login', (req, res) => {
 	if (!req.body.email | !req.body.password) {
@@ -94,45 +110,38 @@ router.post('/login', (req, res) => {
 				message: "That user does not exist"
 			})
 		}
-		User.compareHash(req.body.password, user.password)
-			.then(same => {
-				if (!same) {
+		bcrypt.compare(req.body.password, user.password)
+			.then(match => {
+				if (!match) {
 					return res.status(401).json({
 						ok: false,
 						message: "Username and password do not match"
 					})
+				} else {
+					var token = jwt.sign({
+						_id: user._id,
+						email: user.email,
+						firstname: user.firstname,
+						lastname: user.lastname,
+						_role: user._role,
+						timezone: user.timezone
+					}, process.env.JWT_KEY)
+					res.status(200).cookie('auth', token).json({
+						_id: user._id,
+						email: user.email,
+						firstname: user.firstname,
+						lastname: user.lastname,
+						_role: user._role,
+						timezone: user.timezone,
+						ok: true
+					})
 				}
-				var token = jwt.sign({
-					_id: user._id,
-					email: user.email,
-					firstname: user.firstname,
-					lastname: user.lastname,
-					_role: user._role,
-					timezone: user.timezone
-				}, process.env.JWT_KEY)
-				res.status(200).cookie('auth', token).json({
-					_id: user._id,
-					email: user.email,
-					firstname: user.firstname,
-					lastname: user.lastname,
-					_role: user._role,
-					timezone: user.timezone,
-					ok: true
-				})
-			});
-	})
+			})
+	});
 })
 
 // Logout
-router.get('/logout', (req, res) => {
-	// Clear authentication cookie
-	res.clearCookie('auth')
-	// Return true
-	return res.status(200).json({
-		ok: true,
-		message: "Logged user out"
-	});
-});
+
 
 // Check Authorization Status
 router.get('/isauth', auth, (req, res) => {
@@ -248,11 +257,278 @@ router.delete('/', auth, (req, res) => {
 				message: err.message
 			})
 		}
+		res.clearCookie('auth');
 		return res.status(500).json({
 			ok: true,
 			message: "Successfully deleted user"
 		})
 	})
 })
+// Get requests
+router.get('/requests', auth, (req, res) => {
+	User.findOne({ _id: res.locals._id, followers: { $elemMatch: { accepted: false } } })
+		.select('followers.$')
+		.populate({
+			path: 'followers.user',
+			select: [
+				'firstname',
+				'lastname'
+			]
+		})
+		.exec((err, doc) => {
+			if (!err) {
+				return res.status(200).json({
+					ok: true,
+					doc
+				})
+			} else {
+				res.status(500).json({
+					ok: false,
+					message: "Internal Server Error"
+				})
+				console.log(err)
+			}
+		})
+})
+// Search 
+router.get('/search', auth, (req, res) => {
+	const searchText = "^" + req.query.text;
+	const regexp = new RegExp(searchText, "i",);
+	User.find({
+		firstname: regexp
+	})
+		.limit(10)
+		.select('firstname lastname')
+		.exec((err, doc) => {
+			if (err) {
+				console.log(err.message)
+				return res.status(500).json({
+					ok: false,
+					message: "Something went wrong"
+				})
+			} else {
+				return res.status(200).json({
+					ok: true,
+					doc: doc
+				})
+			}
+		})
+})
+
+router.post('/follow', auth, (req, res) => {
+	const user_id_to_follow = req.body._id;
+	const user_id = res.locals._id;
+
+	if (user_id === user_id_to_follow) {
+		return res.status(400).json({
+			ok: false,
+			message: "Cannot follow yourself"
+		})
+	}
+
+	var update01 = {
+		$addToSet: {
+			followers: {
+				user: user_id,
+				accepted: false
+			}
+		}
+	}
+	var update02 = {
+		$addToSet: {
+			following: {
+				user: user_id_to_follow,
+				accepted: false
+			}
+		}
+	}
+
+	User.findOneAndUpdate({
+		_id: user_id_to_follow,
+		'followers.user': { $ne: user_id }
+	}, update01, (err, doc) => {
+		if (!err) {
+			if (doc !== null) {
+				User.findOneAndUpdate({
+					_id: user_id,
+					'following.user': { $ne: user_id_to_follow }
+				}, update02, (err, doc) => {
+					if (!err) {
+						return res.status(200).json({
+							ok: true,
+							message: "Follow requested"
+						})
+					}
+				})
+			} else {
+				return res.status(409).json({
+					ok: true,
+					message: "Follow request already exists"
+				})
+			}
+		} else {
+			return res.status(500).json({
+				ok: false,
+				message: "Internal Server Error"
+			})
+		}
+	})
+
+})
+
+router.post('/accept', auth, (req, res) => {
+	User.findOneAndUpdate({
+		_id: res.locals._id,
+		followers: { $elemMatch: { user: req.body._id } }
+	}, {
+		$set: {
+			'followers.$.accepted': true
+		}
+	}, (err, doc) => {
+		if (err) {
+			return res.status(500).json(
+				{
+					ok: false,
+					message: err.message
+				}
+			)
+		} else {
+			User.findOneAndUpdate({
+				_id: req.body._id,
+				following: { $elemMatch: { user: res.locals._id } }
+			}, {
+				$set: {
+					'following.$.accepted': true
+				}
+			}, (err, doc) => {
+				if (err) {
+					return res.status(500).json(
+						{
+							ok: false,
+							message: err.message
+						}
+					)
+				} else {
+					return res.status(200).json({
+						ok: true,
+						doc
+					})
+				}
+			})
+		}
+	})
+})
+
+// isFollower Middleware
+const isFollowing = (req, res, next) => {
+	User.find({
+		_id: req.body._id,
+		followers: { $elemMatch: { user: res.locals._id } }
+	})
+		.exec((err, doc) => {
+			console.log(doc);
+			if (err) return res.status(500).json({
+				ok: false,
+				message: err.message
+			})
+			else {
+				if (doc) {
+					return next();
+				} else {
+					return res.status(401).json({
+						ok: false,
+						message: "You are not authorized to view this"
+					})
+				}
+			}
+		})
+}
+// Get user logs
+router.get('/logs', auth, isFollowing, (req, res) => {
+	Log.find({ user: req.body._id })
+		.populate({
+			path: 'task',
+			select: [
+				'title'
+			]
+		})
+		.populate({
+			path: 'user',
+			select: [
+				'firstname',
+				'lastname'
+			]
+		})
+		.limit(5)
+		.exec((err, doc) => {
+			if (err) return res.status(500).json({
+				ok: false,
+				message: err.message
+			})
+			else {
+				return res.status(200).json({
+					ok: true,
+					doc: doc
+				})
+			}
+		})
+})
+
+router.get('/:id', auth, (req, res) => {
+	const id = mongoose.Types.ObjectId(req.params.id);
+	User.find(
+		{
+			_id: id,
+		})
+		.select([
+			'firstname',
+			'lastname',
+			'logs.log',
+			'followers._id',
+			'following._id'
+		])
+		.populate({
+			path: 'logs.log',
+			limit: 50,
+		})
+		.exec((err, doc) => {
+			console.log(doc);
+			console.log(err);
+			if (err) return res.status(500).json({
+				ok: false,
+				message: "Internal Server Error"
+			})
+			else {
+				return res.status(200).json({
+					ok: true,
+					doc
+				})
+			}
+		})
+	// User.findById(id, {
+	// 	$project: 
+	// })
+	// User.findById(id, (err, user) => {
+	// 	if (err) {
+	// 		return res.status(500).json({
+	// 			ok: false,
+	// 			message: "Internal Server Error"
+	// 		})
+	// 	} else {
+	// 		if (!user) {
+	// 			return res.status(404).json({
+	// 				ok: false,
+	// 				message: "User not found"
+	// 			})
+	// 		} else {
+	// 			return res.status(200).json({
+	// 				ok: true,
+	// 				user
+	// 			})
+	// 		}
+	// 	}
+	// })
+})
+
 
 module.exports = router

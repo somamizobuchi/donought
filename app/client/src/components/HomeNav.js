@@ -1,7 +1,11 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../UserContext';
+<<<<<<< HEAD
 import { login } from './utils/user_utils'
 import { useHistory } from 'react-router-dom'
+=======
+import { login } from '../utils/user_utils'
+>>>>>>> myTaskCardRemake
 
 const HomeNav = (props) => {
 
@@ -53,13 +57,9 @@ const HomeNav = (props) => {
 						setUser(usr)
 						history.replace('/')
 					} else {
-						setAlert({
-							...alert,
-							open: true,
-							message: err.message
-						})
+
 					}
-					setLoading(false);
+					// setLoading(false);
 				}
 			)
 		}
@@ -72,7 +72,7 @@ const HomeNav = (props) => {
 					<label className="sr-only" htmlFor="email">Email</label>
 					<input type="text" className="form-control mr-sm-2" name="email" placeholder="example@email.com" value={form.email} onChange={updateField} />
 					<label className="sr-only" htmlFor="inlineFormInputGroupUsername2">Password</label>
-					<input type="password" className="form-control mr-sm-2" name="password" placeholder="Password" value={form.password} onChange={updateField} />
+					<input type="password" className="form-control mr-sm-2" name="password" placeholder="Password" value={form.password} onChange={updateField} autoComplete="off" />
 					<button type="submit" className="btn btn-primary" onClick={handleSubmit}>Log in</button>
 				</form>
 			</div>
@@ -81,10 +81,7 @@ const HomeNav = (props) => {
 					Already a user?
   			</button>
 			</div>
-
 		</div>
-
-
 	)
 }
 

@@ -1,84 +1,46 @@
 import React, { useState, useEffect } from 'react'
+import loadable from '@loadable/component'
 import spacetime from 'spacetime'
-import {
-	Modal,
-	Badge,
-	Form,
-	FormGroup,
-	Label,
-	Input,
-	Alert,
-	Card,
-	CardBody,
-	CardText,
-	CardHeader,
-	CardFooter,
-	Button,
-	ModalHeader,
-	ModalBody,
-	ButtonGroup,
-	ButtonDropdown,
-	DropdownToggle,
-	DropdownMenu,
-	DropdownItem,
-	Row,
-	Col,
-	Container,
-	Tooltip
-} from 'reactstrap'
-import { BsCheck, BsX } from 'react-icons/bs';
+import logo from '../../logo.svg'
+
 
 export default function TaskCard(props) {
 
-	// States
-	const [alert, setAlert] = useState({
-		isOpen: false,
-		color: "",
-		message: ""
-	});
-
-	const [modal, setModal] = useState(false)
+	// const spacetime = loadable.lib(() => import('spacetime'))
 
 	// Props
 	const {
 		task,
 		logs,
-		logged
+		logged,
+		consecutive
 	} = props
+
+	const {
+		modalTaskId,
+		setModalTaskId,
+	} = props.modalTaskId;
 
 	const {
 		refresh,
 		setRefresh
 	} = props.refresh;
 
-	// testing new progress
+	// Streak
 	const Streak = (props) => {
-		const {
-			color,
-			target,
-			today,
-			date
-		} = props;
-		const [tooltipOpen, setTooltipOpen] = useState(false);
-		const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
-		const style = {
+		var bg_color = "bg-light";
+		if (props.success != null) {
+			bg_color = props.success ? "bg-success" : "bg-danger";
+		}
+		var style = {
 			borderRadius: "10px",
-			border: today ? "2px solid #888" : "1px solid #888",
+			border: "2px solid #999",
 			width: "20px",
-			height: "20px",
-			padding: 0
+			height: "20px"
 		}
 		return (
-			<div className="col row">
-				<div id={target} className={"bg-" + color} style={style}></div>
-				<Tooltip
-					isOpen={tooltipOpen}
-					toggle={toggleTooltip}
-					target={target}
-					placement="top"
-				>
-					{date}
-				</Tooltip>
+			<div className="d-inline-block mx-1 mx-md-2 ">
+				<div style={style} className={bg_color}></div>
 			</div>
 		)
 	}
@@ -87,171 +49,86 @@ export default function TaskCard(props) {
 
 	// Use Effect Hook
 	useEffect(() => {
-		var items = []
-		var i;
-		let s = spacetime.now('America/New_York');
-
-		for (i = 9; i >= 0; i--) {
-			let day = s.clone().subtract(i, 'days')
-			let date = i === 0 ? "Today" : day.clone().format('{day-short}, {month-short} {date-ordinal}');
-			let flag = logs.some(log => {
-				let logDate = spacetime(log.createdAt);
-				if (logDate.isBetween(day.startOf('day'), day.endOf('day'))) {
-					let color = log.success ? "success" : "danger"
-					items.push(<Streak key={i} color={color} today={i === 0} date={date} target={task.title.replace(/ /g, '') + i} />)
-					return true
+		const ndays = 5;
+		const nlogs = logs.length;
+		var j = 0;
+		let s_tz = spacetime.now('America/New_York');
+		let strks = new Array(ndays);
+		for (var i = 0; i < ndays; i++) {
+			if (j > nlogs - 1) {
+				strks[i] = (<Streak key={"t-" + task._id + i} success={null} />);
+			} else {
+				let day_to_compare = spacetime(logs[nlogs - 1 - j].createdAt);
+				let d = s_tz.subtract(i, 'days');
+				if (day_to_compare.isBetween(d.startOf('day'), d.endOf('day'))) {
+					strks[i] = (<Streak key={"t-" + task._id + i} success={logs[j].success} />);
+					j += 1;
 				} else {
-					// console.log("False");
-					return false
+					strks[i] = (<Streak key={"t-" + task._id + i} success={null} />);
 				}
-			})
-			if (!flag) items.push(<Streak key={i} color="light" today={i === 0} date={date} target={task.title.replace(/ /g, '') + i} />)
+			}
+			setStreaks(strks)
 		}
-		setStreaks(items)
-	}, [])
+	}, [refresh])
 
-	// Form modal
-	const toggleLogModal = (e) => {
-		e.preventDefault()
-		setModal(true)
+	const openModal = (e) => {
+		e.preventDefault();
+		setModalTaskId(task._id);
+		$("#logFormModal").modal("show");
 	}
-
-	// Log Button
-	const logButton = (logged) ?
-		(<Button color="primary" disabled block>Log</Button>) :
-		(<Button onClick={toggleLogModal} color="primary" block>Log</Button>);
-
-	// Consecutive (streak) badge
-	const consecutiveBadge = (props.consecutive > 0) ?
-		(<Badge color="warning" pill>&#x1F525; {props.consecutive}</Badge>) :
-		null;
 
 	// Render
 	return (
-		<Card>
-			<CardHeader>
-				<Row>
-					<Col xs="8" className="align-self-center">
-						<span className="font-weight-bold">{task.title} {consecutiveBadge}</span>
-					</Col>
-					<Col className="text-right">
-						<TaskMenu tid={task._id} refresh={{ refresh, setRefresh }} />
-					</Col>
-				</Row>
-			</CardHeader>
-			<CardBody>
-				<Alert isOpen={alert.isOpen} color={alert.color}>{alert.message}</Alert>
-				<CardText><Badge pill>{task.category}</Badge></CardText>
-				<CardText>{task.description}</CardText>
-				<LogFormModal refresh={{ refresh, setRefresh }} tid={task._id} alert={{ alert, setAlert }} modal={modal} setModal={setModal} />
-				{/* Streak */}
-				<Container>
-					<div className="row">
+		<>
+			<div className="row shadow rounded py-1 my-3 align-items-center justify-content-around bg-white" >
+				<div className="col-4" style={{ cursor: "pointer" }} data-toggle="collapse" data-target={"#task-" + task._id} aria-expanded="false" aria-controls="collapse">{task.title}</div>
+				<div className="col-1 align-middle">
+					<div className="row align-items-center">
+						<span className="badge badge-pill badge-warning">
+							🔥
+					{consecutive}
+						</span>
+					</div>
+				</div>
+				<div className="col-5">
+					<div className="row align-items-center">
 						{streaks}
 					</div>
-				</Container>
-			</CardBody>
-			<CardFooter>
-				{logButton}
-			</CardFooter>
-		</Card>
+				</div>
+				<div className="col-2">
+					<div className="row align-items-center">
+						{logged ? (
+							<span className="text-muted py-2">Logged</span>
+						) : (
+								<button className="btn btn-light" onClick={openModal}>
+									<img src={logo} alt="logo" width="24px" height="24px" />
+								</button>
+							)}
+					</div>
+				</div>
+				<div className="collapse col-12" id={"task-" + task._id}>
+					<div className="row">
+						<div className="container">
+							<hr></hr>
+							<TaskDetails tid={task._id} refresh={{ refresh, setRefresh }} />
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
 	)
 }
 
 // Form Modal
-const LogFormModal = (props) => {
-	// Form State
-	const [form, setForm] = useState({
-		tid: props.tid,
-		comment: '',
-		success: null
-	})
-	// Update Form
-	const updateForm = (e) => {
-		setForm({
-			...form,
-			[e.target.name]: e.target.value
-		})
-	}
 
 
-	// Handle Logging
-	const handleLog = (e) => {
-		// prevent default behavior
-		e.preventDefault();
+const TaskDetails = (props) => {
 
-		// Request Options
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(form)
-		};
+	const {
+		refresh,
+		setRefresh
+	} = props.refresh;
 
-		// Make http request
-		fetch('/api/task/log', requestOptions)
-			.then(res => res.json())
-			.then(json => {
-				if (json.ok) { // No errors
-					props.alert.setAlert({
-						...alert,
-						isOpen: true,
-						color: "success",
-						message: json.message
-					})
-				} else {		// Server Side errors
-					props.alert.setAlert({
-						...alert,
-						isOpen: true,
-						color: "danger",
-						message: json.message
-					})
-				}
-				props.setModal(false)
-				props.refresh.setRefresh(!props.refresh.refresh);
-			})
-			.catch(err => { // Client side error
-				props.alert.setAlert({
-					...alert,
-					isOpen: true,
-					color: "danger",
-					message: "Something went wrong!"
-				})
-			})
-	}
-
-	const toggleModal = () => {
-		props.setModal(!props.modal)
-	}
-
-	// Render Modal
-	return (
-		<Modal isOpen={props.modal} toggle={toggleModal}>
-			<ModalHeader toggle={toggleModal}>Success?</ModalHeader>
-			<ModalBody>
-				<Form>
-					<FormGroup>
-						<ButtonGroup className="w-100">
-							<Button onClick={() => setForm({ ...form, success: true })} active={form.success} color={form.success ? "success" : "secondary"}><BsCheck /></Button>
-							<Button onClick={() => setForm({ ...form, success: false })} active={form.success === false} color="secondary"><BsX /></Button>
-						</ButtonGroup>
-					</FormGroup>
-					<FormGroup>
-						<Label for="comment">Comment</Label>
-						<Input name="comment" type="text" value={form.comment} onChange={updateForm} />
-					</FormGroup>
-					<Button onClick={handleLog} color="primary">Submit</Button>
-				</Form>
-			</ModalBody>
-		</Modal>
-	)
-}
-
-const TaskMenu = (props) => {
-
-	const [isOpen, setIsOpen] = useState(false)
-	const toggle = () => {
-		setIsOpen(!isOpen)
-	}
 	const handleDelete = (e) => {
 		e.preventDefault();
 		const requestOptions = {
@@ -264,22 +141,10 @@ const TaskMenu = (props) => {
 		fetch('/api/user/task', requestOptions)
 			.then(res => res.json())
 			.then(json => {
-				props.refresh.setRefresh(!props.refresh.refresh)
+				setRefresh(!refresh)
 			})
 	}
 	return (
-		<ButtonDropdown isOpen={isOpen} direction="left" toggle={toggle}>
-			<DropdownToggle
-				tag="span"
-				data-toggle="dropdown"
-				aria-expanded={isOpen}
-			>
-				<span className="font-weight-bold btn btn-light">&#8942;</span>
-			</DropdownToggle>
-			<DropdownMenu>
-				<DropdownItem header>Action</DropdownItem>
-				<DropdownItem className="text-danger" onClick={handleDelete}>Delete</DropdownItem>
-			</DropdownMenu>
-		</ButtonDropdown>
+		<button className="btn btn-danger" onClick={handleDelete}>Leave</button>
 	)
 }
