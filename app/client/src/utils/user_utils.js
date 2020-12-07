@@ -1,3 +1,5 @@
+//
+const BASE_URL = window.location.origin.toString();
 // User Login
 export const login = (email, pass, cb) => {
 	const requestOptions = {
@@ -36,9 +38,9 @@ export const login = (email, pass, cb) => {
 }
 
 // Logout
-export const logout = (cb) => {
+export const logout = () => {
 	return new Promise((resolve, reject) => {
-		fetch('api/user/logout')
+		fetch(`${BASE_URL}/api/user/logout`)
 			.then(res => {
 				if (res.ok) {
 					resolve(true)

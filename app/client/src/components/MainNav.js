@@ -9,11 +9,6 @@ export default function MainNav(props) {
 
 	const { user, setUser } = useContext(UserContext);
 
-	// Loading component
-	const Loading = () => {
-		return <></>
-	}
-
 	// Dynamic import
 	const DashNav = loadable(() => import('./Dashboard/DashNav'))
 	const HomeNav = loadable(() => import('./HomeNav'));
@@ -41,7 +36,8 @@ export default function MainNav(props) {
 	// Render
 	return (
 		<>
-			<div className="navbar navbar-dark bg-dark">
+			{user.authorized ? <DashNav /> : <HomeNav />}
+			{/* <div className="navbar navbar-dark bg-dark">
 				<Link to="/" className="navbar-brand" >
 					<img src={logo} width="32px" alt="logo" />
 				</Link>
@@ -49,7 +45,7 @@ export default function MainNav(props) {
 			</div>
 			<div className="container bg-light justify-content-center">
 				{LoginCollapse}
-			</div>
+			</div> */}
 		</>
 	)
 }

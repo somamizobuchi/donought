@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
+import { UserContext } from '../UserContext'
 import { useParams, useHistory } from "react-router-dom"
 
 export default function User() {
@@ -7,7 +8,35 @@ export default function User() {
 
 	const { id } = useParams();
 
-	const [user, setUser] = useState({});
+	const [profile, setProfile] = useState({});
+
+	const { user, setUser } = useContext(UserContext);
+
+	const handleFollow = (e) => {
+		e.preventDefault();
+		fetch(`${window.location.origin.toString()}/api/user/follow`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'Application/JSON' },
+			body: JSON.stringify({
+				_id: id
+			})
+		})
+			.then(res => {
+				if (res.status === 200) {
+					console.log("friend added");
+					return;
+				} else if (res.status === 409) {
+					console.log("friend already added")
+					return;
+				}
+				return;
+			})
+			.catch(err => {
+				console.log(err.message);
+				return;
+			})
+		return;
+	}
 
 	useEffect(() => {
 		fetch(`/api/user/${id}`, { method: 'GET' })
@@ -15,7 +44,7 @@ export default function User() {
 				if (res.status == 200) {
 					res.json()
 						.then(doc => {
-							setUser(doc.user);
+							setProfile(doc.user);
 						})
 				}
 				if (res.status == 404) {
@@ -30,12 +59,13 @@ export default function User() {
 			.catch(err => {
 				console.log(err.message);
 			})
-	}, [])
+	}, [id])
 
 	return (
 		<>
 			<h1>User</h1>
-			<h1>{user.firstname}</h1>
+			<h1>{profile.firstname}</h1>
+			{user._id === id ? (<></>) : (<button className="btn" onClick={handleFollow}>Follow</button>)}
 		</>
 	)
 }

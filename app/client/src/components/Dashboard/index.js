@@ -20,9 +20,7 @@ export default function Dashboard() {
 			<Switch>
 				<Route path="/profile" component={Profile} />
 				<Route path="/explore" component={Explore} />
-				<Route path="/user/:id">
-					<User />
-				</Route>
+				<Route path="/user/:id" component={User} />
 				<Route path="/" exact={true} component={Tasks} />
 				<Route path="*" component={NotFound} />
 			</Switch>

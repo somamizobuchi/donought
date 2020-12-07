@@ -115,7 +115,7 @@ router.get('/join/:tid', (req, res) => {
 			User.findByIdAndUpdate(
 				res.locals._id,
 				{
-					$addToSet: { tasks: { task: req.params.tid, comment: "hello" } }
+					$addToSet: { tasks: { task: req.params.tid } }
 				}, (err, user) => {
 					if (err) return res.status(500).json(err);
 					return res.status(200).json({

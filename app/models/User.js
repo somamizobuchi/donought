@@ -29,7 +29,27 @@ const userSchema = new Schema({
 			default: false
 		}
 	}],
-	timezone: String
+	timezone: String,
+	following: [{
+		user: {
+			type: Schema.Types.ObjectId,
+			ref: 'User'
+		},
+		accepted: {
+			type: Boolean,
+			default: false
+		}
+	}],
+	followers: [{
+		user: {
+			type: Schema.Types.ObjectId,
+			ref: 'User'
+		},
+		accepted: {
+			type: Boolean,
+			default: false
+		}
+	}]
 }, {
 	timestamps: true
 });
@@ -47,14 +67,12 @@ userSchema.statics.generateHash = async (password) => {
 }
 
 // compareHash(Password, Hash)
-userSchema.statics.compareHash = async (password, hash) => {
-	let same;
-	try {
-		same = await bcrypt.compare(password, hash);
-	} catch (err) {
-		throw new Error(err)
-	}
-	return same
+userSchema.statics.compareHash = (password, hash) => {
+	bcrypt.compare(password, hash)
+		.then(res => {
+			console.log(match);
+			return res;
+		})
 }
 
 // Export model

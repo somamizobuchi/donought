@@ -1,11 +1,15 @@
 import React, { useState, useContext } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 import { UserContext } from '../../UserContext'
 import { logout } from '../../utils/user_utils'
 import SearchBar from './SearchBar'
+import logo from '../../logo.svg'
+import Requests from './Requests'
 
-// Dashboard NavBar
-export default function DashNav(props) {
+
+const DashNav = (props) => {
+
+	const history = useHistory();
 
 	var { user, setUser } = useContext(UserContext)
 
@@ -19,10 +23,6 @@ export default function DashNav(props) {
 		}
 	]
 
-	const toggle = page => {
-		if (currentPage !== page) setCurrentPage(page);
-	}
-
 	const handleLogout = (e) => {
 		logout()
 			.then(() => {
@@ -30,40 +30,52 @@ export default function DashNav(props) {
 					...user,
 					authorized: false
 				});
+				history.push('/');
 			})
 			.catch(err => {
 				console.log(err.message)
 			})
 	}
 
+	const toggle = page => {
+		if (currentPage !== page) setCurrentPage(page);
+	}
 	return (
-		<>
-			<ul className="navbar-nav">
-				{navItems.map(navItem => (
-					<li className="nav-item" key={navItem.key}>
-						<Link
-							to={navItem.path}
-							className="text-light nav-link"
-							onClick={() => toggle(navItem.path)}
-						>
-							{navItem.title}
-						</Link>
-					</li>
-				))}
-			</ul>
-			<li className="nav-item">
-				<div className="dropdown nav-link">
-					<a className="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						{user.firstname}
+		<nav className="navbar navbar-expand-lg navbar-light bg-dark">
+			<Link to="/" className="navbar-brand" >
+				<img src={logo} width="32px" alt="logo" />
+			</Link>
+			<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span className="navbar-toggler-icon"></span>
+			</button>
+			<div className="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul className="navbar-nav mr-auto">
+					{navItems.map(navItem => (
+						<li className="nav-item" key={navItem.key}>
+							<Link
+								to={navItem.path}
+								className="text-light nav-link"
+								onClick={() => toggle(navItem.path)}
+							>
+								{navItem.title}
+							</Link>
+						</li>
+					))}
+				</ul>
+				<SearchBar />
+				<Requests />
+				<div className="dropdown">
+					<a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					</a>
-					<div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-						<Link to="/profile" className="dropdown-item">Profile</Link>
+					<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+						<Link to={'/user/' + user._id} className="dropdown-item">Profile</Link>
+						<div className="dropdown-divider"></div>
 						<a className="dropdown-item text-danger" onClick={handleLogout}>Logout</a>
 					</div>
 				</div>
-			</li>
-			<SearchBar />
-		</>
+			</div>
+		</nav>
 	)
 }
 
+export default DashNav;

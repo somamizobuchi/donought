@@ -1,4 +1,4 @@
-export const log_task = (params = { tid: String, success: Boolean, comment: String }) => {
+const log_task = (params = { tid: String, success: Boolean, comment: String }) => {
 	return new Promise((resolve, reject) => {
 		const requestOptions = {
 			method: 'POST',
@@ -31,6 +31,7 @@ export const log_task = (params = { tid: String, success: Boolean, comment: Stri
 				})
 			})
 	})
-
-
+}
+module.exports = {
+	log_task
 }
