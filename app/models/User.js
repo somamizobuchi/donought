@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
-const Task = require('./Task');
-
+// const File = require('./File')
+const Task = require('./Task')
 
 // User Schema 
 const userSchema = new Schema({
@@ -10,7 +10,18 @@ const userSchema = new Schema({
 	lastname: String,
 	email: String,
 	password: String,
-	_role: Number,
+	images: [{
+		type: Schema.Types.ObjectId,
+		ref: 'File'
+	}],
+	_role: {
+		type: Number,
+		enum: [
+			0, // user
+			1	 // admin
+		],
+		default: 0
+	},
 	tasks: [{
 		task: {
 			type: Schema.Types.ObjectID,

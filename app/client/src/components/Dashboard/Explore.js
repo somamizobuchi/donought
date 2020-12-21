@@ -26,15 +26,10 @@ const Explore = (props) => {
 			{/* <FormModal refresh={refresh} setRefresh={setRefresh} /> */}
 			{
 				tasks.map(task => (
-<<<<<<< HEAD
-					<div className="row py-3" >
-						<TaskCard refresh={refresh} setRefresh={setRefresh} key={task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
-=======
 					<div className="row mt-3" >
 						<div className="col">
 							<TaskCard refresh={refresh} setRefresh={setRefresh} key={"t" + task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
 						</div>
->>>>>>> myTaskCardRemake
 					</div>
 				))
 			}

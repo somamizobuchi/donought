@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../UserContext'
 import { useParams, useHistory } from "react-router-dom"
+import UploadForm from './Dashboard/UploadForm'
 
 export default function User() {
 
@@ -63,9 +64,8 @@ export default function User() {
 
 	return (
 		<>
-			<h1>User</h1>
 			<h1>{profile.firstname}</h1>
-			{user._id === id ? (<></>) : (<button className="btn" onClick={handleFollow}>Follow</button>)}
+			{user._id === id ? (<><UploadForm /></>) : (<button className="btn" onClick={handleFollow}>Follow</button>)}
 		</>
 	)
 }

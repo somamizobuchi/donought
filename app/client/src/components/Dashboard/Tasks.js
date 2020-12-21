@@ -69,13 +69,8 @@ export default function Tasks() {
 		)
 	} else {
 		return (
-<<<<<<< HEAD
-			<div className="row text-center mt-3">
-				<Button onClick={() => push('/explore')} color="primary">
-=======
 			<div className="col text-center mt-3">
 				<button className="btn btn-primary" onClick={() => push('/explore')}>
->>>>>>> myTaskCardRemake
 					Explore Donoughts!
 				</button>
 			</div>

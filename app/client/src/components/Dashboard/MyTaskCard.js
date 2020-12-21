@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import loadable from '@loadable/component'
 import spacetime from 'spacetime'
 import logo from '../../logo.svg'
 
 
 export default function TaskCard(props) {
-
-	// const spacetime = loadable.lib(() => import('spacetime'))
 
 	// Props
 	const {

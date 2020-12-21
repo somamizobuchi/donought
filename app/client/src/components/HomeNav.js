@@ -1,11 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../UserContext';
-<<<<<<< HEAD
-import { login } from './utils/user_utils'
 import { useHistory } from 'react-router-dom'
-=======
 import { login } from '../utils/user_utils'
->>>>>>> myTaskCardRemake
 
 const HomeNav = (props) => {
 

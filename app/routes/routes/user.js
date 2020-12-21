@@ -1,16 +1,17 @@
+// Utilities
 const router = require('express').Router();
-const User = require('../../models/User');
+const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const auth = require('./auth')
 const geoip = require('geoip-lite');
+// Models
 const Task = require('../../models/Task');
 const Log = require('../../models/TaskLog');
-const mongoose = require("mongoose");
-const { route } = require('./task');
-const { log_task } = require('../../client/src/utils/task_utils');
-
-
+const User = require('../../models/User');
+// Middleware
+const auth = require('./auth')
+// Routes
+const image = require('./image');
 
 
 // Create new User
@@ -473,61 +474,37 @@ router.get('/logs', auth, isFollowing, (req, res) => {
 			}
 		})
 })
+// Upload 
+router.use('/image', image);
 
 router.get('/:id', auth, (req, res) => {
 	const id = mongoose.Types.ObjectId(req.params.id);
-	User.find(
-		{
-			_id: id,
+	User.aggregate()
+		.match({ _id: id })
+		.lookup({
+			from: 'files',
+			localField: 'images',
+			foreignField: '_id',
+			as: 'images'
 		})
-		.select([
-			'firstname',
-			'lastname',
-			'logs.log',
-			'followers._id',
-			'following._id'
-		])
-		.populate({
-			path: 'logs.log',
-			limit: 50,
+		.project({
+			image: { $arrayElemAt: ['$images', 0] },
+			firstname: 1,
+			lastname: 1
 		})
-		.exec((err, doc) => {
-			console.log(doc);
-			console.log(err);
-			if (err) return res.status(500).json({
-				ok: false,
-				message: "Internal Server Error"
+		.exec()
+		.then(doc => {
+			return res.status(200).json({
+				ok: true,
+				user: doc
 			})
-			else {
-				return res.status(200).json({
-					ok: true,
-					doc
-				})
-			}
 		})
-	// User.findById(id, {
-	// 	$project: 
-	// })
-	// User.findById(id, (err, user) => {
-	// 	if (err) {
-	// 		return res.status(500).json({
-	// 			ok: false,
-	// 			message: "Internal Server Error"
-	// 		})
-	// 	} else {
-	// 		if (!user) {
-	// 			return res.status(404).json({
-	// 				ok: false,
-	// 				message: "User not found"
-	// 			})
-	// 		} else {
-	// 			return res.status(200).json({
-	// 				ok: true,
-	// 				user
-	// 			})
-	// 		}
-	// 	}
-	// })
+		.catch(err => {
+			return res.status(500).json({
+				ok: false,
+				message: err.message
+			})
+		})
 })
 
 

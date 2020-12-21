@@ -13,7 +13,8 @@ function App() {
 		firstname: '',
 		lastname: '',
 		authorized: false,
-		tasks: []
+		tasks: [],
+		image: null
 	});
 
 	useEffect(() => {

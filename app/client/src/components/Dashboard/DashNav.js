@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 import { UserContext } from '../../UserContext'
 import { logout } from '../../utils/user_utils'
@@ -14,6 +14,25 @@ const DashNav = (props) => {
 	var { user, setUser } = useContext(UserContext)
 
 	const [currentPage, setCurrentPage] = useState(useLocation().pathname);
+
+	const [profileImage, setProfileImage] = useState({});
+
+	useEffect(() => {
+		fetch('/api/user/image', {
+			method: 'GET'
+		})
+			.then(data => data.json())
+			.then(res => {
+				setProfileImage({
+					...profileImage,
+					image: res.data,
+					type: res.type
+				})
+			})
+			.catch(err => {
+				console.log(err.message);
+			})
+	}, []);
 
 	const navItems = [
 		{
@@ -66,6 +85,7 @@ const DashNav = (props) => {
 				<Requests />
 				<div className="dropdown">
 					<a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<img width="10px" height="10px" src={`data:${profileImage.type};base64,${profileImage.image}`} />
 					</a>
 					<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 						<Link to={'/user/' + user._id} className="dropdown-item">Profile</Link>
