@@ -4,7 +4,7 @@
   "description": "Client application for donought",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open --port 4000 --mode development --hot",
+    "start": "webpack-dev-server --config webpack.config.development.js",
     "build": "webpack -p"
   },
   "author": "Soma Mizobuchi",

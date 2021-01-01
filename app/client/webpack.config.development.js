@@ -3,38 +3,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
+	mode: "development",
 	entry: './src/index.js',
 	output: {
-		filename: '[name].bundle.js',
-		chunkFilename: '[name].bundle.js',
-		path: path.resolve(__dirname, 'dist'),
+		filename: 'bundle.[hash].js',
 		publicPath: '/'
 	},
+	devtool: 'inline-source-map',
 	module: {
 		rules: [
 			{
-				test: /\.m?js$/,
-				exclude: /(node_modules|bower_components)/,
-				use: {
-					loader: 'babel-loader'
-				}
+				test: /\.js$|jsx/,
+				exclude: /node_modules/,
+				use: ['babel-loader']
 			},
 			{
-				test: /\.s[ac]ss$/i,
-				use: [
-					'style-loader',
-					'css-loader',
-					{
-						loader: 'sass-loader',
-						options: {
-							implementation: require('sass'),
-						},
-					},
-				]
-			},
-			{
-				test: /\.css$/i,
-				use: ['style-loader', 'css-loader'],
+				test: /\.css$/,
+				use: ['style-loader', 'css-loader']
 			},
 			{
 				test: /\.(png|jpe?g|gif|svg|ico)$/i,
@@ -49,7 +34,7 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: './src/index.html'
 		}),
-		// new BundleAnalyzerPlugin()
+		new BundleAnalyzerPlugin()
 	],
 	optimization: {
 		splitChunks: {
@@ -63,6 +48,8 @@ module.exports = {
 		}
 	},
 	devServer: {
+		port: process.env.PORT || 4000,
+		historyApiFallback: true,
 		proxy: {
 			'/api': 'http://localhost:5000'
 		}
