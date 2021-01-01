@@ -1,10 +1,10 @@
-import React, { useState, useContext } from 'react'
-import { UserContext } from '../UserContext'
+import React, { useState } from 'react'
+import { useUserContext } from '../contexts/UserContext'
 import { login } from '../utils/user_utils'
 
 export default function LoginForm() {
 
-	const { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useUserContext();
 
 	const [form, setForm] = useState({
 		email: '',

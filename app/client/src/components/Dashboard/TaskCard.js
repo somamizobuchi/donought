@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react'
-import { UserContext } from '../../UserContext';
+import React, { useState } from 'react'
+import { useUserContext } from '../../contexts/UserContext';
 
 export default function TaskCard(props) {
 
-	const { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useUserContext();
 
 	// handling delete
 	const handleDelete = (e) => {

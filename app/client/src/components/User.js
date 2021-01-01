@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { UserContext } from '../UserContext'
+import React, { useEffect, useState } from 'react'
+import { useUserContext } from '../contexts/UserContext'
 import { useParams, useHistory } from "react-router-dom"
 import UploadForm from './Dashboard/UploadForm'
 
@@ -11,7 +11,7 @@ export default function User() {
 
 	const [profile, setProfile] = useState({});
 
-	const { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useUserContext();
 
 	const handleFollow = (e) => {
 		e.preventDefault();

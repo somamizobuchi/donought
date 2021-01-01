@@ -5,10 +5,6 @@ import { log_task } from '../../utils/task_utils'
 // Log Form in a Modal
 const LogFormModal = (props) => {
 
-	const {
-		refresh,
-		setRefresh
-	} = props.refresh;
 
 	// Use Effect
 	useEffect(() => {
@@ -42,11 +38,11 @@ const LogFormModal = (props) => {
 		log_task(form)
 			.then(() => {
 				$("#logFormModal").modal("hide");
-				setRefresh(!refresh);
+				// setRefresh(!refresh);
 			})
 			.catch(err => {
 				$("#logFormModal").modal("hide");
-				setRefresh(!refresh);
+				// setRefresh(!refresh);
 			})
 	}
 

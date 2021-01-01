@@ -36,7 +36,7 @@ export default function Requests(props) {
 
 	return (
 		<>
-			<div className="dropdown">
+			<div className="dropdown d-none d-lg-block">
 				<a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					Requests
 				</a>

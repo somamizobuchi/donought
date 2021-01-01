@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react'
-import { UserContext } from '../UserContext';
+import React, { useState } from 'react'
+import { useUserContext } from '../contexts/UserContext';
 import { useHistory } from 'react-router-dom'
 import { login } from '../utils/user_utils'
 
 const HomeNav = (props) => {
 
-	const { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useUserContext();
 
 	const [form, setState] = useState({
 		email: '',

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { UserContext } from '../../UserContext'
 import {
 	Switch,
 	Route
@@ -7,6 +6,7 @@ import {
 import loadable from '@loadable/component'
 import Profile from './Profile'
 import NotFound from '../NotFound'
+import DashNav from './DashNav'
 // Dynamic imports
 const User = loadable(() => import('../User'));
 const Tasks = loadable(() => import('./Tasks'));
@@ -16,14 +16,17 @@ export default function Dashboard() {
 
 	// Render
 	return (
-		<div className="container">
-			<Switch>
-				<Route path="/profile" component={Profile} />
-				<Route path="/explore" component={Explore} />
-				<Route path="/user/:id" component={User} />
-				<Route path="/" exact={true} component={Tasks} />
-				<Route path="*" component={NotFound} />
-			</Switch>
-		</div>
+		<>
+			<DashNav />
+			<div className="container">
+				<Switch>
+					<Route path="/profile" component={Profile} />
+					<Route path="/explore" component={Explore} />
+					<Route path="/user/:id" component={User} />
+					<Route path="/" exact={true} component={Tasks} />
+					<Route path="*" component={NotFound} />
+				</Switch>
+			</div>
+		</>
 	);
 }

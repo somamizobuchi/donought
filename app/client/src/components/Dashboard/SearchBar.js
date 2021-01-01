@@ -56,7 +56,7 @@ const SearchBar = (props) => {
 		zIndex: 3
 	}
 	return (
-		<form className="w-100 position-relative" onSubmit={handleSearch}>
+		<form className="w-100 position-relative d-none d-lg-block" onSubmit={handleSearch}>
 			<div className="input-group">
 				<label className="sr-only" htmlFor="navSearchBar">Search</label>
 				<input

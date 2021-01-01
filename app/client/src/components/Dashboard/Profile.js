@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
-import { UserContext } from '../../UserContext'
+import { useUserContext } from '../../contexts/UserContext'
 import { delete_user } from '../../utils/user_utils'
 
 export default function Profile(props) {
 
-	var { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useUserContext();
 
 	const handleDelete = (e) => {
 		e.preventDefault();
