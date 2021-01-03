@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
 
 export default function TaskForm(props) {
@@ -31,12 +30,6 @@ export default function TaskForm(props) {
 		// Make http request
 		fetch('/api/task/new', requestOptions)
 			.then(res => res.json())
-			.then(res => {
-				// toggle Modal
-				props.toggle();
-				// Refresh parent
-				props.setRefresh(true);
-			})
 			.catch(err => {
 				console.log(err.message);
 			})
@@ -45,21 +38,15 @@ export default function TaskForm(props) {
 	// render
 	return (
 		<div>
-			<Form>
-				<FormGroup>
-					<Label for="title">Title</Label>
-					<Input value={form.title} type="text" name="title" onChange={updateField}></Input>
-				</FormGroup>
-				<FormGroup>
-					<Label for="category">Category</Label>
-					<Input value={form.category} type="text" name="category" onChange={updateField}></Input>
-				</FormGroup>
-				<FormGroup>
-					<Label for="description">Description</Label>
-					<Input value={form.description} type="text" name="description" onChange={updateField}></Input>
-				</FormGroup>
-			</Form>
-			<Button onClick={handleSubmit}>Create</Button>
+			<form>
+				<label htmlFor="title">Title</label>
+				<input value={form.title} type="text" name="title" onChange={updateField}></input>
+				<label htmlFor="category">Category</label>
+				<input value={form.category} type="text" name="category" onChange={updateField}></input>
+				<label htmlFor="description">Description</label>
+				<input value={form.description} type="text" name="description" onChange={updateField}></input>
+			</form>
+			<button onClick={handleSubmit}>Create</button>
 		</div>
 	)
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import TaskCard from './TaskCard'
-// import TaskForm from './TaskForm'
+import TaskForm from './TaskForm'
 
 const Explore = (props) => {
 
@@ -23,7 +23,7 @@ const Explore = (props) => {
 	// Render: 
 	return (
 		<>
-			{/* <FormModal refresh={refresh} setRefresh={setRefresh} /> */}
+			<TaskForm />
 			{
 				tasks.map(task => (
 					<div className="row mt-3" >

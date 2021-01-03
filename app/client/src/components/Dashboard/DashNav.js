@@ -13,6 +13,9 @@ const DashNav = (props) => {
 
 	const { user, setUser } = useUserContext()
 
+	const [isOpen, setIsOpen] = useState(false);
+
+	const [navCollapseClassNames, setNavCollapseClassNames] = useState("nav-collapse");
 	// const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
 	const [profileImage, setProfileImage] = useState({
@@ -63,50 +66,51 @@ const DashNav = (props) => {
 			})
 	}
 
-	const toggle = page => {
-		if (currentPage !== page) setCurrentPage(page);
+	const handleToggle = e => {
+		e.preventDefault();
+		if (isOpen) {
+			setNavCollapseClassNames("nav-collapse nav-collapse-slide-out");
+			setIsOpen(!isOpen)
+		} else {
+			setNavCollapseClassNames("nav-collapse nav-collapse-slide-in");
+			setIsOpen(!isOpen);
+		}
 	}
+
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-dark">
-			<Link to="/" className="navbar-brand" >
-				<img src={logo} width="32px" alt="logo" />
-			</Link>
-			<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span className="navbar-toggler-icon"></span>
-			</button>
-
-			{/* Display under md */}
-
-			{/* Navbar Collapse */}
-			<div className="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul className="navbar-nav mr-auto">
-					{navItems.map(navItem => (
-						<li className="nav-item" key={navItem.key}>
-							<Link
-								to={navItem.path}
-								className="text-light nav-link"
-							// onClick={() => toggle(navItem.path)}
-							>
-								{navItem.title}
-							</Link>
+		<nav className="nav-main bg-dark position-relative">
+			<div className="container d-flex-col">
+				<div className="nav-controls">
+					<div className="nav-logo col-1">
+						<Link to="/">
+							<img src={logo} alt="logo" />
+						</Link>
+					</div>
+					<button className="btn align-self-center nav-toggle" id="nav-toggle" onClick={handleToggle}>
+						Toggle
+				</button>
+				</div>
+				<div className={navCollapseClassNames}>
+					<span onClick={handleToggle}>X</span>
+					<ul className="container">
+						<li>
+							<SearchBar />
 						</li>
-					))}
-				</ul>
-			</div>
-			<SearchBar />
-			<Requests className="d-none d-md-block" />
-			<div className="dropdown d-none d-md-block">
-				<a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<img width="10px" height="10px" src={`data:${profileImage.type};base64,${profileImage.image}`} />
-				</a>
-				<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-					<Link to={'/user/' + user._id} className="dropdown-item">Profile</Link>
-					<div className="dropdown-divider"></div>
-					<a className="dropdown-item text-danger" onClick={handleLogout}>Logout</a>
+						{navItems.map(navItem => (
+							<li key={navItem.key}>
+								<Link
+									to={navItem.path}
+									className="text-light nav-link"
+								>
+									{navItem.title}
+								</Link>
+							</li>
+						))}
+					</ul>
 				</div>
 			</div>
 		</nav>
+
 	)
 }
-
 export default DashNav;

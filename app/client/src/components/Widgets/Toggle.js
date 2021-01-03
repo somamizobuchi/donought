@@ -1,11 +1,23 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import './Toggle.css'
 
 const Toggle = (props) => {
 
+	const [checked, setChecked] = useState(false);
+	useEffect(() => {
+		setChecked(props.initial)
+	}, [props.initial])
+
+	const handleToggle = (e) => {
+		setChecked(e.target.checked);
+		props.setState({
+			...props.state,
+			[e.target.name]: e.target.checked
+		})
+	}
 	return (
 		<>
-			<input name={props.name} type="checkbox" id="toggle" value={props.value} checked={props.checked} onChange={props.onChange} />
+			<input name={props.name} type="checkbox" id="toggle" checked={checked} value={checked} onChange={handleToggle} />
 			<label htmlFor="toggle">Toggle</label>
 		</>
 	)
