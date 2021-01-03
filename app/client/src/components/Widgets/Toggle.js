@@ -4,12 +4,13 @@ import './Toggle.css'
 const Toggle = (props) => {
 
 	const [checked, setChecked] = useState(false);
+
 	useEffect(() => {
 		setChecked(props.initial)
 	}, [props.initial])
 
 	const handleToggle = (e) => {
-		setChecked(e.target.checked);
+		setChecked(!checked);
 		props.setState({
 			...props.state,
 			[e.target.name]: e.target.checked

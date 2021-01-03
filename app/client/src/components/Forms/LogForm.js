@@ -39,14 +39,14 @@ export default function LogForm({ tid, success }) {
 	return (
 		<form className="log-form" onSubmit={handleLog}>
 			<div className="form-group align-middle">
-				<p><strong>Status:</strong> {success ? "Completed" : "Incomplete"}</p>
+				<p><strong>Status:</strong> {form.success ? "Completed" : "Incomplete"}</p>
 				<Toggle name="success" initial={success} state={form} setState={setForm} />
 			</div>
 			<div className="form-group">
 				<input className="form-control" name="comment" type="text" value={form.comment} onChange={updateForm} placeholder="Anything to say?" />
 			</div>
 			<div className="form-group">
-				<button className="btn" type="submit" disabled>Submit</button>
+				<button className="btn" type="submit">Submit</button>
 			</div>
 		</form>
 	)

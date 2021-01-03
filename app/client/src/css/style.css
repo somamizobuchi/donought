@@ -3,6 +3,7 @@
 	--bg-color-dark: #3e3e3e;
 	--ui-color-dark: #5e5e5e;
 	--text-color-light: #fff;
+	--text-color-light-hover: #eee;
 	--text-color-dark: #000;
 	--color-light: #f8f8f8;
 	--color-light-hover: #e8e8e8;
@@ -10,6 +11,7 @@
 	--color-dark-hover: #322f3d;
 	--color-primary: #3498db;
 	--color-primary-hover: #2980b9;
+	--color-success: #00b16a;
 }
 
 body {
@@ -43,6 +45,15 @@ body {
 	flex-direction: row;
 	align-items: flex-start;
 	justify-content: space-between;
+}
+.nav-toggle {
+	font-size: 2rem;
+	color: var(--text-color-light);
+	cursor: pointer;
+}
+.nav-toggle:hover,
+.nav-toggle:focus {
+	color: var(--text-color-light-hover);
 }
 .nav-logo img {
 	display: block;
@@ -256,7 +267,7 @@ body {
 	background-color: var(--ui-color-dark);
 }
 .bg-success {
-	background-color: green;
+	background-color: var(--color-success);
 }
 .bg-danger {
 	background-color: red;
@@ -328,10 +339,10 @@ body {
 	outline: none;
 }
 .btn-round {
+	font-size: 1rem;
 	text-align: center;
 	height: 1.5rem;
 	width: 1.5rem;
-	padding: 0;
 	border-radius: 50%;
 	background-color: #bbb;
 	overflow: hidden;

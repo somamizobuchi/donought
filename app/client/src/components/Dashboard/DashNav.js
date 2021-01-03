@@ -5,6 +5,7 @@ import { logout } from '../../utils/user_utils'
 import SearchBar from './SearchBar'
 import logo from '../../logo.svg'
 import Requests from './Requests'
+import { FiMenu } from 'react-icons/fi'
 
 
 const DashNav = (props) => {
@@ -16,7 +17,6 @@ const DashNav = (props) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const [navCollapseClassNames, setNavCollapseClassNames] = useState("nav-collapse");
-	// const [currentPage, setCurrentPage] = useState(useLocation().pathname);
 
 	const [profileImage, setProfileImage] = useState({
 		image: localStorage.getItem('profileImageBase64') || null,
@@ -78,7 +78,7 @@ const DashNav = (props) => {
 	}
 
 	return (
-		<nav className="nav-main bg-dark position-relative">
+		<nav className="nav-main bg-ui-dark position-relative">
 			<div className="container d-flex-col">
 				<div className="nav-controls">
 					<div className="nav-logo col-1">
@@ -86,9 +86,7 @@ const DashNav = (props) => {
 							<img src={logo} alt="logo" />
 						</Link>
 					</div>
-					<button className="btn align-self-center nav-toggle" id="nav-toggle" onClick={handleToggle}>
-						Toggle
-				</button>
+					<FiMenu className="align-self-center nav-toggle" onClick={handleToggle} />
 				</div>
 				<div className={navCollapseClassNames}>
 					<span onClick={handleToggle}>X</span>

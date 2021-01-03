@@ -113,7 +113,7 @@ export default function TaskTable(props) {
 						<th>Last 5</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody >
 					{tasks.map(task => (
 						<TaskTableRow
 							key={"t" + task.task._id}
