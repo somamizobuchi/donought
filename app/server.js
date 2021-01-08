@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const apiRouter = require('./routes/api');
 const cors = require('cors');
 const chalk = require('chalk');
 const consecutiveCron = require('./utils/crons/updateConsecutive');
+const apiRouter = require('./api/index');
 
 // Environment Variables 
 require('dotenv').config();

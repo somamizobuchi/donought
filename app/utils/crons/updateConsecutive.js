@@ -10,7 +10,7 @@ module.exports = new cronJob('0 0 * * *', () => {
 		.find({
 			timezone: 'America/New_York'
 		})
-		.select('tasks._id tasks.logs tasks.consecutive tasks.isLogged')
+		.select('tasks._id tasks.logs tasks.streak tasks.isLogged')
 		.populate({
 			path: 'tasks.logs',
 			match: {
@@ -29,7 +29,7 @@ module.exports = new cronJob('0 0 * * *', () => {
 				user.tasks.forEach(task => {
 					// No log was posted yesterday...
 					if (task.logs.length < 1) {
-						task.consecutive = 0;
+						task.streak = 0;
 					}
 					// Reset isLogged to false
 					task.isLogged = false;
@@ -37,9 +37,9 @@ module.exports = new cronJob('0 0 * * *', () => {
 				// Save users
 				user.save(err => {
 					if (err) console.log(err);
-					console.log("Cron job complete!");
 				})
 			});
+			console.log("Cron job complete!");
 		})
 },
 	null, 	// on complete

@@ -1,48 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 import { useUserContext } from '../../contexts/UserContext'
-import { logout } from '../../utils/user_utils'
 import SearchBar from './SearchBar'
 import logo from '../../logo.svg'
-import Requests from './Requests'
-import { FiMenu } from 'react-icons/fi'
+import { FiSearch, FiMenu, FiX } from 'react-icons/fi'
 
 
 const DashNav = (props) => {
 
 	const history = useHistory();
 
-	const { user, setUser } = useUserContext()
+	const { currentUser, signOut } = useUserContext()
 
-	const [isOpen, setIsOpen] = useState(false);
-
+	const [navCollapseOpen, setNavCollapseOpen] = useState(false);
 	const [navCollapseClassNames, setNavCollapseClassNames] = useState("nav-collapse");
+	const [navCollapseBg, setNavCollapseBg] = useState("nav-collapse-bg");
+	const [searchBarOpen, setSearchBarOpen] = useState(false);
 
-	const [profileImage, setProfileImage] = useState({
-		image: localStorage.getItem('profileImageBase64') || null,
-		type: localStorage.getItem('profileImageType') || null,
-	});
-
-	useEffect(() => {
-		if (!localStorage.getItem('profileImageBase64')) {
-			fetch('/api/user/image', {
-				method: 'GET'
-			})
-				.then(data => data.json())
-				.then(res => {
-					localStorage.setItem("profileImageBase64", res.data);
-					localStorage.setItem("profileImageType", res.type);
-					setProfileImage({
-						...profileImage,
-						image: res.data,
-						type: res.type
-					})
-				})
-				.catch(err => {
-					console.log(err.message);
-				})
-		}
-	}, []);
 
 	const navItems = [
 		{
@@ -52,62 +26,71 @@ const DashNav = (props) => {
 		}
 	]
 
-	const handleLogout = (e) => {
-		logout()
+	const handleSignout = (e) => {
+		e.preventDefault();
+		signOut()
 			.then(() => {
-				setUser({
-					...user,
-					authorized: false
-				});
-				history.push('/');
-			})
-			.catch(err => {
-				console.log(err.message)
+				history.replace('/');
 			})
 	}
 
-	const handleToggle = e => {
-		e.preventDefault();
-		if (isOpen) {
+	const handleNavToggle = e => {
+		if (navCollapseOpen) {
+			setNavCollapseBg("nav-collapse-bg");
 			setNavCollapseClassNames("nav-collapse nav-collapse-slide-out");
-			setIsOpen(!isOpen)
+			setNavCollapseOpen(!navCollapseOpen)
 		} else {
 			setNavCollapseClassNames("nav-collapse nav-collapse-slide-in");
-			setIsOpen(!isOpen);
+			setNavCollapseBg("nav-collapse-bg nav-collapse-bg-show");
+			setSearchBarOpen(false);
+			setNavCollapseOpen(!navCollapseOpen);
 		}
 	}
 
 	return (
 		<nav className="nav-main bg-ui-dark position-relative">
-			<div className="container d-flex-col">
-				<div className="nav-controls">
-					<div className="nav-logo col-1">
-						<Link to="/">
-							<img src={logo} alt="logo" />
-						</Link>
-					</div>
-					<FiMenu className="align-self-center nav-toggle" onClick={handleToggle} />
+			<div className="container nav-container">
+				<div className="nav-logo col-1">
+					<Link to="/">
+						<img src={logo} alt="logo" />
+					</Link>
 				</div>
-				<div className={navCollapseClassNames}>
-					<span onClick={handleToggle}>X</span>
-					<ul className="container">
-						<li>
-							<SearchBar />
-						</li>
-						{navItems.map(navItem => (
-							<li key={navItem.key}>
-								<Link
-									to={navItem.path}
-									className="text-light nav-link"
-								>
-									{navItem.title}
-								</Link>
+				<div className="nav-controls">
+					<FiSearch className="nav-control-item" onClick={() => setSearchBarOpen(true)} />
+					<FiMenu className="nav-control-item" onClick={handleNavToggle} />
+				</div>
+				<div className={navCollapseBg} onClick={handleNavToggle}>
+					<span className="nav-close" onClick={handleNavToggle}><FiX /></span>
+					<div className={navCollapseClassNames} onClick={e => e.stopPropagation()}>
+						<div className="nav-profile">
+							<img src={currentUser.picture} alt="" />
+							<Link to={`/user/${currentUser._id}`} className="btn">
+								<p>{currentUser.firstname}</p>
+							</Link>
+						</div>
+						<ul className="container">
+							{navItems.map(navItem => (
+								<li key={navItem.key}>
+									<Link
+										to={navItem.path}
+										className="text-light nav-link"
+										onClick={handleNavToggle}
+									>
+										{navItem.title}
+									</Link>
+								</li>
+							))}
+							<li>
+								<a href="" className="btn bg-danger" onClick={handleSignout}>
+									Sign out
+							</a>
 							</li>
-						))}
-					</ul>
+						</ul>
+					</div>
 				</div>
 			</div>
-		</nav>
+			<SearchBar open={searchBarOpen} setOpen={setSearchBarOpen} />
+		</nav >
 
 	)
 }

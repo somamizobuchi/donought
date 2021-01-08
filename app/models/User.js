@@ -1,19 +1,22 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
-// const File = require('./File')
-const Task = require('./Task')
 
 // User Schema 
 const userSchema = new Schema({
-	firstname: String,
-	lastname: String,
+	googleId: String,
+	firstname: {
+		type: String,
+		required: true
+	},
+	lastname: {
+		type: String,
+		required: true
+	},
 	email: String,
-	password: String,
-	images: [{
-		type: Schema.Types.ObjectId,
-		ref: 'File'
-	}],
+	picture: {
+		type: String,
+		default: ''
+	},
 	_role: {
 		type: Number,
 		enum: [
@@ -27,7 +30,7 @@ const userSchema = new Schema({
 			type: Schema.Types.ObjectID,
 			ref: 'Task'
 		},
-		consecutive: {
+		streak: {
 			type: Number,
 			default: 0
 		},
@@ -41,50 +44,9 @@ const userSchema = new Schema({
 		}
 	}],
 	timezone: String,
-	following: [{
-		user: {
-			type: Schema.Types.ObjectId,
-			ref: 'User'
-		},
-		accepted: {
-			type: Boolean,
-			default: false
-		}
-	}],
-	followers: [{
-		user: {
-			type: Schema.Types.ObjectId,
-			ref: 'User'
-		},
-		accepted: {
-			type: Boolean,
-			default: false
-		}
-	}]
 }, {
 	timestamps: true
 });
-
-// generateHash(password)
-userSchema.statics.generateHash = async (password) => {
-	const saltRounds = 10;
-	let hash;
-	try {
-		hash = await bcrypt.hash(password, saltRounds)
-	} catch (err) {
-		throw new Error(err);
-	}
-	return hash
-}
-
-// compareHash(Password, Hash)
-userSchema.statics.compareHash = (password, hash) => {
-	bcrypt.compare(password, hash)
-		.then(res => {
-			console.log(match);
-			return res;
-		})
-}
 
 // Export model
 module.exports = mongoose.model('User', userSchema)

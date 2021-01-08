@@ -24,15 +24,13 @@ const Explore = (props) => {
 	return (
 		<>
 			<TaskForm />
-			{
-				tasks.map(task => (
-					<div className="row mt-3" >
-						<div className="col">
-							<TaskCard refresh={refresh} setRefresh={setRefresh} key={"t" + task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
-						</div>
-					</div>
-				))
-			}
+			<ul className="task-list">
+				{
+					tasks.map(task => (
+						<TaskCard refresh={refresh} setRefresh={setRefresh} key={"t" + task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />
+					))
+				}
+			</ul>
 		</>
 	)
 }

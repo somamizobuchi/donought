@@ -1,8 +1,7 @@
 import React from 'react'
-import LoginForm from './LoginForm'
-import RegisterForm from './RegisterForm'
 import Footer from './Footer'
 import {
+	Link,
 	Switch,
 	Route
 } from "react-router-dom";
@@ -12,50 +11,48 @@ import HomeNav from './HomeNav'
 
 
 export default function Home(props) {
+
 	// Main Component
 	return (
 		<div>
 			<HomeNav />
-			<div className="jumbotron jumbotron-fluid">
-				<div className="container">
-					<div className="row justify-content-center">
-						<Switch>
-							<Route path="/login" exact={true}>
-								<LoginForm />
-							</Route>
-							<Route path="/" exact={true}>
-								<div className="col-sm-8 col-md-auto py-3 mr-none mr-lg-5">
-									<Panel />
-								</div>
-								<div className="col-xs-8 col-sm-7 col-md-6 col-lg-5 col-xl-4">
-									<RegisterForm />
-								</div>
-							</Route>
-							<Route path="*">
-								<NotFound />
-							</Route>
-						</Switch>
-					</div>
-				</div>
-			</div>
+			<Switch>
+				<Route path="/" exact component={HomeContent} />
+				<Route path="*" component={NotFound} />
+			</Switch>
 			<Footer />
 		</div >
 	)
 }
 
-const Panel = (props) => {
+const HomeContent = (props) => {
 	return (
-		<>
-			<h2 className="text-center text-md-left mb-4">Donought</h2>
-			<div className="text-center text-md-left mb-3">
-				<h5><BsCheckBox className="mr-2" />Do more, by doing less</h5>
+		<main>
+			<div className="hero">
+				<div className="hero-text">
+					<h1>Donought - (DO)<sub>0</sub></h1>
+					<p>Do less, not more</p>
+				</div>
 			</div>
-			<div className="text-center text-md-left mb-3">
-				<h5><BsXSquare className="mr-2" />An "anti" to-do list</h5>
+			<InfoCard />
+		</main>
+	)
+}
+
+const InfoCard = (props) => {
+	return (
+		<div className="info-card bg-ui-dark">
+			<div className="container d-flex-col">
+				<h2>
+					What is Donought?
+				</h2>
+				<p>
+					Donought is a simple app to help you keep track of unwanted habits.
+				</p>
+				<Link to="/about" className="btn bg-primary info-card-btn">
+					Learn More
+				</Link>
 			</div>
-			<div className="text-center text-md-left mb-3">
-				<h5><BsPeopleFill className="mr-2" />Community support</h5>
-			</div>
-		</>
+		</div>
 	)
 }

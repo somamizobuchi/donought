@@ -42,16 +42,10 @@ export default function TaskCard(props) {
 
 	// Render
 	return (
-		<div className="col-sm-8 col-md-5 col-lg-4">
-			<div className="card">
-				<div className="card-header">{props.title} <div className="badge badge-pill">&#x1F464; {props.numUsers}</div></div>
-				<div className="card-body">
-					<div className="card-text"><div className="badge badge-pill">{props.cat}</div></div>
-					<div className="card-text">{props.desc}</div>
-					<button className="btn btn-danger" onClick={handleDelete}>Delete</button>
-					<button className="btn btn-success" onClick={handleJoin}>Join</button>
-				</div>
-			</div>
-		</div>
+		<li className="task-item bg-ui-dark">
+			<div className="task-title">{props.title}</div>
+			<span>&#x1F464; {props.numUsers}</span>
+			<div className="btn bg-primary" onClick={handleJoin}>Join</div>
+		</li>
 	)
 }

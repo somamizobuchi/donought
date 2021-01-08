@@ -1,7 +1,8 @@
 const router = require('express').Router();
-const auth = require('./auth');
-router.use('*', auth);
-const isAdmin = require('./admin');
+const verifyToken = require('../middleware/verifyToken')
+// const auth = require('./auth');
+// router.use('*', auth);
+// const isAdmin = require('./admin');
 const moment = require('moment')
 // Models
 const User = require('../../models/User');
@@ -26,7 +27,7 @@ router.get('/', (req, res) => {
 
 
 // New Task
-router.post('/new', isAdmin, (req, res) => {
+router.post('/new', (req, res) => {
 	// Determine if task w title exists
 	Task.exists({ title: req.body.title }, (err, exists) => {
 		if (err) {
@@ -64,7 +65,7 @@ router.post('/new', isAdmin, (req, res) => {
 })
 
 // Delete task
-router.delete('/delete', isAdmin, (req, res) => {
+router.delete('/delete', (req, res) => {
 	const task_id = req.body.tid;
 	// Deleting task from tasks
 	Task.findByIdAndDelete(task_id, (err, doc) => {
@@ -94,16 +95,17 @@ router.delete('/delete', isAdmin, (req, res) => {
 })
 
 // Join a Task
-router.get('/join/:tid', (req, res) => {
+router.get('/join/:tid', verifyToken, (req, res) => {
+	const _id = res.locals.user._id
 	Task.findByIdAndUpdate({ _id: req.params.tid }, {
-		$addToSet: { users: res.locals._id }
+		$addToSet: { users: _id }
 	}, (err, task) => {
 		if (err) return res.status(500).send(err);
 		if (!task) return res.status(404).json({
 			ok: false,
 			message: "no tasks found"
 		})
-		User.exists({ _id: res.locals._id, 'tasks.task': req.params.tid }, (err, exists) => {
+		User.exists({ _id: _id, 'tasks.task': req.params.tid }, (err, exists) => {
 			if (err) return res.status(500).json({
 				ok: false,
 				message: "Internal Server Error"
@@ -113,7 +115,7 @@ router.get('/join/:tid', (req, res) => {
 				message: "You have already joined this Donought"
 			})
 			User.findByIdAndUpdate(
-				res.locals._id,
+				_id,
 				{
 					$addToSet: { tasks: { task: req.params.tid } }
 				}, (err, user) => {
@@ -129,71 +131,64 @@ router.get('/join/:tid', (req, res) => {
 
 
 // Add a log
-router.post('/log', (req, res) => {
-	const serverErrMsg = {
-		ok: false,
-		message: "Internal Server Error!"
-	}
+router.post('/log', verifyToken, (req, res) => {
+	const uid = res.locals.user._id;
+	const tid = req.body.tid;
+	console.log(tid);
 	Log.findOne({
-		user: res.locals._id,
-		task: req.body.tid
+		user: uid,
+		task: tid
 	})
 		.sort({ createdAt: -1 })
-		.exec((err, log) => {
-			if (err) return res.status(500).json(serverErrMsg);
+		.exec()
+		.then(log => {
+			console.log("Checking if log already exists for this day...")
 			if (log) {
-				const startOfDay = moment().startOf('day');
-				const createdAt = moment(log.createdAt);
+				const timezone = "America/New_York"
+				const startOfDay = moment.tz(timezone).startOf('day');
+				const createdAt = moment.tz(log.createdAt, timezone);
 				// Check if already logged today
-				if (createdAt.isAfter(startOfDay)) return res.status(409).json({
-					ok: false,
-					message: "You have already submitted a log for this task today"
-				})
+				if (createdAt.isAfter(startOfDay)) throw { code: 409 };
 			}
-
-			// Create a log 
+			return
+		})
+		.then(() => {
+			console.log("Creating new log...");
 			const newLog = new Log({
 				success: req.body.success,
 				comment: req.body.comment,
-				task: req.body.tid,
-				user: res.locals._id
-			});
-
-			// Save Log
-			newLog.save((err, prod) => {
-				if (err) return res.status(500).json(serverErrMsg)
-				if (prod._id) {
-					const logID = prod._id
-					let update;
-					if (req.body.success) {
-						update = {
-							$addToSet: { 'tasks.$.logs': logID },
-							$inc: { 'tasks.$.consecutive': 1 },
-							$set: {
-								'tasks.$.isLogged': true
-							}
-						}
-					} else {
-						update = {
-							$addToSet: { 'tasks.$.logs': logID },
-							$set: {
-								'tasks.$.consecutive': 0,
-								'tasks.$.isLogged': true
-							}
-						}
-					}
-					User.findOneAndUpdate({
-						_id: res.locals._id,
-						tasks: { $elemMatch: { task: req.body.tid } }
-					}, update, (err, doc) => {
-						if (err) return res.status(500).json(serverErrMsg)
-						res.status(200).json({
-							ok: true,
-							message: "Successfully added log"
-						})
-					})
-				}
+				task: tid,
+				user: uid
 			})
+			return newLog.save()
+		})
+		.then(log => {
+			console.log("adding log to user");
+			const update = req.body.success ? {
+				$addToSet: { 'tasks.$.logs': log._id },
+				$inc: { 'tasks.$.streak': 1 },
+				$set: {
+					'tasks.$.isLogged': true
+				}
+			} : {
+					$addToSet: { 'tasks.$.logs': log._id },
+					$set: {
+						'tasks.$.streak': 0,
+						'tasks.$.isLogged': true
+					}
+				}
+			return User.findOneAndUpdate({
+				_id: uid,
+				tasks: { $elemMatch: { _id: req.body.tid } }
+			}, update).exec()
+		})
+		.then(() => {
+			return res.sendStatus(200)
+		})
+		.catch(err => {
+			console.log(err)
+			if (err.code) return res.sendStatus(err.code);
+			return res.sendStatus(500);
 		})
 })
 

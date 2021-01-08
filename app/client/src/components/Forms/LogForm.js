@@ -2,19 +2,18 @@ import React, { useState, useEffect } from 'react'
 import Toggle from '../Widgets/Toggle'
 import { log_task } from '../../utils/task_utils'
 
-export default function LogForm({ tid, success }) {
+export default function LogForm({ tid }) {
 
 	const [form, setForm] = useState({
-		tid: null,
+		tid: tid,
 		success: false,
 		comment: ""
 	});
 
 	useEffect(() => {
 		setForm({
-			tid: tid,
-			success: success,
-			comment: ""
+			...form,
+			tid: tid
 		})
 	}, [tid])
 
@@ -35,18 +34,25 @@ export default function LogForm({ tid, success }) {
 				console.log(err);
 			})
 	}
+	const handleToggle = (e) => {
+		setForm({
+			...form,
+			success: !form.success
+		})
+	}
 
 	return (
 		<form className="log-form" onSubmit={handleLog}>
 			<div className="form-group align-middle">
 				<p><strong>Status:</strong> {form.success ? "Completed" : "Incomplete"}</p>
-				<Toggle name="success" initial={success} state={form} setState={setForm} />
+				<label htmlFor="toggle">Toggle</label>
+				<Toggle name="success" checked={form.success} value={form.success} onChange={handleToggle} />
 			</div>
 			<div className="form-group">
 				<input className="form-control" name="comment" type="text" value={form.comment} onChange={updateForm} placeholder="Anything to say?" />
 			</div>
 			<div className="form-group">
-				<button className="btn" type="submit">Submit</button>
+				<button className="btn bg-primary" type="submit">Submit</button>
 			</div>
 		</form>
 	)

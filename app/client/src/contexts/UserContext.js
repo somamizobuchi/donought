@@ -1,43 +1,61 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom';
 
 const UserContext = React.createContext();
 
-
 export default function UserProvider({ children }) {
 	// User State to be used in context
-	const [user, setUser] = useState({
-		_id: '',
-		email: '',
-		firstname: '',
-		lastname: '',
-		authorized: false,
-		tasks: [],
-		image: null
+	const [currentUser, setCurrentUser] = useState({
+		_id: null,
+		firstname: null,
+		lastname: null,
+		picture: null,
+		authorized: false
 	});
 	// Loading state: while fetching
 	const [loading, setLoading] = useState(true);
+	// UseHistory
 	// Authorize User
 	useEffect(() => {
-		fetch('/api/user/isauth')
-			.then(res => res.json())
-			.then(json => {
-				setUser({
-					_id: json._id,
-					email: json.email,
-					firstname: json.firstname,
-					lastname: json.lastname,
-					timezone: json.timezone,
-					authorized: json.ok,
-					tasks: []
-				})
+		setLoading(true);
+		fetch('/api/auth/')
+			.then(res => {
+				if (!res.ok) throw { code: res.status };
+				return res.json();
+			})
+			.then(res => {
+				console.log(res)
+				setCurrentUser({
+					_id: res.user._id,
+					firstname: res.user.firstname,
+					lastname: res.user.lastname,
+					picture: res.user.picture,
+					authorized: true
+				});
 			})
 			.catch(err => {
-				console.log(err.message)
+				console.log(err.code);
 			})
-			.finally(setLoading(false));
+			.finally(() => {
+				setLoading(false);
+			});
 	}, [])
+
+	const signOut = () => {
+		return new Promise(resolve => {
+			fetch('/api/auth/signout')
+				.then(res => {
+					setCurrentUser({
+						...currentUser,
+						authorized: false,
+					})
+					resolve()
+				})
+		})
+	}
+
 	return (
-		<UserContext.Provider value={{ user, setUser }}>
+		<UserContext.Provider value={{ currentUser, signOut }}>
 			{!loading && children}
 		</UserContext.Provider>
 	)
@@ -45,50 +63,4 @@ export default function UserProvider({ children }) {
 
 export function useUserContext() {
 	return useContext(UserContext);
-}
-
-export function login(email, password) {
-	return new Promise((resolve, reject) => {
-		fetch('/api/user/login', requestOptions)
-			.then(res => {
-				if (res.status == 200) {
-					return res.json();
-				} else {
-					throw {
-						status: res.status
-					}
-				}
-			})
-			.then(json => {
-
-			})
-			.catch(err => {
-				reject(err);
-			})
-	})
-	fetch('/api/user/login', requestOptions)
-		.then(res => res.json())
-		.then(json => {
-			let err = null;
-			if (json.ok) {
-				let user = {
-					_id: json._id,
-					email: json.email,
-					firstname: json.firstname,
-					lastname: json.lastname,
-					timezone: json.timezone,
-					_role: json._role,
-					authorized: true
-				}
-				return cb(err, user);
-			} else {
-				err = {
-					message: json.message
-				};
-				return cb(err, null);
-			}
-		})
-		.catch(err => {
-			return cb(err, null);
-		})
 }
