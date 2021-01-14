@@ -8,7 +8,7 @@ export function Modal({ open, setOpen, children }) {
 	}
 
 	return (
-		<div className={"modal-bg " + (open ? "" : "d-none")} onClick={handleToggle}>
+		<div className={"modal-bg bg-blur " + (open ? "" : "d-none")} onClick={handleToggle}>
 			<div className="modal-content rounded position-relative" onClick={e => e.stopPropagation()}>
 				<div className="modal-toggle" onClick={handleToggle}>
 					<FiX className="btn-round" />

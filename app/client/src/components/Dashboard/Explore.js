@@ -24,7 +24,8 @@ const Explore = (props) => {
 	return (
 		<>
 			<TaskForm />
-			<ul className="task-list">
+			<h3>Trending</h3>
+			<ul className="d-flex-col text-light">
 				{
 					tasks.map(task => (
 						<TaskCard refresh={refresh} setRefresh={setRefresh} key={"t" + task._id} title={task.title} cat={task.category} desc={task.description} tid={task._id} numUsers={task.numUsers} />

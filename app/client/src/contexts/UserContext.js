@@ -24,7 +24,6 @@ export default function UserProvider({ children }) {
 				return res.json();
 			})
 			.then(res => {
-				console.log(res)
 				setCurrentUser({
 					_id: res.user._id,
 					firstname: res.user.firstname,

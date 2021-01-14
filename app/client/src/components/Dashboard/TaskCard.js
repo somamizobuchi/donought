@@ -42,8 +42,10 @@ export default function TaskCard(props) {
 
 	// Render
 	return (
-		<li className="task-item bg-ui-dark">
-			<div className="task-title">{props.title}</div>
+		<li className="d-flex-row py-1 justify-content-evenly pill bg-ui-dark align-items-center mb-1">
+			<div className="task-title w-20">{props.title}</div>
+			<div className="w-40">{props.desc}</div>
+			<div className="w-10">{props.cat}</div>
 			<span>&#x1F464; {props.numUsers}</span>
 			<div className="btn bg-primary" onClick={handleJoin}>Join</div>
 		</li>

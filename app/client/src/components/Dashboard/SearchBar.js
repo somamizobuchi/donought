@@ -58,13 +58,14 @@ const SearchBar = ({ open, setOpen }) => {
 		setOpen(false);
 	}
 
+
 	return (
-		<form className={"search-bar " + (isOpen ? "search-bar-show" : null)} onSubmit={handleSearch}>
+		<form className={"search-bar bg-blur " + (isOpen ? "search-bar-show" : null)} onSubmit={handleSearch}>
 			<div className={"form-group container search-bar-input" + (isOpen ? " slide-down" : " slide-up")}>
 				<label className="d-none" htmlFor="navSearchBar">Search</label>
 				<input
 					name="search"
-					className=""
+					className="w-80"
 					id="navSearchBar"
 					type="text"
 					placeholder="Search"

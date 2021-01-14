@@ -49,7 +49,8 @@ export default function LogForm({ tid }) {
 				<Toggle name="success" checked={form.success} value={form.success} onChange={handleToggle} />
 			</div>
 			<div className="form-group">
-				<input className="form-control" name="comment" type="text" value={form.comment} onChange={updateForm} placeholder="Anything to say?" />
+				<label className="d-none" htmlFor="toggle">Toggle</label>
+				<input className="form-control w-100" name="comment" type="text" value={form.comment} onChange={updateForm} placeholder="Anything to say?" />
 			</div>
 			<div className="form-group">
 				<button className="btn bg-primary" type="submit">Submit</button>

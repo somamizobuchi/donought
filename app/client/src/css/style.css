@@ -1,8 +1,8 @@
 :root {
-	--bg-color-light: #fefefe;
+	--bg-color-light: #e1e1e1;
 	--bg-color-dark: #3e3e3e;
 	--ui-color-dark: #5e5e5e;
-	--text-color-light: #fff;
+	--text-color-light: #fefefe;
 	--text-color-light-hover: #eee;
 	--text-color-dark: #000;
 	--color-light: #f8f8f8;
@@ -279,7 +279,6 @@ body {
 	flex-direction: column;
 }
 .task-title {
-	width: 25%;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -301,12 +300,11 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 0.5em;
-	padding: 0.5em 1em;
 	border-radius: 999px;
 	box-sizing: border-box;
 }
-.last-five {
-	width: 25%;
+.last-five-items {
+	width: 30%;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -315,10 +313,16 @@ body {
 	border-radius: 999px;
 }
 .last-five-item {
-	width: 1rem;
-	height: 1rem;
-	background-color: #fff;
-	border-radius: 0.5rem;
+	padding: 0;
+	width: 2em;
+	height: 2em;
+	text-align: center;
+	vertical-align: center;
+	border-radius: 999px;
+	overflow: hidden;
+}
+.last-five-item:last-child{
+	border: 0.3em double #e9e9e9;
 }
 /*=========================
 				Modal	
@@ -381,7 +385,6 @@ body {
 .form-group input[type="text"] {
 	font-family: 'Quicksand', sans-serif;
 	font-size: 1rem;
-	width: 100%;
 	padding: 0.5rem 1rem;
 	border: none;
 	border-radius: 999px;
@@ -396,6 +399,10 @@ body {
 .form-group input:focus {
 	outline: none;
 }
+/* Text Size */
+.font-sm {
+	font-size: 0.5rem;
+}
 /* Text Colors */
 .text-light {
 	color: var(--text-color-light);
@@ -404,7 +411,7 @@ body {
 	color: var(--color-light-hover);
 }
 .text-dark {
-	color: var(--txt-dark);
+	color: var(--text-color-dark);
 }
 .text-dark-hover {
 	color: var(--color-dark-hover);
@@ -427,6 +434,16 @@ body {
 }
 .bg-light {
 	background-color: var(--bg-color-light);
+}
+.bg-lightgray {
+	background-color: lightgray;
+}
+.bg-gray {
+	background-color: gray;
+}
+.bg-blur {
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
 }
 /* Display Properties */
 .d-block {
@@ -451,8 +468,17 @@ body {
 	position: relative;
 }
 /* Flex alignment */
-.justify-content-around {
+.justify-content-between {
 	justify-content: space-between;
+}
+.justify-content-around {
+	justify-content: space-around;
+}
+.justify-content-evenly {
+	justify-content: space-evenly;
+}
+.justify-self-center {
+	justify-self: center;
 }
 .align-items-center {
 	align-items: center;
@@ -470,6 +496,28 @@ body {
 .h-0 {
 	height: 0;
 }
+/* Width */
+.w-10 {
+	width: 10%;
+}
+.w-20 {
+	width: 20%;
+}
+.w-25 {
+	width: 25%;
+}
+.w-30 {
+	width: 30%;
+}
+.w-40 {
+	width: 40%;
+}
+.w-80 {
+	width: 80%;
+}
+.w-100 {
+	width: 100%;
+}
 /* Padding */
 .p-1 {
 	padding: 1em;
@@ -477,13 +525,35 @@ body {
 .p-2 {
 	padding: 2em;
 }
+.px-1 {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+.py-1 {
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+/* Margins */
+.m-auto {
+	margin: auto;
+}
+.mb-1 {
+	margin-bottom: 1em;
+}
+.text-center {
+	text-align: center;
+}
 /* Button */
 .btn {
+	display: block;
 	padding: 0.5em 1em;
 	font-family: 'Quicksand', sans-serif;
 	margin: 0;
 	font-size: 1rem;
 	border: none;
+	text-align: center;
+	text-overflow: ellipsis;
+	overflow: hidden;
 	text-decoration: none;
 	color: var(--color-light);
 	border-radius: 9999px;
@@ -508,6 +578,9 @@ body {
 /* Border-Radius Properties */
 .rounded {
 	border-radius: 1em;
+}
+.pill {
+	border-radius: 999px;
 }
 /* Shadow Properties */
 .shadow {

@@ -3,7 +3,7 @@ import { Link, useLocation, useHistory } from 'react-router-dom'
 import { useUserContext } from '../../contexts/UserContext'
 import SearchBar from './SearchBar'
 import logo from '../../logo.svg'
-import { FiSearch, FiMenu, FiX } from 'react-icons/fi'
+import { FiSearch, FiMenu, FiX, FiCompass } from 'react-icons/fi'
 
 
 const DashNav = (props) => {
@@ -41,12 +41,11 @@ const DashNav = (props) => {
 			setNavCollapseOpen(!navCollapseOpen)
 		} else {
 			setNavCollapseClassNames("nav-collapse nav-collapse-slide-in");
-			setNavCollapseBg("nav-collapse-bg nav-collapse-bg-show");
+			setNavCollapseBg("nav-collapse-bg bg-blur nav-collapse-bg-show");
 			setSearchBarOpen(false);
 			setNavCollapseOpen(!navCollapseOpen);
 		}
 	}
-
 	return (
 		<nav className="nav-main bg-ui-dark position-relative">
 			<div className="container nav-container">
@@ -56,6 +55,7 @@ const DashNav = (props) => {
 					</Link>
 				</div>
 				<div className="nav-controls">
+					<FiCompass className="nav-control-item" onClick={() => history.push("/explore")} />
 					<FiSearch className="nav-control-item" onClick={() => setSearchBarOpen(true)} />
 					<FiMenu className="nav-control-item" onClick={handleNavToggle} />
 				</div>
