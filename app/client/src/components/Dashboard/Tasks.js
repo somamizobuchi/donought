@@ -100,16 +100,18 @@ const LastFive = ({ logs }) => {
 			if (j > nlogs - 1) break;
 			let d = new Intl.DateTimeFormat('en-US', {
 				timeZone: tz
-			}).format(today.setDate(today.getDate() - (i ? 1 : 0)));
+			}).format(today.setDate(today.getDate() - (i === 0 ? 0 : 1)));
+			// console.log(d)
 			let logDate = new Intl.DateTimeFormat('en-US', {
 				timeZone: tz
 			}).format(new Date(logs[nlogs - 1 - j].createdAt));
+			console.log(logDate)
 			if (d === logDate) {
-				logged[i] = logs[j].success
-				j++;
+				logged[i] = logs[nlogs - j - 1].success
 			} else {
 				logged[i] = null;
 			}
+			j++;
 		}
 		return logged.reverse();
 	}
