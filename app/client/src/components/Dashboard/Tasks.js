@@ -54,7 +54,7 @@ export default function Tasks() {
 			<ul className="task-list text-light">
 				<li className="d-flex-row py-1 justify-content-evenly align-items-center">
 					<div className="task-title w-20"></div>
-					<div className="w-40 font-sm d-flex-row justify-content-evenly align-items-center">
+					<div className="w-35 font-sm d-flex-row justify-content-evenly align-items-center">
 						{weekdays && weekdays.map(wd => (
 							<span className="last-five-item text-center d-flex-row justify-content-around align-items-center">{wd}</span>
 						))}
@@ -69,12 +69,14 @@ export default function Tasks() {
 								{task.task.title}
 							</a>
 						</div>
-						<LastFive logs={task.logs} />
+						<div className="d-flex-col w-35 py-1 bg-dark pill">
+							<LastFive logs={task.logs} />
+						</div>
 						<div className="w-10 text-center">
 							{(task.streak > 1) ? `🔥 ${task.streak}` : ""}
 						</div>
 						<div className="w-10">
-							<button className="btn bg-primary" onClick={(e) => handleLog(e, task._id)} disabled={task.logged}>Log</button>
+							<button className="btn bg-primary" onClick={(e) => handleLog(e, task._id)} disabled={task.isLogged}>{task.isLogged ? "Logged" : "Log"}</button>
 						</div>
 					</li>
 				))}
@@ -98,14 +100,14 @@ const LastFive = ({ logs }) => {
 		var j = 0;
 		for (var i = 0; i < ndays; i++) {
 			if (j > nlogs - 1) break;
+			// Get today - i date
 			let d = new Intl.DateTimeFormat('en-US', {
 				timeZone: tz
 			}).format(today.setDate(today.getDate() - (i === 0 ? 0 : 1)));
-			// console.log(d)
+			// Get date of log
 			let logDate = new Intl.DateTimeFormat('en-US', {
 				timeZone: tz
 			}).format(new Date(logs[nlogs - 1 - j].createdAt));
-			console.log(logDate)
 			if (d === logDate) {
 				logged[i] = logs[nlogs - j - 1].success
 			} else {
@@ -120,12 +122,10 @@ const LastFive = ({ logs }) => {
 		setLastFive(lastFiveLogical(logs, "America/New_York"));
 	}, [])
 	return (
-		<div className="d-flex-col w-40 py-1 bg-dark pill">
-			<div className="d-flex-row justify-content-evenly align-items-center">
-				{lastFive.map(success => (
-					<Item success={success} />
-				))}
-			</div>
+		<div className="d-flex-row justify-content-evenly align-items-center">
+			{lastFive.map(success => (
+				<Item success={success} />
+			))}
 		</div>
 	)
 }

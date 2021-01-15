@@ -23,8 +23,7 @@ const Explore = (props) => {
 	// Render: 
 	return (
 		<>
-			<TaskForm />
-			<h3>Trending</h3>
+			<h3 className="text-light p-1">Top</h3>
 			<ul className="d-flex-col text-light">
 				{
 					tasks.map(task => (

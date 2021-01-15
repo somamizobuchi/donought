@@ -13,7 +13,8 @@ router.get('/', (req, res) => {
 				.select([
 					'firstname',
 					'lastname',
-					'picture'
+					'picture',
+					'_role'
 				])
 				.exec()
 		})

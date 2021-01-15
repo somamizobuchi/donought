@@ -7,16 +7,15 @@ import { FiSearch, FiMenu, FiX, FiCompass } from 'react-icons/fi'
 
 
 const DashNav = (props) => {
-
+	// BROWSER HISTORY
 	const history = useHistory();
-
+	// CURRENT USER CONTEXT
 	const { currentUser, signOut } = useUserContext()
-
+	// STATES
 	const [navCollapseOpen, setNavCollapseOpen] = useState(false);
 	const [navCollapseClassNames, setNavCollapseClassNames] = useState("nav-collapse");
 	const [navCollapseBg, setNavCollapseBg] = useState("nav-collapse-bg");
 	const [searchBarOpen, setSearchBarOpen] = useState(false);
-
 
 	const navItems = [
 		{

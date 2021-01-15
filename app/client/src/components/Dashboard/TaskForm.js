@@ -38,15 +38,22 @@ export default function TaskForm(props) {
 	// render
 	return (
 		<div>
+			<h3>Create New Task</h3>
 			<form>
-				<label htmlFor="title">Title</label>
-				<input value={form.title} type="text" name="title" onChange={updateField}></input>
-				<label htmlFor="category">Category</label>
-				<input value={form.category} type="text" name="category" onChange={updateField}></input>
-				<label htmlFor="description">Description</label>
-				<input value={form.description} type="text" name="description" onChange={updateField}></input>
+				<div className="form-group">
+					<label htmlFor="title" className="d-none">Title</label>
+					<input className="w-100" value={form.title} type="text" name="title" placeholder="title" onChange={updateField}></input>
+				</div>
+				<div className="form-group">
+					<label htmlFor="category" className="d-none">Category</label>
+					<input className="w-100" value={form.category} type="text" name="category" placeholder="category" onChange={updateField}></input>
+				</div>
+				<div className="form-group">
+					<label htmlFor="description" className="d-none">Description</label>
+					<input className="w-100" value={form.description} type="text" name="description" placeholder="description" onChange={updateField}></input>
+				</div>
 			</form>
-			<button onClick={handleSubmit}>Create</button>
+			<button className="btn bg-primary" onClick={handleSubmit}>Create</button>
 		</div>
 	)
 }

@@ -29,6 +29,7 @@ export default function UserProvider({ children }) {
 					firstname: res.user.firstname,
 					lastname: res.user.lastname,
 					picture: res.user.picture,
+					_role: res.user._role,
 					authorized: true
 				});
 			})
