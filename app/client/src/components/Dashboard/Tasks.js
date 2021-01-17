@@ -2,14 +2,14 @@ import loadable from "@loadable/component";
 import React, { useEffect, useState } from "react";
 import { Modal, ModalBody } from '../Modal'
 import LogForm from '../Forms/LogForm';
+import { useUserContext } from '../../contexts/UserContext'
 
 export default function Tasks() {
-
-	// const TaskTable = loadable(() => import('./TaskTable'));
+	// CONTEXT
+	const { currentUser } = useUserContext();
+	// STATES
 	const [tasks, setTasks] = useState([]);
-	// LogModal State
 	const [logModalOpen, setLogModalOpen] = useState(false);
-	// LogTaskId
 	const [logTaskId, setLogTaskId] = useState(null);
 	// Component Mount
 	useEffect(() => {
@@ -18,13 +18,11 @@ export default function Tasks() {
 			.then(res => res.json())
 			.then(tasks => {
 				setTasks(tasks)
-				console.log(tasks);
 			})
 			.catch(err => {
 				console.log(err)
 			})
 	}, [])
-
 
 	const getWeekdayChars = (tz) => {
 		const ndays = 5;
@@ -55,15 +53,15 @@ export default function Tasks() {
 				<li className="d-flex-row py-1 justify-content-evenly align-items-center">
 					<div className="task-title w-20"></div>
 					<div className="w-35 font-sm d-flex-row justify-content-evenly align-items-center">
-						{weekdays && weekdays.map(wd => (
-							<span className="last-five-item text-center d-flex-row justify-content-around align-items-center">{wd}</span>
+						{weekdays && weekdays.map((wd, index) => (
+							<span key={"weekday-" + index} className="last-five-item text-center d-flex-row justify-content-around align-items-center">{wd}</span>
 						))}
 					</div>
 					<div className="w-10 text-center">streak</div>
 					<div className="w-10 text-center"></div>
 				</li>
 				{tasks && tasks.map(task => (
-					<li className="d-flex-row py-1 justify-content-evenly align-items-center pill bg-ui-dark mb-1">
+					<li key={"t-" + task._id} className="d-flex-row py-1 justify-content-evenly align-items-center pill bg-ui-dark mb-1">
 						<div className="task-title w-20">
 							<a href="#">
 								{task.task.title}
@@ -91,7 +89,11 @@ export default function Tasks() {
 }
 
 const LastFive = ({ logs }) => {
-
+	// STATES
+	const [lastFive, setLastFive] = useState([]);
+	useEffect(() => {
+		setLastFive(lastFiveLogical(logs, "America/New_York"));
+	}, [])
 	const lastFiveLogical = (logs, tz) => {
 		const ndays = 5;
 		const nlogs = logs.length;
@@ -110,21 +112,17 @@ const LastFive = ({ logs }) => {
 			}).format(new Date(logs[nlogs - 1 - j].createdAt));
 			if (d === logDate) {
 				logged[i] = logs[nlogs - j - 1].success
+				j++;
 			} else {
 				logged[i] = null;
 			}
-			j++;
 		}
 		return logged.reverse();
 	}
-	const [lastFive, setLastFive] = useState([]);
-	useEffect(() => {
-		setLastFive(lastFiveLogical(logs, "America/New_York"));
-	}, [])
 	return (
 		<div className="d-flex-row justify-content-evenly align-items-center">
-			{lastFive.map(success => (
-				<Item success={success} />
+			{lastFive.map((success, index) => (
+				<Item success={success} key={"log-" + index} />
 			))}
 		</div>
 	)

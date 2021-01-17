@@ -13,7 +13,7 @@ passport.use(new GoogleStrategy({
 	clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 	callbackURL: "http://localhost:5000/api/auth/google/callback"
 }, (_accessToken, _refreshToken, profile, done) => {
-	console.log(profile.id);
+
 	User.findOneAndUpdate({ googleId: profile.id }, { picture: profile.photos[0].value })
 		.exec()
 		.then(doc => {

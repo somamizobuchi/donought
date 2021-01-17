@@ -1,7 +1,6 @@
 // Utilities
 const router = require('express').Router();
 const mongoose = require("mongoose");
-const geoip = require('geoip-lite');
 const verifyToken = require('../middleware/verifyToken');
 // Models
 const Task = require('../../models/Task');
@@ -13,6 +12,7 @@ const User = require('../../models/User');
 
 // Get User's Tasks
 router.get('/tasks', verifyToken, (req, res) => {
+	var today = new Date(new Date().toLocaleString('en-US', { timeZone: res.locals.user.timezone }));
 	User
 		.findById(res.locals.user._id)
 		.select('tasks._id tasks.task tasks.logs tasks.streak tasks.isLogged')
