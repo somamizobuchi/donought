@@ -53,7 +53,7 @@ export default function LogForm({ tid }) {
 				<input className="form-control w-100" name="comment" type="text" value={form.comment} onChange={updateForm} placeholder="Anything to say?" />
 			</div>
 			<div className="form-group">
-				<button className="btn bg-primary" type="submit">Submit</button>
+				<button className="btn-primary" type="submit">Submit</button>
 			</div>
 		</form>
 	)

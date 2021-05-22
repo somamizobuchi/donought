@@ -80,7 +80,7 @@ const DashNav = (props) => {
 								</li>
 							))}
 							<li>
-								<a href="" className="btn bg-danger" onClick={handleSignout}>
+								<a href="" className="btn-danger" onClick={handleSignout}>
 									Sign out
 							</a>
 							</li>

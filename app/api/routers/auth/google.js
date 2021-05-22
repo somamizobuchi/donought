@@ -11,7 +11,7 @@ router.use(passport.initialize());
 passport.use(new GoogleStrategy({
 	clientID: process.env.GOOGLE_CLIENT_ID,
 	clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-	callbackURL: "http://localhost:5000/api/auth/google/callback"
+	callbackURL: "/api/auth/google/callback"
 }, (_accessToken, _refreshToken, profile, done) => {
 
 	User.findOneAndUpdate({ googleId: profile.id }, { picture: profile.photos[0].value })
@@ -47,6 +47,7 @@ router.get('/', passport.authenticate('google', {
 // - Generate user if not defined
 // - Create token if user exists
 router.get('/callback', passport.authenticate('google', { session: false, failureRedirect: 'http://localhost:4000/' }), (req, res) => {
+	console.log(req.user._id);
 	var token = jwt.sign({
 		_id: req.user._id,
 	}, process.env.JWT_KEY)

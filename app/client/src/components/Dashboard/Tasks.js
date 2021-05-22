@@ -50,7 +50,7 @@ export default function Tasks() {
 		<>
 			<h3 className="text-light p-1">Current Tasks</h3>
 			<ul className="task-list text-light">
-				<li className="d-flex-row py-1 justify-content-evenly align-items-center">
+				<li className="d-flex-row py-1 justify-content-evenly align-items-center last-five-row">
 					<div className="task-title w-20"></div>
 					<div className="w-35 font-sm d-flex-row justify-content-evenly align-items-center">
 						{weekdays && weekdays.map((wd, index) => (
@@ -61,20 +61,20 @@ export default function Tasks() {
 					<div className="w-10 text-center"></div>
 				</li>
 				{tasks && tasks.map(task => (
-					<li key={"t-" + task._id} className="d-flex-row py-1 justify-content-evenly align-items-center pill bg-ui-dark mb-1">
-						<div className="task-title w-20">
+					<li key={"t-" + task._id} className="d-flex-row py-1 justify-content-evenly align-items-center pill bg-ui-dark mb-1 last-five-row">
+						<div className="task-title">
 							<a href="#">
 								{task.task.title}
 							</a>
 						</div>
-						<div className="d-flex-col w-35 py-1 bg-dark pill">
+						<div className="d-flex-col py-1 bg-dark pill">
 							<LastFive logs={task.logs} />
 						</div>
-						<div className="w-10 text-center">
+						<div className=" text-center">
 							{(task.streak > 1) ? `🔥 ${task.streak}` : ""}
 						</div>
-						<div className="w-10">
-							<button className="btn bg-primary" onClick={(e) => handleLog(e, task._id)} disabled={task.isLogged}>{task.isLogged ? "Logged" : "Log"}</button>
+						<div className="">
+							<button className="btn-primary" onClick={(e) => handleLog(e, task._id)} disabled={task.isLogged}>{task.isLogged ? "Logged" : "Log"}</button>
 						</div>
 					</li>
 				))}

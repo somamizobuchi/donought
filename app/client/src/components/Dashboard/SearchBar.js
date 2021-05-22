@@ -73,7 +73,7 @@ const SearchBar = ({ open, setOpen }) => {
 					value={searchText}
 					onKeyDown={handleKeyPress}
 				/>
-				<button className="btn bg-primary" onClick={handleClose}>Cancel</button>
+				<button className="btn-primary" onClick={handleClose}>Cancel</button>
 			</div>
 			<div className="search-results">
 				{searchResult.map((doc, idx) => (

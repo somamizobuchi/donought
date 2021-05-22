@@ -1,0 +1,28 @@
+/* Buttons */
+@mixin button-reset {
+	border: none;
+	outline: none;
+	box-shadow: none;
+	cursor: pointer;
+}
+@each $name, $color in $theme-colors {
+	.btn-#{$name} {
+		@include button-reset;
+		@include pill;
+		padding: 0.75em 0.9em;
+		transition: all 0.2s ease-in-out;
+		color: map-get($map: $text-colors, $key: 'light');
+		background-color: $color;
+		&:hover {
+			background-color: darken($color: $color, $amount: 5);
+		}
+		&:focus {
+			background-color: darken($color: $color, $amount: 10);
+		}
+		&:disabled {
+			background-color: color.scale($color: $color, $alpha: -40%);
+			color: color.scale($color: map-get($map: $text-colors, $key: 'light'), $alpha: -40%);
+			cursor: not-allowed;
+		}
+	}
+}

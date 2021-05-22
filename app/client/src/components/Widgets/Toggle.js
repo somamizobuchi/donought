@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import './Toggle.css'
+import './Toggle.scss'
 
 const Toggle = ({ name, checked, value, onChange }) => {
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import UserProvider, { useUserContext } from '../contexts/UserContext';
 import LandingPage from './LandingPage'
 import { BrowserRouter as Router } from 'react-router-dom';
-import '../css/style.css'
+import '../style/style.scss'
 
 export default function App() {
 	// Render
